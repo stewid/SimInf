@@ -110,7 +110,9 @@
   Coerce a `SimInf_events` object to a `data.frame`
 
 - [`as.data.frame(`*`<SimInf_individual_events>`*`)`](http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_individual_events.md)
-  : Coerce to data frame
+  :
+
+  Coerce a `SimInf_individual_events` object to a `data.frame`
 
 - [`as.data.frame(`*`<SimInf_pmcmc>`*`)`](http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_pmcmc.md)
   :

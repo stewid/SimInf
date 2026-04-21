@@ -1,11 +1,11 @@
 # Coerce a `SimInf_events` object to a `data.frame`
 
 Convert the scheduled events stored in a `SimInf_events` object into a
-standard `data.frame`. This function extracts the event type, time,
-source node, destination node, number of individuals, proportion, and
-the specific columns from the select (`E`) and shift (`N`) matrices that
-define how each event modifies the compartment state. The resulting
-`data.frame` has one row per scheduled event.
+`data.frame`. This function extracts the event type, time, source node,
+destination node, number of individuals, proportion, and the specific
+columns from the select (`E`) and shift (`N`) matrices that define how
+each event modifies the compartment state. The resulting `data.frame`
+has one row per scheduled event.
 
 ## Usage
 
@@ -28,9 +28,9 @@ as.data.frame(x, ...)
 
 A `data.frame` with columns:
 
-- `event`: Event type (numeric or character, depending on input).
+- `event`: Event type (integer or character, depending on input).
 
-- `time`: Time of the event (numeric or `Date`, depending on input).
+- `time`: Time of the event (integer or `Date`, depending on input).
 
 - `node`: Source node identifier.
 
