@@ -26,3 +26,9 @@ iteration and one column per parameter. These samples represent
 the joint posterior distribution of the parameters.  This format
 is convenient for post-processing and visualization.
 }
+\seealso{
+\code{\link{pmcmc}} for running the PMCMC analysis,
+    \code{\linkS4class{SimInf_pmcmc}} for the class definition,
+    and \code{\link{continue_pmcmc}} for continuing an existing
+    PMCMC run.
+}

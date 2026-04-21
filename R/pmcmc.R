@@ -103,6 +103,10 @@ setAs(
 ##' @param ... Additional arguments (currently ignored).
 ##' @return A \code{data.frame} where rows represent MCMC iterations
 ##'     and columns represent the posterior samples of the parameters.
+##' @seealso \code{\link{pmcmc}} for running the PMCMC analysis,
+##'     \code{\linkS4class{SimInf_pmcmc}} for the class definition,
+##'     and \code{\link{continue_pmcmc}} for continuing an existing
+##'     PMCMC run.
 ##' @method as.data.frame SimInf_pmcmc
 ##' @export
 as.data.frame.SimInf_pmcmc <- function(x, ...) {
