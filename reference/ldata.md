@@ -27,6 +27,13 @@ ldata(model, node)
 
 a numeric vector
 
+## See also
+
+[`gdata`](http://stewid.github.io/SimInf/reference/gdata.md) for
+retrieving global data (common to all nodes), and
+[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+for the class definition and overview of model structure.
+
 ## Examples
 
 ``` r

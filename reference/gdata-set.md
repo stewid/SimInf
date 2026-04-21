@@ -31,6 +31,13 @@ gdata(model, parameter) <- value
 
 a `SimInf_model` object
 
+## See also
+
+[`ldata`](http://stewid.github.io/SimInf/reference/ldata.md) for
+retrieving local data (node-specific), and
+[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+for the class definition and overview of model structure.
+
 ## Examples
 
 ``` r
