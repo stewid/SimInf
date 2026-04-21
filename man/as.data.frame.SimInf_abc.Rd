@@ -28,7 +28,14 @@ columns include:
   \item \code{generation}: The generation number (integer).
   \item \code{weight}: The normalized weight of the particle
   (numeric).
-  \item \code{...}: Columns corresponding to the parameter names
-    defined in the ABC analysis (e.g., \code{beta}, \code{gamma}).
+  \item \strong{Parameter columns}: One column for each parameter
+    estimated in the ABC analysis (e.g., \code{beta},
+    \code{gamma}, \code{sigma}).  The column names match the
+    parameter names defined in the \code{priors}.
 }
+}
+\seealso{
+\code{\link{abc}} for running the ABC analysis,
+    \code{\linkS4class{SimInf_abc}} for the class definition, and
+    \code{\link{continue_abc}} for continuing an existing ABC run.
 }
