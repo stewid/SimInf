@@ -2,15 +2,40 @@
 % Please edit documentation in R/SimInf_individual_events.R
 \name{as.data.frame.SimInf_individual_events}
 \alias{as.data.frame.SimInf_individual_events}
-\title{Coerce to data frame}
+\title{Coerce a \code{SimInf_individual_events} object to a \code{data.frame}}
 \usage{
 \method{as.data.frame}{SimInf_individual_events}(x, ...)
 }
 \arguments{
-\item{x}{any \R object.}
+\item{x}{A \code{SimInf_individual_events} object.}
 
-\item{...}{additional arguments to be passed to or from methods.}
+\item{...}{Additional arguments (currently ignored).}
+}
+\value{
+A \code{data.frame} with columns:
+  \itemize{
+    \item \code{id}: Identifier of the individual (integer or
+    character, depending on input).
+    \item \code{event}: Event type (integer or character,
+    depending on input).
+    \item \code{time}: Time of the event (numeric or \code{Date},
+    depending on input).
+    \item \code{node}: Source node identifier (integer or
+    character, depending on input).
+    \item \code{dest}: Destination node identifier (integer or
+    character, depending on input) (may be \code{NA}).
+  }
 }
 \description{
-Coerce to data frame
+Convert the cleaned individual-level events stored in a
+\code{SimInf_individual_events} object into a
+\code{data.frame}. This function extracts the individual
+identifier, event type, time, source node, and destination node.
+The resulting \code{data.frame} has one row per event.
+}
+\seealso{
+\code{\linkS4class{SimInf_individual_events}} for the
+    class definition and \code{\link{individual_events}} for
+    cleaning livestock event data and prepare it for usage in
+    SimInf.
 }

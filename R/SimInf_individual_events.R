@@ -116,11 +116,35 @@ setAs(
     }
 )
 
-##' Coerce to data frame
+##' Coerce a \code{SimInf_individual_events} object to a \code{data.frame}
 ##'
+##' Convert the cleaned individual-level events stored in a
+##' \code{SimInf_individual_events} object into a
+##' \code{data.frame}. This function extracts the individual
+##' identifier, event type, time, source node, and destination node.
+##' The resulting \code{data.frame} has one row per event.
+##'
+##' @param x A \code{SimInf_individual_events} object.
+##' @param ... Additional arguments (currently ignored).
+##' @return A \code{data.frame} with columns:
+##'   \itemize{
+##'     \item \code{id}: Identifier of the individual (integer or
+##'     character, depending on input).
+##'     \item \code{event}: Event type (integer or character,
+##'     depending on input).
+##'     \item \code{time}: Time of the event (numeric or \code{Date},
+##'     depending on input).
+##'     \item \code{node}: Source node identifier (integer or
+##'     character, depending on input).
+##'     \item \code{dest}: Destination node identifier (integer or
+##'     character, depending on input) (may be \code{NA}).
+##'   }
+##'
+##' @seealso \code{\linkS4class{SimInf_individual_events}} for the
+##'     class definition and \code{\link{individual_events}} for
+##'     cleaning livestock event data and prepare it for usage in
+##'     SimInf.
 ##' @method as.data.frame SimInf_individual_events
-##'
-##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_individual_events <- function(x, ...) {
     methods::as(x, "data.frame")

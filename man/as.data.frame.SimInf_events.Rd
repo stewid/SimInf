@@ -14,9 +14,9 @@
 \value{
 A \code{data.frame} with columns:
   \itemize{
-    \item \code{event}: Event type (numeric or character,
+    \item \code{event}: Event type (integer or character,
     depending on input).
-    \item \code{time}: Time of the event (numeric or \code{Date},
+    \item \code{time}: Time of the event (integer or \code{Date},
     depending on input).
     \item \code{node}: Source node identifier.
     \item \code{dest}: Destination node identifier (may be
@@ -34,12 +34,12 @@ A \code{data.frame} with columns:
 }
 \description{
 Convert the scheduled events stored in a \code{SimInf_events}
-object into a standard \code{data.frame}. This function extracts
-the event type, time, source node, destination node, number of
-individuals, proportion, and the specific columns from the select
-(\code{E}) and shift (\code{N}) matrices that define how each
-event modifies the compartment state.  The resulting
-\code{data.frame} has one row per scheduled event.
+object into a \code{data.frame}. This function extracts the event
+type, time, source node, destination node, number of individuals,
+proportion, and the specific columns from the select (\code{E})
+and shift (\code{N}) matrices that define how each event modifies
+the compartment state.  The resulting \code{data.frame} has one
+row per scheduled event.
 }
 \examples{
 ## Create an 'SIR' model with 1600 cattle herds (nodes) and
