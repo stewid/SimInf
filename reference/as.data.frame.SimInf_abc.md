@@ -35,5 +35,15 @@ include:
 
 - `weight`: The normalized weight of the particle (numeric).
 
-- `...`: Columns corresponding to the parameter names defined in the ABC
-  analysis (e.g., `beta`, `gamma`).
+- **Parameter columns**: One column for each parameter estimated in the
+  ABC analysis (e.g., `beta`, `gamma`, `sigma`). The column names match
+  the parameter names defined in the `priors`.
+
+## See also
+
+[`abc`](http://stewid.github.io/SimInf/reference/abc.md) for running the
+ABC analysis,
+[`SimInf_abc`](http://stewid.github.io/SimInf/reference/SimInf_abc-class.md)
+for the class definition, and
+[`continue_abc`](http://stewid.github.io/SimInf/reference/continue_abc.md)
+for continuing an existing ABC run.
