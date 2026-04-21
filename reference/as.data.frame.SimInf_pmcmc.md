@@ -31,3 +31,12 @@ The resulting `data.frame` contains one row per MCMC iteration and one
 column per parameter. These samples represent the joint posterior
 distribution of the parameters. This format is convenient for
 post-processing and visualization.
+
+## See also
+
+[`pmcmc`](http://stewid.github.io/SimInf/reference/pmcmc.md) for running
+the PMCMC analysis,
+[`SimInf_pmcmc`](http://stewid.github.io/SimInf/reference/SimInf_pmcmc-class.md)
+for the class definition, and
+[`continue_pmcmc`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md)
+for continuing an existing PMCMC run.
