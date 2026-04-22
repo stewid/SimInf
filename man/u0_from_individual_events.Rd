@@ -13,9 +13,18 @@ u0_from_individual_events(events, time = NULL, target = NULL, age = NULL)
 \S4method{u0_from_individual_events}{data.frame}(events, time = NULL, target = NULL, age = NULL)
 }
 \arguments{
-\item{events}{A \code{SimInf_individual_events} object containing
-cleaned individual events (e.g., births, deaths, movements)
-processed by \code{\link{individual_events}}.}
+\item{events}{A \code{SimInf_individual_events} object OR a raw
+\code{data.frame} containing individual events.
+\itemize{
+  \item If a \code{SimInf_individual_events} object is
+  provided, it is used directly.
+  \item If a \code{data.frame} is provided, it is
+    automatically cleaned and processed using
+    \code{\link{individual_events}}. The data frame must
+    conform to the input format required by
+    \code{\link{individual_events}} (see its documentation for
+    details on required columns).
+}}
 
 \item{time}{A numeric scalar specifying the time point at which to
 calculate the initial state. If \code{NULL} (default), the

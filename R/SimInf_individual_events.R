@@ -816,9 +816,6 @@ setMethod(
 ##'         \code{\link{individual_events}} (see its documentation for
 ##'         details on required columns).
 ##'     }
-##' @param events A \code{SimInf_individual_events} object containing
-##'     cleaned individual events (e.g., births, deaths, movements)
-##'     processed by \code{\link{individual_events}}.
 ##' @param time A numeric scalar specifying the time point at which to
 ##'     calculate the initial state. If \code{NULL} (default), the
 ##'     earliest time point among the events is used.
