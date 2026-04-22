@@ -21,7 +21,7 @@ u0_from_individual_events(events, time = NULL, target = NULL, age = NULL)
 
 - events:
 
-  A `SimInf_individual_events` object OR a raw `data.frame` containing
+  A `SimInf_individual_events` object or a `data.frame` containing
   individual events.
 
   - If a `SimInf_individual_events` object is provided, it is used
