@@ -13,7 +13,7 @@ u0_from_individual_events(events, time = NULL, target = NULL, age = NULL)
 \S4method{u0_from_individual_events}{data.frame}(events, time = NULL, target = NULL, age = NULL)
 }
 \arguments{
-\item{events}{A \code{SimInf_individual_events} object OR a raw
+\item{events}{A \code{SimInf_individual_events} object or a
 \code{data.frame} containing individual events.
 \itemize{
   \item If a \code{SimInf_individual_events} object is

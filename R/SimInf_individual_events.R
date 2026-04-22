@@ -804,7 +804,7 @@ setMethod(
 ##' starts with the correct population structure derived from the
 ##' event log.
 ##'
-##' @param events A \code{SimInf_individual_events} object OR a raw
+##' @param events A \code{SimInf_individual_events} object or a
 ##'     \code{data.frame} containing individual events.
 ##'     \itemize{
 ##'       \item If a \code{SimInf_individual_events} object is
