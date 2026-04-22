@@ -71,9 +71,16 @@ simulation.</p>
 
 
 <dl><dt id="arg-events">events<a class="anchor" aria-label="anchor" href="#arg-events"></a></dt>
-<dd><p>A <code>SimInf_individual_events</code> object containing
-cleaned individual events (e.g., births, deaths, movements)
-processed by <code><a href="individual_events.html">individual_events</a></code>.</p></dd>
+<dd><p>A <code>SimInf_individual_events</code> object OR a raw
+<code>data.frame</code> containing individual events.</p><ul><li><p>If a <code>SimInf_individual_events</code> object is
+  provided, it is used directly.</p></li>
+<li><p>If a <code>data.frame</code> is provided, it is
+    automatically cleaned and processed using
+    <code><a href="individual_events.html">individual_events</a></code>. The data frame must
+    conform to the input format required by
+    <code><a href="individual_events.html">individual_events</a></code> (see its documentation for
+    details on required columns).</p></li>
+</ul></dd>
 
 
 <dt id="arg-time">time<a class="anchor" aria-label="anchor" href="#arg-time"></a></dt>

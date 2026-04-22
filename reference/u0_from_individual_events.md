@@ -21,9 +21,18 @@ u0_from_individual_events(events, time = NULL, target = NULL, age = NULL)
 
 - events:
 
-  A `SimInf_individual_events` object containing cleaned individual
-  events (e.g., births, deaths, movements) processed by
-  [`individual_events`](http://stewid.github.io/SimInf/reference/individual_events.md).
+  A `SimInf_individual_events` object OR a raw `data.frame` containing
+  individual events.
+
+  - If a `SimInf_individual_events` object is provided, it is used
+    directly.
+
+  - If a `data.frame` is provided, it is automatically cleaned and
+    processed using
+    [`individual_events`](http://stewid.github.io/SimInf/reference/individual_events.md).
+    The data frame must conform to the input format required by
+    [`individual_events`](http://stewid.github.io/SimInf/reference/individual_events.md)
+    (see its documentation for details on required columns).
 
 - time:
 
