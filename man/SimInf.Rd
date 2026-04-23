@@ -17,7 +17,7 @@ The \pkg{SimInf} framework models infection dynamics within each
 subpopulation (node) as continuous-time Markov chains (CTMC) using
 the Gillespie stochastic simulation algorithm (SSA). Additionally,
 SimInf can incorporate data—such as births, deaths, and
-movements-as scheduled events. These events trigger at predefined
+movements—as scheduled events. These events trigger at predefined
 time points and modify the state of subpopulations by randomly
 sampling individuals from the affected compartments. This
 capability allows simulations to be driven by empirical records or
