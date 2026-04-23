@@ -32,6 +32,7 @@
 #  include <omp.h>
 #endif
 #include <string.h>
+#include <stdbool.h>
 
 /**
  * Structure to hold AEM solver specific data/arguments for simulation.
