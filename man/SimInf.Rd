@@ -6,17 +6,24 @@
 \alias{SimInf}
 \title{A Framework for Data-Driven Stochastic Disease Spread Simulations}
 \description{
-The SimInf package provides a flexible framework for data-driven
-spatio-temporal disease spread modeling, designed to efficiently
-handle population demographics and network data. The framework
-integrates infection dynamics in each subpopulation as
-continuous-time Markov chains (CTMC) using the Gillespie
-stochastic simulation algorithm (SSA) and incorporates available
-data such as births, deaths or movements as scheduled events. A
-scheduled event is used to modify the state of a subpopulation at
-a predefined time-point.
+The \pkg{SimInf} package provides a flexible, high-performance
+framework for data-driven spatio-temporal disease spread
+modeling. It is designed to efficiently simulate disease
+transmission dynamics alongside population demographics and
+dynamic contact networks.
 }
 \details{
+The \pkg{SimInf} framework models infection dynamics within each
+subpopulation (node) as continuous-time Markov chains (CTMC) using
+the Gillespie stochastic simulation algorithm (SSA). Additionally,
+SimInf can incorporate data—such as births, deaths, and animal
+movements—as \strong{scheduled events}. These events trigger at
+predefined time points and modify the state of subpopulations by
+randomly sampling individuals from the affected compartments. This
+capability allows simulations to be driven by empirical records or
+synthetic scenarios while maintaining the stochastic nature of the
+population dynamics.
+
 The \code{\linkS4class{SimInf_model}} is central and provides the
 basis for the framework. A \code{\linkS4class{SimInf_model}}
 object supplies the state-change matrix, the dependency graph, the
