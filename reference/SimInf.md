@@ -35,7 +35,8 @@ for a detailed tutorial on defining custom models.
 
 After a model is created, a simulation is executed using the
 [`run`](http://stewid.github.io/SimInf/reference/run.md) method. Upon
-successful completion, `run` returns a new
+successful completion,
+[`run`](http://stewid.github.io/SimInf/reference/run.md) returns a new
 [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
 object containing the original configuration plus the simulated
 stochastic trajectory.
@@ -43,16 +44,16 @@ stochastic trajectory.
 To inspect and analyze the results, SimInf provides a suite of utility
 functions:
 
-- [`summary,SimInf_model-method`](http://stewid.github.io/SimInf/reference/summary-SimInf_model-method.md)
+- [`summary`](http://stewid.github.io/SimInf/reference/summary-SimInf_model-method.md)
   and
-  [`show,SimInf_model-method`](http://stewid.github.io/SimInf/reference/show-SimInf_model-method.md)
+  [`show`](http://stewid.github.io/SimInf/reference/show-SimInf_model-method.md)
   for a quick overview of the model structure and simulation results.
 
-- [`plot,SimInf_model-method`](http://stewid.github.io/SimInf/reference/plot.md)
-  for visualizing the time series of compartments and continuous state
+- [`plot`](http://stewid.github.io/SimInf/reference/plot.md) for
+  visualizing the time series of compartments and continuous state
   variables.
 
-- [`trajectory,SimInf_model-method`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_model-method.md)
+- [`trajectory`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_model-method.md)
   for extracting the full time series data for custom analysis.
 
 - [`prevalence`](http://stewid.github.io/SimInf/reference/prevalence.md)

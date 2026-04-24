@@ -83,18 +83,19 @@ or node-specific parameters.  See the vignette
 "Getting started with mparse" for a detailed tutorial on defining
 custom models.</p>
 <p>After a model is created, a simulation is executed using the
-<code><a href="run.html">run</a></code> method. Upon successful completion, <code>run</code>
-returns a new <code><a href="SimInf_model-class.html">SimInf_model</a></code> object containing
-the original configuration plus the simulated stochastic
-trajectory.</p>
+<code><a href="run.html">run</a></code> method. Upon successful completion,
+<code><a href="run.html">run</a></code> returns a new <code><a href="SimInf_model-class.html">SimInf_model</a></code>
+object containing the original configuration plus the simulated
+stochastic trajectory.</p>
 <p>To inspect and analyze the results, SimInf provides a suite of
-utility functions:</p><ul><li><p><code><a href="summary-SimInf_model-method.html">summary,SimInf_model-method</a></code> and
-    <code><a href="show-SimInf_model-method.html">show,SimInf_model-method</a></code> for a quick overview of
-    the model structure and simulation results.</p></li>
-<li><p><code><a href="plot.html">plot,SimInf_model-method</a></code> for visualizing the
-    time series of compartments and continuous state variables.</p></li>
-<li><p><code><a href="trajectory-SimInf_model-method.html">trajectory,SimInf_model-method</a></code> for
-    extracting the full time series data for custom analysis.</p></li>
+utility functions:</p><ul><li><p><code><a href="summary-SimInf_model-method.html">summary</a></code> and
+    <code><a href="show-SimInf_model-method.html">show</a></code> for a quick
+    overview of the model structure and simulation results.</p></li>
+<li><p><code><a href="plot.html">plot</a></code> for
+    visualizing the time series of compartments and continuous
+    state variables.</p></li>
+<li><p><code><a href="trajectory-SimInf_model-method.html">trajectory</a></code>
+    for extracting the full time series data for custom analysis.</p></li>
 <li><p><code><a href="prevalence.html">prevalence</a></code> for calculating and summarizing
     disease prevalence across nodes and time.</p></li>
 </ul><p>These functions facilitate both rapid exploratory analysis and
