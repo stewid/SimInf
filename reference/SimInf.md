@@ -33,19 +33,36 @@ models with complex propensity functions, multiple compartments, or
 node-specific parameters. See the vignette "Getting started with mparse"
 for a detailed tutorial on defining custom models.
 
-After a model is created, a simulation is started with a call to the
-[`run`](http://stewid.github.io/SimInf/reference/run.md) method and if
-execution is successful, it returns a modified
+After a model is created, a simulation is executed using the
+[`run`](http://stewid.github.io/SimInf/reference/run.md) method. Upon
+successful completion, `run` returns a new
 [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
-object with a single stochastic solution trajectory attached to it.
+object containing the original configuration plus the simulated
+stochastic trajectory.
 
-SimInf provides several utility functions to inspect simulated data, for
-example, `show`, `summary` and `plot`. To facilitate custom analysis, it
-provides the
-[`trajectory,SimInf_model-method`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_model-method.md)
-and
-[`prevalence`](http://stewid.github.io/SimInf/reference/prevalence.md)
-methods.
+To inspect and analyze the results, SimInf provides a suite of utility
+functions:
+
+- [`summary,SimInf_model-method`](http://stewid.github.io/SimInf/reference/summary-SimInf_model-method.md)
+  and
+  [`show,SimInf_model-method`](http://stewid.github.io/SimInf/reference/show-SimInf_model-method.md)
+  for a quick overview of the model structure and simulation results.
+
+- [`plot,SimInf_model-method`](http://stewid.github.io/SimInf/reference/plot.md)
+  for visualizing the time series of compartments and continuous state
+  variables.
+
+- [`trajectory,SimInf_model-method`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_model-method.md)
+  for extracting the full time series data for custom analysis.
+
+- [`prevalence`](http://stewid.github.io/SimInf/reference/prevalence.md)
+  for calculating and summarizing disease prevalence across nodes and
+  time.
+
+These functions facilitate both rapid exploratory analysis and detailed
+post-processing of simulation outcomes. See the vignette "Post-process
+data in a trajectory" for a comprehensive tutorial on extracting and
+analyzing simulation results.
 
 One of our design goal was to make SimInf extendable and enable usage of
 the numerical solvers from other R extension packages in order to
