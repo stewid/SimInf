@@ -30,8 +30,8 @@ description, generates model-specific C code, and returns a
 object ready for simulation. This approach combines the flexibility of R
 with the computational speed of compiled code, making it well-suited for
 models with complex propensity functions, multiple compartments, or
-node-specific parameters. Additionally, the package provides tools to
-derive initial states directly from cleaned individual event logs.
+node-specific parameters. See the vignette "Getting started with mparse"
+for a detailed tutorial on defining custom models.
 
 After a model is created, a simulation is started with a call to the
 [`run`](http://stewid.github.io/SimInf/reference/run.md) method and if
