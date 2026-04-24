@@ -40,21 +40,22 @@ or node-specific parameters.  See the vignette
 custom models.
 
 After a model is created, a simulation is executed using the
-\code{\link{run}} method. Upon successful completion, \code{run}
-returns a new \code{\linkS4class{SimInf_model}} object containing
-the original configuration plus the simulated stochastic
-trajectory.
+\code{\link{run}} method. Upon successful completion,
+\code{\link{run}} returns a new \code{\linkS4class{SimInf_model}}
+object containing the original configuration plus the simulated
+stochastic trajectory.
 
 To inspect and analyze the results, SimInf provides a suite of
 utility functions:
 \itemize{
-  \item \code{\link{summary,SimInf_model-method}} and
-    \code{\link{show,SimInf_model-method}} for a quick overview of
-    the model structure and simulation results.
-  \item \code{\link{plot,SimInf_model-method}} for visualizing the
-    time series of compartments and continuous state variables.
-  \item \code{\link{trajectory,SimInf_model-method}} for
-    extracting the full time series data for custom analysis.
+  \item \code{\link[=summary,SimInf_model-method]{summary}} and
+    \code{\link[=show,SimInf_model-method]{show}} for a quick
+    overview of the model structure and simulation results.
+  \item \code{\link[=plot,SimInf_model-method]{plot}} for
+    visualizing the time series of compartments and continuous
+    state variables.
+  \item \code{\link[=trajectory,SimInf_model-method]{trajectory}}
+    for extracting the full time series data for custom analysis.
   \item \code{\link{prevalence}} for calculating and summarizing
     disease prevalence across nodes and time.
 }
