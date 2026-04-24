@@ -71,10 +71,10 @@ population dynamics.</p>
 <p>The package supports both predefined models (e.g.,
 <code><a href="SIR.html">SIR</a></code>, <code><a href="SIS.html">SIS</a></code>) and custom model
 specifications via the <code><a href="mparse.html">mparse</a></code> function.
-<code>mparse</code> serves as the primary interface for defining custom
-compartment models, allowing users to describe transitions using a
-simple, human-readable string syntax in R. The function then
-parses this description, generates model-specific C code, and
+<code><a href="mparse.html">mparse</a></code> serves as the primary interface for defining
+custom compartment models, allowing users to describe transitions
+using a simple, human-readable string syntax in R. The function
+then parses this description, generates model-specific C code, and
 returns a <code><a href="SimInf_model-class.html">SimInf_model</a></code> object ready for
 simulation. This approach combines the flexibility of R with the
 computational speed of compiled code, making it well-suited for

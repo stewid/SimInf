@@ -22,10 +22,11 @@ The package supports both predefined models (e.g.,
 [`SIS`](http://stewid.github.io/SimInf/reference/SIS.md)) and custom
 model specifications via the
 [`mparse`](http://stewid.github.io/SimInf/reference/mparse.md) function.
-`mparse` serves as the primary interface for defining custom compartment
-models, allowing users to describe transitions using a simple,
-human-readable string syntax in R. The function then parses this
-description, generates model-specific C code, and returns a
+[`mparse`](http://stewid.github.io/SimInf/reference/mparse.md) serves as
+the primary interface for defining custom compartment models, allowing
+users to describe transitions using a simple, human-readable string
+syntax in R. The function then parses this description, generates
+model-specific C code, and returns a
 [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
 object ready for simulation. This approach combines the flexibility of R
 with the computational speed of compiled code, making it well-suited for
