@@ -38,16 +38,20 @@
 ##' synthetic scenarios while maintaining the stochastic nature of the
 ##' population dynamics.
 ##'
-##' The \code{\linkS4class{SimInf_model}} is central and provides the
-##' basis for the framework. A \code{\linkS4class{SimInf_model}}
-##' object supplies the state-change matrix, the dependency graph, the
-##' scheduled events, and the initial state of the system.
-##'
-##' All predefined models in SimInf have a generating function, with
-##' the same name as the model, for example \code{\link{SIR}}.
-##'
-##' A model can also be created from a model specification using the
-##' \code{\link{mparse}} method.
+##' The package supports both predefined models (e.g.,
+##' \code{\link{SIR}}, \code{\link{SIS}}) and custom model
+##' specifications via the \code{\link{mparse}} function.
+##' \code{mparse} serves as the primary interface for defining custom
+##' compartment models, allowing users to describe transitions using a
+##' simple, human-readable string syntax in R. The function then
+##' parses this description, generates model-specific C code, and
+##' returns a \code{\linkS4class{SimInf_model}} object ready for
+##' simulation. This approach combines the flexibility of R with the
+##' computational speed of compiled code, making it well-suited for
+##' models with complex propensity functions, multiple compartments,
+##' or node-specific parameters.  Additionally, the package provides
+##' tools to derive initial states directly from cleaned individual
+##' event logs.
 ##'
 ##' After a model is created, a simulation is started with a call to
 ##' the \code{\link{run}} method and if execution is successful, it
