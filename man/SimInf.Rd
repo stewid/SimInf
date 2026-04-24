@@ -27,10 +27,10 @@ population dynamics.
 The package supports both predefined models (e.g.,
 \code{\link{SIR}}, \code{\link{SIS}}) and custom model
 specifications via the \code{\link{mparse}} function.
-\code{mparse} serves as the primary interface for defining custom
-compartment models, allowing users to describe transitions using a
-simple, human-readable string syntax in R. The function then
-parses this description, generates model-specific C code, and
+\code{\link{mparse}} serves as the primary interface for defining
+custom compartment models, allowing users to describe transitions
+using a simple, human-readable string syntax in R. The function
+then parses this description, generates model-specific C code, and
 returns a \code{\linkS4class{SimInf_model}} object ready for
 simulation. This approach combines the flexibility of R with the
 computational speed of compiled code, making it well-suited for
