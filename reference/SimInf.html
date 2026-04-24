@@ -68,14 +68,20 @@ sampling individuals from the affected compartments. This
 capability allows simulations to be driven by empirical records or
 synthetic scenarios while maintaining the stochastic nature of the
 population dynamics.</p>
-<p>The <code><a href="SimInf_model-class.html">SimInf_model</a></code> is central and provides the
-basis for the framework. A <code><a href="SimInf_model-class.html">SimInf_model</a></code>
-object supplies the state-change matrix, the dependency graph, the
-scheduled events, and the initial state of the system.</p>
-<p>All predefined models in SimInf have a generating function, with
-the same name as the model, for example <code><a href="SIR.html">SIR</a></code>.</p>
-<p>A model can also be created from a model specification using the
-<code><a href="mparse.html">mparse</a></code> method.</p>
+<p>The package supports both predefined models (e.g.,
+<code><a href="SIR.html">SIR</a></code>, <code><a href="SIS.html">SIS</a></code>) and custom model
+specifications via the <code><a href="mparse.html">mparse</a></code> function.
+<code>mparse</code> serves as the primary interface for defining custom
+compartment models, allowing users to describe transitions using a
+simple, human-readable string syntax in R. The function then
+parses this description, generates model-specific C code, and
+returns a <code><a href="SimInf_model-class.html">SimInf_model</a></code> object ready for
+simulation. This approach combines the flexibility of R with the
+computational speed of compiled code, making it well-suited for
+models with complex propensity functions, multiple compartments,
+or node-specific parameters.  Additionally, the package provides
+tools to derive initial states directly from cleaned individual
+event logs.</p>
 <p>After a model is created, a simulation is started with a call to
 the <code><a href="run.html">run</a></code> method and if execution is successful, it
 returns a modified <code><a href="SimInf_model-class.html">SimInf_model</a></code> object with a

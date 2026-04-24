@@ -17,19 +17,21 @@ affected compartments. This capability allows simulations to be driven
 by empirical records or synthetic scenarios while maintaining the
 stochastic nature of the population dynamics.
 
-The
+The package supports both predefined models (e.g.,
+[`SIR`](http://stewid.github.io/SimInf/reference/SIR.md),
+[`SIS`](http://stewid.github.io/SimInf/reference/SIS.md)) and custom
+model specifications via the
+[`mparse`](http://stewid.github.io/SimInf/reference/mparse.md) function.
+`mparse` serves as the primary interface for defining custom compartment
+models, allowing users to describe transitions using a simple,
+human-readable string syntax in R. The function then parses this
+description, generates model-specific C code, and returns a
 [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
-is central and provides the basis for the framework. A
-[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
-object supplies the state-change matrix, the dependency graph, the
-scheduled events, and the initial state of the system.
-
-All predefined models in SimInf have a generating function, with the
-same name as the model, for example
-[`SIR`](http://stewid.github.io/SimInf/reference/SIR.md).
-
-A model can also be created from a model specification using the
-[`mparse`](http://stewid.github.io/SimInf/reference/mparse.md) method.
+object ready for simulation. This approach combines the flexibility of R
+with the computational speed of compiled code, making it well-suited for
+models with complex propensity functions, multiple compartments, or
+node-specific parameters. Additionally, the package provides tools to
+derive initial states directly from cleaned individual event logs.
 
 After a model is created, a simulation is started with a call to the
 [`run`](http://stewid.github.io/SimInf/reference/run.md) method and if
