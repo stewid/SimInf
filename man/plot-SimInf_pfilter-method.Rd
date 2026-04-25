@@ -14,8 +14,8 @@ trajectory (top) and the effective sample size (bottom) are
 displayed. If \code{y} is a character vector or a formula, the
 plot function for a \code{SimInf_model} object is called with
 the filtered trajectory, see
-\code{\link{plot,SimInf_model-method}} for more details about
-the specification a plot.}
+\code{\link[=plot,SimInf_model-method]{plot}} for more details
+about the specification a plot.}
 
 \item{...}{Other graphical parameters that are passed on to the
 plot function.}

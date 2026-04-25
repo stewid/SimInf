@@ -97,7 +97,7 @@ trajectory_data <- function(model, name) {
 ##' @template compartments-param
 ##' @template index-param
 ##' @param ... Additional arguments, see
-##'     \code{\link{trajectory,SimInf_model-method}}
+##'     \code{\link[=trajectory,SimInf_model-method]{trajectory}}
 ## nolint start: brace_linter
 setGeneric(
     "trajectory",
@@ -253,7 +253,7 @@ setMethod(
 ##'     compartment. Using \code{format = "matrix"} returns the result
 ##'     as a matrix, which is the internal format (see
 ##'     \sQuote{Details} in
-##'     \code{\link{trajectory,SimInf_model-method}}).
+##'     \code{\link[=trajectory,SimInf_model-method]{trajectory}}).
 ##' @return A \code{data.frame} if \code{format = "data.frame"}, else
 ##'     a matrix.
 ##' @include pfilter.R

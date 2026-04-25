@@ -9,7 +9,7 @@ Class to handle the \acronym{SISe3_sp} model. This class inherits
 from \code{\linkS4class{SimInf_model}}, meaning that
 \acronym{SISe3_sp} objects are fully compatible with all generic
 functions defined for \code{SimInf_model}, such as
-\code{\link{run}}, \code{\link{plot,SimInf_model-method}},
+\code{\link{run}}, \code{\link[=plot,SimInf_model-method]{plot}},
 \code{\link{trajectory}}, and \code{\link{prevalence}}.
 }
 \details{

@@ -229,11 +229,11 @@ each node with the following columns:
 }
 \seealso{
 \code{\linkS4class{SISe3_sp}} for the class definition.
-\code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
-\code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
-models.  \code{\link{mparse}} for creating custom models.
-\code{\link{run}} for running the simulation.
-\code{\link{trajectory}}, \code{\link{prevalence}} and
-\code{\link{plot,SimInf_model-method}} for post-processing and
-visualization.
+    \code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
+    \code{\link{SISe3}} and \code{\link{SISe_sp}} for other
+    predefined models.  \code{\link{mparse}} for creating custom
+    models.  \code{\link{run}} for running the simulation.
+    \code{\link{trajectory}}, \code{\link{prevalence}} and
+    \code{\link[=plot,SimInf_model-method]{plot}} for
+    post-processing and visualization.
 }

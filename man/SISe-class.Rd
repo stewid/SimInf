@@ -9,7 +9,7 @@ Class to handle the \acronym{SISe} model. This class inherits from
 \code{\linkS4class{SimInf_model}}, meaning that \acronym{SISe}
 objects are fully compatible with all generic functions defined
 for \code{SimInf_model}, such as \code{\link{run}},
-\code{\link{plot,SimInf_model-method}}, \code{\link{trajectory}},
+\code{\link[=plot,SimInf_model-method]{plot}}, \code{\link{trajectory}},
 and \code{\link{prevalence}}.
 }
 \details{

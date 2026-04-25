@@ -25,7 +25,7 @@
 ##' \code{\linkS4class{SimInf_model}}, meaning that \acronym{SISe}
 ##' objects are fully compatible with all generic functions defined
 ##' for \code{SimInf_model}, such as \code{\link{run}},
-##' \code{\link{plot,SimInf_model-method}}, \code{\link{trajectory}},
+##' \code{\link[=plot,SimInf_model-method]{plot}}, \code{\link{trajectory}},
 ##' and \code{\link{prevalence}}.
 ##'
 ##' @template SISe-details
@@ -85,15 +85,15 @@ select_matrix_SISe <- function() {
 ##' @template beta-end-param
 ##' @param epsilon The background environmental infectious pressure
 ##' @return \code{SISe}
-##' @seealso
-##' \code{\linkS4class{SISe}} for the class definition.
-##' \code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
-##' \code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
-##' models.  \code{\link{mparse}} for creating custom models.
-##' \code{\link{run}} for running the simulation.
-##' \code{\link{trajectory}}, \code{\link{prevalence}} and
-##' \code{\link{plot,SimInf_model-method}} for post-processing and
-##' visualization.
+##'
+##' @seealso \code{\linkS4class{SISe}} for the class definition.
+##'     \code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SIS}},
+##'     \code{\link{SISe3}} and \code{\link{SISe_sp}} for other
+##'     predefined models.  \code{\link{mparse}} for creating custom
+##'     models.  \code{\link{run}} for running the simulation.
+##'     \code{\link{trajectory}}, \code{\link{prevalence}} and
+##'     \code{\link[=plot,SimInf_model-method]{plot}} for
+##'     post-processing and visualization.
 ##' @include check_arguments.R
 ##' @export
 SISe <- function(u0,

@@ -24,7 +24,7 @@ when extracting data. Default (\code{index = NULL}) is to
 extract data from all nodes.}
 
 \item{...}{Additional arguments, see
-\code{\link{trajectory,SimInf_model-method}}}
+\code{\link[=trajectory,SimInf_model-method]{trajectory}}}
 }
 \description{
 Generic function to extract data from a simulated trajectory
