@@ -6,11 +6,11 @@
 \alias{SimInf}
 \title{A Framework for Data-Driven Stochastic Disease Spread Simulations}
 \description{
-The \pkg{SimInf} package provides a flexible, high-performance
-framework for data-driven spatio-temporal disease spread
-modeling. It is designed to efficiently simulate disease
-transmission dynamics alongside population demographics and
-dynamic contact networks.
+The \pkg{SimInf} package provides a flexible framework for
+data-driven spatio-temporal disease spread modeling, combining the
+speed of compiled C code with the flexibility of R. It is designed
+to efficiently simulate disease transmission dynamics alongside
+population demographics and dynamic contact networks.
 }
 \details{
 The \pkg{SimInf} framework models infection dynamics within each
