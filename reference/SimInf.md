@@ -66,6 +66,25 @@ post-processing of simulation outcomes. See the vignette "Post-process
 data in a trajectory" for a comprehensive tutorial on extracting and
 analyzing simulation results.
 
+Beyond simulation, the package provides functionality to fit models to
+time series data using two Bayesian inference methods:
+
+- Approximate Bayesian Computation Sequential Monte Carlo (ABC-SMC),
+  implemented in
+  [`abc`](http://stewid.github.io/SimInf/reference/abc.md), based on the
+  approach by Toni and others (2009)
+  [doi:10.1098/rsif.2008.0172](https://doi.org/10.1098/rsif.2008.0172) .
+
+- Particle Markov Chain Monte Carlo (PMCMC), implemented in
+  [`pmcmc`](http://stewid.github.io/SimInf/reference/pmcmc.md), based on
+  the approach by Andrieu and others (2010)
+  [doi:10.1111/j.1467-9868.2009.00736.x](https://doi.org/10.1111/j.1467-9868.2009.00736.x)
+  .
+
+Both methods enable parameter estimation in stochastic models where the
+likelihood function is intractable, by using simulated data to estimate
+the posterior distributions of model parameters.
+
 One of our design goal was to make SimInf extendable and enable usage of
 the numerical solvers from other R extension packages in order to
 facilitate complex epidemiological research. To support this, SimInf has
