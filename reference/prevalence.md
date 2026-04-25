@@ -63,4 +63,4 @@ prevalence(model, formula, level = 1, index = NULL, ...)
 - ...:
 
   Additional arguments, see
-  [`prevalence,SimInf_model-method`](http://stewid.github.io/SimInf/reference/prevalence-SimInf_model-method.md)
+  [`prevalence`](http://stewid.github.io/SimInf/reference/prevalence-SimInf_model-method.md)

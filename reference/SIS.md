@@ -100,9 +100,8 @@ creating custom models.
 simulation.
 [`trajectory`](http://stewid.github.io/SimInf/reference/trajectory.md),
 [`prevalence`](http://stewid.github.io/SimInf/reference/prevalence.md)
-and
-[`plot,SimInf_model-method`](http://stewid.github.io/SimInf/reference/plot.md)
-for post-processing and visualization.
+and [`plot`](http://stewid.github.io/SimInf/reference/plot.md) for
+post-processing and visualization.
 
 ## Examples
 

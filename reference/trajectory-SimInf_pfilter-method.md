@@ -37,7 +37,7 @@ trajectory(model, compartments, index, format = c("data.frame", "matrix"))
   with one row per node and time-step with the number of individuals in
   each compartment. Using `format = "matrix"` returns the result as a
   matrix, which is the internal format (see ‘Details’ in
-  [`trajectory,SimInf_model-method`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_model-method.md)).
+  [`trajectory`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_model-method.md)).
 
 ## Value
 

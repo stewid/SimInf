@@ -33,4 +33,4 @@ trajectory(model, compartments = NULL, index = NULL, ...)
 - ...:
 
   Additional arguments, see
-  [`trajectory,SimInf_model-method`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_model-method.md)
+  [`trajectory`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_model-method.md)

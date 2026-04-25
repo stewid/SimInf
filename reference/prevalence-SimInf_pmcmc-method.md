@@ -80,5 +80,5 @@ prevalence(model, formula, level, index, start = 1, end = NULL, thin = 1)
 
 A `data.frame` where the first column is the `iteration` and the
 remaining columns are the result from calling
-[`prevalence,SimInf_model-method`](http://stewid.github.io/SimInf/reference/prevalence-SimInf_model-method.md)
+[`prevalence`](http://stewid.github.io/SimInf/reference/prevalence-SimInf_model-method.md)
 with the arguments `formula`, `level` and `index` for each iteration.

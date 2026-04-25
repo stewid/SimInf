@@ -5,7 +5,7 @@ Class to handle the SIR model. This class inherits from
 meaning that SIR objects are fully compatible with all generic functions
 defined for `SimInf_model`, such as
 [`run`](http://stewid.github.io/SimInf/reference/run.md),
-[`plot,SimInf_model-method`](http://stewid.github.io/SimInf/reference/plot.md),
+[`plot`](http://stewid.github.io/SimInf/reference/plot.md),
 [`trajectory`](http://stewid.github.io/SimInf/reference/trajectory.md),
 and
 [`prevalence`](http://stewid.github.io/SimInf/reference/prevalence.md).

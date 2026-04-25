@@ -21,8 +21,8 @@ plot(x, y, ...)
   the effective sample size (bottom) are displayed. If `y` is a
   character vector or a formula, the plot function for a `SimInf_model`
   object is called with the filtered trajectory, see
-  [`plot,SimInf_model-method`](http://stewid.github.io/SimInf/reference/plot.md)
-  for more details about the specification a plot.
+  [`plot`](http://stewid.github.io/SimInf/reference/plot.md) for more
+  details about the specification a plot.
 
 - ...:
 

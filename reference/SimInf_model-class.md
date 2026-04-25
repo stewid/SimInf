@@ -133,8 +133,7 @@ for creating custom models using a simple string syntax.
 the simulation.
 [`trajectory`](http://stewid.github.io/SimInf/reference/trajectory.md),
 [`prevalence`](http://stewid.github.io/SimInf/reference/prevalence.md),
-and
-[`plot,SimInf_model-method`](http://stewid.github.io/SimInf/reference/plot.md)
-for extracting and visualizing results.
+and [`plot`](http://stewid.github.io/SimInf/reference/plot.md) for
+extracting and visualizing results.
 [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
 for details on the event schedule structure.
