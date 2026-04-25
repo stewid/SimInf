@@ -53,9 +53,9 @@
 ##' "Getting started with mparse" for a detailed tutorial on defining
 ##' custom models.
 ##'
-##' To facilitate the use of real-world livestock data, SimInf
-##' provides functionality for preparing individual event records
-##' (e.g., births, deaths, and movements) for simulation. The
+##' To facilitate the use of real livestock data, SimInf provides
+##' functionality for preparing individual event records (e.g.,
+##' births, deaths, and movements) for simulation. The
 ##' \code{\link{individual_events}} function cleans and validates raw
 ##' livestock events, resolving inconsistencies and structuring the
 ##' data into the format required by the simulation engine. This
