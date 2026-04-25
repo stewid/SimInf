@@ -82,16 +82,17 @@ models with complex propensity functions, multiple compartments,
 or node-specific parameters.  See the vignette
 "Getting started with mparse" for a detailed tutorial on defining
 custom models.</p>
-<p>To facilitate the use of real-world livestock data, SimInf
-provides functionality for preparing individual event records
-(e.g., births, deaths, and movements) for simulation. The
+<p>To facilitate the use of real livestock data, SimInf provides
+functionality for preparing individual event records (e.g.,
+births, deaths, and movements) for simulation. The
 <code><a href="individual_events.html">individual_events</a></code> function cleans and validates raw
 livestock events, resolving inconsistencies and structuring the
-data into the format required by the simulation engine. This
-process transforms complex, individual-level logs into the
-scheduled events that drive population dynamics. See the vignette
-"Scheduled events" for a detailed guide on processing livestock
-data and integrating it into your models.</p>
+data into the format required by the simulation. This process
+transforms complex, individual-level logs into the scheduled
+events that drive population demographics and movement
+networks. See the vignette "Scheduled events" for a detailed guide
+on processing livestock data and integrating it into disease
+spread models.</p>
 <p>After a model is created, a simulation is executed using the
 <code><a href="run.html">run</a></code> method. Upon successful completion,
 <code><a href="run.html">run</a></code> returns a new <code><a href="SimInf_model-class.html">SimInf_model</a></code>
