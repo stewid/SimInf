@@ -93,12 +93,15 @@
 ##' where the likelihood function is intractable, by using simulated
 ##' data to estimate the posterior distributions of model parameters.
 ##'
-##' One of our design goal was to make SimInf extendable and enable
-##' usage of the numerical solvers from other R extension packages in
-##' order to facilitate complex epidemiological research.  To support
-##' this, SimInf has functionality to generate the required C and R
-##' code from a model specification, see
-##' \code{\link{package_skeleton}}
+##' Finally, one of the core design goals of SimInf is extensibility.
+##' The package provides functionality to generate the required C and
+##' R code from a model specification, enabling users to create custom
+##' R packages that leverage the numerical solvers of SimInf. This
+##' facilitates complex epidemiological research by allowing
+##' researchers to encapsulate their specific model structures within
+##' a standard R package, ensuring reproducibility and ease of
+##' sharing. See \code{\link{package_skeleton}} for details on
+##' creating a new R package based on a custom model specification.
 ##' @references
 ##'
 ##' \Widgren2019
