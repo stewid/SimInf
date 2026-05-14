@@ -119,6 +119,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Stefan Widgren \email{stefan.widgren@gmail.com} (\href{https://orcid.org/0000-0001-5745-2284}{ORCID})
   \item Robin Eriksson (\href{https://orcid.org/0000-0002-4291-712X}{ORCID})
   \item Stefan Engblom (\href{https://orcid.org/0000-0002-3614-1732}{ORCID})
   \item Pavol Bauer (\href{https://orcid.org/0000-0003-4328-7171}{ORCID})
