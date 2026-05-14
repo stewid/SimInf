@@ -49,6 +49,7 @@ variables. A variable is defined by the operator `<-`. Using a variable
 for the size of the population, the SIR model can be described as:
 
 ``` r
+
 library(SimInf)
 
 transitions <- c("S -> beta*S*I/N -> I",
@@ -66,6 +67,7 @@ the system is to be returned. Let us create a model that consists of
 starts with 99 susceptibles, 5 infected and 0 recovered individuals.
 
 ``` r
+
 n <- 1000
 u0 <- data.frame(S = rep(99, n), I = rep(5, n), R = rep(0, n))
 
@@ -80,6 +82,7 @@ To generate data from the model and then print some basic information
 about the outcome, run the following commands:
 
 ``` r
+
 result <- run(model)
 result
 ```
@@ -109,6 +112,7 @@ count in each compartment across nodes as a colored line together with
 the inter-quartile range using the same color, but with transparency.
 
 ``` r
+
 plot(result)
 ```
 
@@ -123,6 +127,7 @@ individuals in each compartment at the time points specified in `tspan`.
 Below is the first 10 lines of the `data.frame` with simulated data.
 
 ``` r
+
 trajectory(result)
 ```
 
@@ -147,6 +152,7 @@ and the right hand side of the formula specifies the compartments at
 risk. Below is the first 10 lines of the `data.frame`.
 
 ``` r
+
 prevalence(result, I ~ S + I + R)
 ```
 
@@ -183,6 +189,7 @@ You can install the released version of `SimInf` from
 [CRAN](https://CRAN.R-project.org/package=SimInf)
 
 ``` r
+
 install.packages("SimInf")
 ```
 
@@ -190,6 +197,7 @@ or use the `remotes` package to install the development version from
 [GitHub](https://github.com/stewid/SimInf)
 
 ``` r
+
 library(remotes)
 install_github("stewid/SimInf")
 ```

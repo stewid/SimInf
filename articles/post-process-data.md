@@ -12,6 +12,7 @@ and explore this trajectory data.
 Let us first load the SimInf package.
 
 ``` r
+
 library(SimInf)
 ```
 
@@ -31,6 +32,7 @@ Let’s simulate 10 days of data from an SIR model with 6 nodes. For
 reproducibility, we set the seed and specify the number of threads.
 
 ``` r
+
 set.seed(123)
 set_num_threads(1)
 
@@ -53,6 +55,7 @@ result <- run(model)
 Extract the full trajectory data (all compartments, all nodes).
 
 ``` r
+
 trajectory(result)
 ```
 
@@ -121,6 +124,7 @@ trajectory(result)
 Extract the number of recovered individuals (R) in the first node only.
 
 ``` r
+
 trajectory(result, compartments = "R", index = 1)
 ```
 
@@ -140,6 +144,7 @@ Extract the number of recovered individuals in the first and third
 nodes.
 
 ``` r
+
 trajectory(result, compartments = "R", index = c(1, 3))
 ```
 
@@ -188,6 +193,7 @@ Let’s determine the proportion of infected individuals in the total
 population.
 
 ``` r
+
 prevalence(result, I ~ S + I + R)
 ```
 
@@ -207,6 +213,7 @@ Identical result is obtained with the shorthand `I ~ .` (where `.` means
 “all compartments”).
 
 ``` r
+
 prevalence(result, I ~ .)
 ```
 
@@ -226,6 +233,7 @@ Calculate the proportion of nodes that are infected (at least one I
 individual).
 
 ``` r
+
 prevalence(result, I ~ S + I + R, level = 2)
 ```
 
@@ -244,6 +252,7 @@ prevalence(result, I ~ S + I + R, level = 2)
 Calculate the prevalence **within each node** individually.
 
 ``` r
+
 prevalence(result, I ~ S + I + R, level = 3)
 ```
 
@@ -326,6 +335,7 @@ will vary unless set.seed() is used.*
 Plot the median and interquartile range (IQR) of all compartments.
 
 ``` r
+
 plot(result)
 ```
 
@@ -334,6 +344,7 @@ plot(result)
 Plot the median and the middle 95% quantile range.
 
 ``` r
+
 plot(result, range = 0.95)
 ```
 
@@ -342,6 +353,7 @@ plot(result, range = 0.95)
 Plot only the infected individuals (I).
 
 ``` r
+
 plot(result, "I")
 ```
 
@@ -350,6 +362,7 @@ plot(result, "I")
 Use formula notation to plot the infected individuals.
 
 ``` r
+
 plot(result, ~I)
 ```
 
@@ -361,6 +374,7 @@ Plot the trajectories for the first three nodes. We use `range = FALSE`
 to suppress the shaded median/range bands and show the individual lines.
 
 ``` r
+
 plot(result, index = 1:3, range = FALSE)
 ```
 
@@ -369,6 +383,7 @@ plot(result, index = 1:3, range = FALSE)
 Use `type = "l"` to draw a line.
 
 ``` r
+
 plot(result, index = 1:3, range = FALSE, type = "l")
 ```
 
@@ -377,6 +392,7 @@ plot(result, index = 1:3, range = FALSE, type = "l")
 Plot the infected individuals in the first node only.
 
 ``` r
+
 plot(result, "I", index = 1, range = FALSE)
 ```
 
@@ -387,6 +403,7 @@ plot(result, "I", index = 1, range = FALSE)
 Plot the proportion of infected individuals in the population.
 
 ``` r
+
 plot(result, I ~ S + I + R)
 ```
 
@@ -395,6 +412,7 @@ plot(result, I ~ S + I + R)
 Plot the proportion of nodes with infected individuals (`level = 2`).
 
 ``` r
+
 plot(result, I ~ S + I + R, level = 2)
 ```
 
@@ -404,6 +422,7 @@ Plot the median and IQR of the prevalence **within in each node**
 (`level = 3`).
 
 ``` r
+
 plot(result, I ~ S + I + R, level = 3)
 ```
 
@@ -412,6 +431,7 @@ plot(result, I ~ S + I + R, level = 3)
 Plot the prevalence in the first three nodes.
 
 ``` r
+
 plot(result, I ~ S + I + R, level = 3, index = 1:3, range = FALSE)
 ```
 
@@ -431,5 +451,6 @@ plot(result, I ~ S + I + R, level = 3, index = 1:3, range = FALSE)
 To find more details on the plot method for `SimInf_model` objects, run:
 
 ``` r
+
 help("plot,SimInf_model-method", package = "SimInf")
 ```

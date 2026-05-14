@@ -38,6 +38,7 @@ from node *3* to node *2* at *t=3*.
 Let us first load the SimInf package.
 
 ``` r
+
 library(SimInf)
 ```
 
@@ -61,6 +62,7 @@ interpreted as follows:
     **2**
 
 ``` r
+
 events <- data.frame(
   event      = rep("extTrans", 6),  ## Event "extTrans" is
                                     ##  a movement between nodes
@@ -78,6 +80,7 @@ events <- data.frame(
 and have a look at the `data.frame`
 
 ``` r
+
 events
 ```
 
@@ -95,6 +98,7 @@ First, we define the initial state with different numbers of individuals
 in each node:
 
 ``` r
+
 u0 <- data.frame(
   S = c(10, 15, 20, 25),
   I = c(5,  0,  0,  0),
@@ -106,6 +110,7 @@ Next, we create the model using this initial state and the events
 defined above:
 
 ``` r
+
 model <- SIR(
   u0 = u0,
   tspan = 0:3,
@@ -125,6 +130,7 @@ use the 4^(th) column which means that all compartments can be sampled
 in each movement event (see below).
 
 ``` r
+
 select_matrix(model)
 ```
 
@@ -143,6 +149,7 @@ the number of threads to use since there is random sampling involved
 when picking individuals from the compartments.
 
 ``` r
+
 set.seed(1)
 set_num_threads(1)
 result <- run(model)
@@ -153,6 +160,7 @@ And plot (Figure 2) the number of individuals in each node. We use
 bands, making it easier to read the exact compartment counts.
 
 ``` r
+
 plot(result, range = FALSE)
 ```
 
@@ -168,6 +176,7 @@ Or use the
 function to more easily inspect the outcome in each node in detail.
 
 ``` r
+
 trajectory(result)
 ```
 
@@ -200,6 +209,7 @@ the built-in SIR model, where we start with 300 individuals (S = 100, I
 second node.
 
 ``` r
+
 u0 <- data.frame(
   S = c(100, 0),
   I = c(100, 0),
@@ -222,6 +232,7 @@ Now, create the model. Then run it, and plot the number of individuals
 in the second node.
 
 ``` r
+
 model <- SIR(
   u0 = u0,
   tspan = 1:300,
@@ -263,6 +274,7 @@ keeping the others at 1. We specify the compartment name, the column
 index (`select = 4`), and the desired weight (`value`).
 
 ``` r
+
 select_matrix(model) <- data.frame(
   compartment = c("S", "I", "R"),
   select      = c(4, 4, 4),
@@ -273,6 +285,7 @@ select_matrix(model) <- data.frame(
 Now, run the model again to see the effect.
 
 ``` r
+
 plot(run(model), index = 2)
 ```
 
@@ -286,6 +299,7 @@ being selected for a movement event.
 Next, let us apply a much larger weight to the I compartment.
 
 ``` r
+
 select_matrix(model) <- data.frame(
   compartment = c("S", "I", "R"),
   select      = c(4, 4, 4),
@@ -306,6 +320,7 @@ of being selected for a movement event compared to the previous example.
 Finally, increase the weight for the R compartment as well.
 
 ``` r
+
 select_matrix(model) <- data.frame(
   compartment = c("S", "I", "R"),
   select      = c(4, 4, 4),
@@ -338,6 +353,7 @@ Let us create a simple model where births occur at regular intervals.
 Newborns enter the susceptible compartment.
 
 ``` r
+
 u0 <- data.frame(
   S = 20,
   I = 10,
@@ -350,6 +366,7 @@ time. All newborns enter the susceptible compartment (column 1 in the E
 matrix).
 
 ``` r
+
 events <- data.frame(
   event      = rep("enter", 3), ## "enter" add new individuals to a node
   time       = c(5, 10, 15),    ## The time that the event happens
@@ -390,6 +407,7 @@ create the initial state and the scheduled events. We will use
 the S and R compartments for that select value.
 
 ``` r
+
 u0 <- data.frame(
   S = 20,
   I = 10,
@@ -403,6 +421,7 @@ recovered compartment, with probability proportional to the weights in
 column 1 of the E matrix.
 
 ``` r
+
 events <- data.frame(
   event      = rep("enter", 300), ## "enter" add new individuals to a node
   time       = 1:300,             ## The time that the event happens
@@ -429,6 +448,7 @@ expected. It is not necessary to use `value=1` since that is the
 default, however, for clarity we specifically set that value.
 
 ``` r
+
 select_matrix(model) <- data.frame(
   compartment = c("S", "R"),
   select      = c(1, 1),
@@ -439,6 +459,7 @@ select_matrix(model) <- data.frame(
 Now, verify the select matrix.
 
 ``` r
+
 select_matrix(model)
 ```
 
@@ -449,6 +470,7 @@ select_matrix(model)
     ## R 1
 
 ``` r
+
 plot(run(model))
 ```
 
@@ -463,6 +485,7 @@ Let us modify the E matrix so that newborns are more likely to enter the
 S compartment compared to the R compartment.
 
 ``` r
+
 select_matrix(model) <- data.frame(
   compartment = c("S", "R"),
   select      = c(1, 1),
@@ -491,6 +514,7 @@ compartments are selected.
 Let us create a model where individuals die at scheduled times.
 
 ``` r
+
 u0 <- data.frame(
   S = 20,
   I = 10,
@@ -533,6 +557,7 @@ individuals. For example, infected individuals might have higher
 mortality risk.
 
 ``` r
+
 u0 <- data.frame(
   S = 100,
   I = 100,
@@ -564,6 +589,7 @@ Let us increase the weight for the I compartment to make infected
 individuals more likely to be removed:
 
 ``` r
+
 select_matrix(model) <- data.frame(
   compartment = c("S", "I"),
   select      = c(1, 1),
@@ -594,6 +620,7 @@ individuals to the recovered compartment at a specific time. We will use
 susceptible to recovered.
 
 ``` r
+
 u0 <- data.frame(
   S = 100,
   I = 10,
@@ -605,6 +632,7 @@ At time 10, we vaccinate 30 susceptible individuals, moving them to the
 R compartment.
 
 ``` r
+
 events <- data.frame(
   event      = "intTrans", ## "intTrans" move individuals within a node
   time       = 10,         ## The time that the event happens
@@ -631,6 +659,7 @@ compartment. With compartments ordered S=1, I=2, R=3, a value of 2 means
 individuals from compartment 1 (S) move to compartment 1+2=3 (R).
 
 ``` r
+
 shift_matrix(model) <- data.frame(
   compartment = "S",
   shift = 1,
@@ -652,6 +681,7 @@ compartment.
 Now, verify the shift matrix.
 
 ``` r
+
 shift_matrix(model)
 ```
 
@@ -665,6 +695,7 @@ selects which column to use. The value N\[p, q\] indicates how many rows
 to move from compartment p.
 
 ``` r
+
 plot(run(model))
 ```
 
@@ -685,6 +716,7 @@ population.
 ### Example: Proportional culling
 
 ``` r
+
 u0 <- data.frame(
   S = 20,
   I = 15,
@@ -695,6 +727,7 @@ u0 <- data.frame(
 Remove 20% of the population at time 10:
 
 ``` r
+
 events <- data.frame(
   event      = "exit", ## "exit" remove individuals from a node
   time       = 10,     ## The time that the event happens
@@ -738,6 +771,7 @@ within-node movements happen before between-node movements.
 ### Example: Multiple events at the same time
 
 ``` r
+
 u0 <- data.frame(
   S = c(20, 30),
   I = c(15, 25),
@@ -753,6 +787,7 @@ At time 5, we schedule:
 - 15 movements to node 2 (external transfer)
 
 ``` r
+
 events <- data.frame(
   event      = c("exit", "enter", "intTrans", "extTrans"),
   time       = c(5, 5, 5, 5),
@@ -790,11 +825,11 @@ plot(run(model), range = FALSE)
 
 This vignette demonstrated the four types of scheduled events in SimInf:
 
-| Event type | Purpose                        | Key parameters                                 |
-|:-----------|:-------------------------------|:-----------------------------------------------|
-| `enter`    | Add individuals to a node      | `n` or `proportion`, `select`, `shift`         |
-| `exit`     | Remove individuals from a node | `n` or `proportion`, `select`                  |
-| `intTrans` | Move individuals within a node | `n` or `proportion`, `select`, `shift`         |
+| Event type | Purpose | Key parameters |
+|:---|:---|:---|
+| `enter` | Add individuals to a node | `n` or `proportion`, `select`, `shift` |
+| `exit` | Remove individuals from a node | `n` or `proportion`, `select` |
+| `intTrans` | Move individuals within a node | `n` or `proportion`, `select`, `shift` |
 | `extTrans` | Move individuals between nodes | `n` or `proportion`, `select`, `shift`, `dest` |
 
 Key points to remember:

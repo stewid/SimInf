@@ -24,6 +24,7 @@ In this vignette, we will explore:
 Let us first load the SimInf package.
 
 ``` r
+
 library(SimInf)
 ```
 
@@ -51,6 +52,7 @@ S + I is the total population.
 We define the transition as follows:
 
 ``` r
+
 transitions <- "S -> beta * S * I / (S + I) -> I"
 ```
 
@@ -67,6 +69,7 @@ infected individuals recover and move to the recovered compartment (R).
 The recovery rate is typically \gamma I.
 
 ``` r
+
 transitions <- c(
   "S -> beta * S * I / (S + I + R) -> I",
   "I -> gamma * I -> R"
@@ -86,6 +89,7 @@ We need to specify:
   recorded.
 
 ``` r
+
 model <- mparse(
   transitions = transitions,
   compartments = c("S", "I", "R"),
@@ -106,6 +110,7 @@ there is random sampling involved when picking individuals from the
 compartments.
 
 ``` r
+
 set.seed(22)
 plot(run(model))
 ```
@@ -138,6 +143,7 @@ The order of definitions does not matter; `mparse` will resolve
 dependencies automatically.
 
 ``` r
+
 transitions <- c(
   "S -> beta * S * I / N -> I",
   "I -> gamma * I -> R",
@@ -155,6 +161,7 @@ integers. We can enforce this by prefixing the variable name with
 `(int)`.
 
 ``` r
+
 transitions <- c(
   "S -> beta * S * I / N -> I",
   "I -> gamma * I -> R",
@@ -173,6 +180,7 @@ Let us create the model using the variable definition. Note that we no
 longer need to calculate it inline in the propensity expression.
 
 ``` r
+
 model <- mparse(
   transitions = transitions,
   compartments = c("S", "I", "R"),
@@ -187,6 +195,7 @@ transition definitions are now more concise and easier to manage. Note
 that we use the same seed value as before.
 
 ``` r
+
 set.seed(22)
 plot(run(model))
 ```
@@ -215,6 +224,7 @@ otherwise. For example, to avoid dividing by zero when N = 0, we can
 write:
 
 ``` r
+
 transitions <- c(
   "S -> N > 0 ? beta * S * I / N : 0 -> I",
   "I -> gamma * I -> R",
@@ -238,6 +248,7 @@ Let us create the model with this safety check. Note that the logic
 remains the same, but the simulation is now robust against empty nodes.
 
 ``` r
+
 model <- mparse(
   transitions = transitions,
   compartments = c("S", "I", "R"),
@@ -290,6 +301,7 @@ parameter, `beta_farm`. Note that we also include the safety check for
 division by zero using the ternary operator, as discussed previously.
 
 ``` r
+
 transitions <- c(
   "S -> N > 0 ? beta_farm * S * I / N : 0 -> I",
   "I -> gamma * I -> R",
@@ -305,6 +317,7 @@ node. The column name must match the variable name used in the
 transitions.
 
 ``` r
+
 gdata <- c(gamma = 0.077)
 
 ldata <- data.frame(
@@ -325,6 +338,7 @@ on. If the row counts differ or the order is mixed, the model will
 assign parameters to the wrong nodes, leading to incorrect results.
 
 ``` r
+
 u0 <- data.frame(
   S = c(99, 95),  # Farm 1: 99 S, Farm 2: 95 S
   I = c(1, 5),    # Farm 1: 1 I, Farm 2: 5 I
@@ -338,6 +352,7 @@ Now we create the model. mparse automatically associates the rows of
 ldata and u0 with the nodes (1, 2, …).
 
 ``` r
+
 model <- mparse(
   transitions = transitions,
   compartments = c("S", "I", "R"),
@@ -354,6 +369,7 @@ range = FALSE to display the trajectory lines without the shaded range
 bands.
 
 ``` r
+
 set.seed(22)
 result <- run(model)
 plot(result, range = FALSE)
@@ -386,6 +402,7 @@ argument in [`plot()`](https://rdrr.io/r/graphics/plot.default.html) or
 [`trajectory()`](http://stewid.github.io/SimInf/reference/trajectory.md).
 
 ``` r
+
 plot(result, index = 2)
 ```
 
@@ -454,6 +471,7 @@ The model consists of five transitions:
 In `mparse` syntax, these transitions are written as:
 
 ``` r
+
 transitions <- c(
   "@ -> bR * R -> R",
   "R -> (dR + (bR - dR) * R / K) * R -> @",
@@ -477,6 +495,7 @@ Let us define the parameters and initial conditions. We assume an
 initial population of 1000 prey and 100 predators.
 
 ``` r
+
 parameters <- c(
   bR = 2, bF = 2, dR = 1, K = 1000,
   alpha = 0.007, w = 0.0035, dF = 2
@@ -490,6 +509,7 @@ this example, we can simulate a single node or replicate it to see the
 distribution of outcomes.
 
 ``` r
+
 model <- mparse(
   transitions = transitions,
   compartments = c("R", "F"),
@@ -504,6 +524,7 @@ stochastic, we might see the predators go extinct in some realizations,
 while in others, the populations oscillate around a stable limit cycle.
 
 ``` r
+
 set.seed(3)
 result <- run(model)
 plot(result)
@@ -527,6 +548,7 @@ To better visualize the dynamics, we can plot the **phase plane**
 nature of the interaction.
 
 ``` r
+
 plot(F ~ R, data = trajectory(result), type = "l", col = "darkgreen",
      xlab = "Prey (R)", ylab = "Predators (F)", main = "")
 ```
@@ -582,6 +604,7 @@ keeps the transition expressions clean and avoids repetitive
 calculations.
 
 ``` r
+
 transitions <- c(
   "S -> N > 0 ? beta * S * I / N : 0 -> I1",
   "I1 -> gamma * I1 -> I2",
@@ -600,6 +623,7 @@ Let us define the parameters and initial conditions. We start with 5
 individuals in the first infectious stage (`I1`).
 
 ``` r
+
 model <- mparse(
   transitions = transitions,
   compartments = c("S", "I1", "I2", "I3", "I4", "R"),
@@ -614,6 +638,7 @@ infection spreading through the stages (`I1` to `I4`) before individuals
 recover.
 
 ``` r
+
 set.seed(3)
 result <- run(model)
 plot(result)
@@ -638,6 +663,7 @@ function allows us to specify a formula where the left-hand side defines
 the “cases” and the right-hand side defines the “at-risk” population.
 
 ``` r
+
 plot(result, I1 + I2 + I3 + I4 ~ ., col = "blue", lwd = 2, ylab = "Prevalence")
 ```
 

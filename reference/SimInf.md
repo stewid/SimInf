@@ -134,6 +134,9 @@ Useful links:
 
 Authors:
 
+- Stefan Widgren <stefan.widgren@gmail.com>
+  ([ORCID](https://orcid.org/0000-0001-5745-2284))
+
 - Robin Eriksson ([ORCID](https://orcid.org/0000-0002-4291-712X))
 
 - Stefan Engblom ([ORCID](https://orcid.org/0000-0002-3614-1732))
