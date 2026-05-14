@@ -48,9 +48,21 @@ valid_SimInf_model_object <- function(object) {
 ## Assign the function as the validity method for the class.
 setValidity("SimInf_model", valid_SimInf_model_object)
 
-##' Create a \code{SimInf_model}
+##' Create a \code{SimInf_model} object
 ##'
-##' @template G-param
+##' Construct a low-level \code{SimInf_model} object. This function is
+##' typically used internally by model constructors (e.g.,
+##' \code{SIR()}, \code{mparse()}) or for advanced usage where custom
+##' model definitions (e.g., user-provided C code or non-standard
+##' matrices) are required.
+##'
+##' @param G \strong{Dependency Graph}.  Indicates which transition
+##'     rates need updating after a state transition.  Can be provided
+##'     as a sparse matrix (class \code{dgCMatrix}) or a dense matrix.
+##'     If a dense matrix is provided, it is automatically converted
+##'     to a sparse format internally.  See
+##'     \code{\linkS4class{SimInf_model}} for detailed matrix layout.
+##'
 ##' @template S-param
 ##' @template U-param
 ##' @template ldata-param

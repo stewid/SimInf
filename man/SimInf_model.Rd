@@ -2,7 +2,7 @@
 % Please edit documentation in R/SimInf_model.R
 \name{SimInf_model}
 \alias{SimInf_model}
-\title{Create a \code{SimInf_model}}
+\title{Create a \code{SimInf_model} object}
 \usage{
 SimInf_model(
   G,
@@ -21,13 +21,12 @@ SimInf_model(
 )
 }
 \arguments{
-\item{G}{Dependency graph that indicates the transition rates that
-need to be updated after a given state transition has occured.
-A non-zero entry in element \code{G[i, i]} indicates that
-transition rate \code{i} needs to be recalculated if the state
-transition \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt})
-of object class
-\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
+\item{G}{\strong{Dependency Graph}.  Indicates which transition
+rates need updating after a state transition.  Can be provided
+as a sparse matrix (class \code{dgCMatrix}) or a dense matrix.
+If a dense matrix is provided, it is automatically converted
+to a sparse format internally.  See
+\code{\linkS4class{SimInf_model}} for detailed matrix layout.}
 
 \item{S}{Each column corresponds to a transition, and execution of
 state transition \code{j} amounts to adding the \code{S[, j]}
@@ -135,5 +134,9 @@ the model.}
 \linkS4class{SimInf_model}
 }
 \description{
-Create a \code{SimInf_model}
+Construct a low-level \code{SimInf_model} object. This function is
+typically used internally by model constructors (e.g.,
+\code{SIR()}, \code{mparse()}) or for advanced usage where custom
+model definitions (e.g., user-provided C code or non-standard
+matrices) are required.
 }
