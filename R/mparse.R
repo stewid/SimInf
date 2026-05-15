@@ -633,9 +633,17 @@ dependency_graph <- function(transitions, S) {
 ##' ## Run and plot the result.
 ##' result <- run(model)
 ##' plot(result)
-mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
-                   gdata = NULL, u0 = NULL, v0 = NULL, tspan = NULL,
-                   events = NULL, E = NULL, N = NULL, pts_fun = NULL,
+mparse <- function(transitions = NULL,
+                   compartments = NULL,
+                   ldata = NULL,
+                   gdata = NULL,
+                   u0 = NULL,
+                   v0 = NULL,
+                   tspan = NULL,
+                   events = NULL,
+                   E = NULL,
+                   N = NULL,
+                   pts_fun = NULL,
                    use_enum = FALSE) {
     ## Check transitions
     if (!is.vector(transitions, mode = "character") ||
