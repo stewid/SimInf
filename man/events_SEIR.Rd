@@ -2,7 +2,7 @@
 % Please edit documentation in R/SEIR.R
 \name{events_SEIR}
 \alias{events_SEIR}
-\title{Example event data for the \acronym{SEIR} model with cattle herds}
+\title{Example event data for the SEIR model with cattle herds}
 \usage{
 events_SEIR()
 }
@@ -53,9 +53,9 @@ the columns of the internal select matrix:
 }
 
 Events are distributed across all 1,600 herds over the 4-year
-period, reflecting realistic patterns of cattle demographic change
-and herd-to-herd movement. The timing and frequency of events can
-significantly influence disease dynamics simulated by the model.
+period. These are synthetic data generated to illustrate how to
+incorporate scheduled events (such as births, deaths, and
+movements) into a compartment model in the SimInf framework.
 }
 \examples{
 ## For reproducibility, call the set.seed() function and specify the
@@ -71,12 +71,14 @@ set_num_threads(1)
 ## births, deaths and between-node movements of individuals.
 u0 <- u0_SEIR()
 u0$E[1] <- 10
-model <- SEIR(u0      = u0,
-              tspan   = seq(from = 1, to = 4*365, by = 7),
-              events  = events_SEIR(),
-              beta    = 0.16,
-              epsilon = 0.25,
-              gamma   = 0.01)
+model <- SEIR(
+    u0      = u0,
+    tspan   = seq(from = 1, to = 4*365, by = 7),
+    events  = events_SEIR(),
+    beta    = 0.16,
+    epsilon = 0.25,
+    gamma   = 0.01
+)
 
 ## Display the number of cattle affected by each event type per day.
 plot(events(model))

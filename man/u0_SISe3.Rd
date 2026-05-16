@@ -3,7 +3,7 @@
 \docType{data}
 \name{u0_SISe3}
 \alias{u0_SISe3}
-\title{Example initial population data for the \acronym{SISe3} model}
+\title{Example initial population data for the SISe3 model}
 \format{
 A \code{data.frame}
 }
@@ -12,14 +12,14 @@ data(u0_SISe3)
 }
 \description{
 Dataset containing the initial number of susceptible and infected
-cattle across three age categories in 1,600 herds. Provides
-realistic population structure for demonstrating SISe3 model
-simulations in a cattle disease epidemiology context with age
-structure.
+cattle (individuals) across three age categories in 1,600 herds
+(nodes). Provides a heterogeneous population structure for
+demonstrating SISe3 model simulations in a compartmental modeling
+context.
 }
 \details{
-This dataset represents initial disease states in a population of
-1,600 cattle herds (nodes) stratified into three age
+This dataset represents initial disease states in a synthetic
+population of 1,600 cattle herds (nodes) stratified into three age
 categories. Each row represents a single herd (node). The SISe3
 model extends the SISe model with age-structured compartments
 (S_1, I_1, S_2, I_2, S_3, I_3) and an environmental compartment
@@ -28,18 +28,22 @@ transmission rates or recovery rates differ by age group.
 
 The data contains:
 \describe{
-  \item{S_1}{Total susceptible cattle in age category 1}
-  \item{I_1}{Total infected cattle in age category 1 (initialized to zero)}
+  \item{S_1}{Total susceptible cattle (individuals) in age
+  category 1 in the node}
+  \item{I_1}{Total infected cattle in age category 1 (initialized
+  to zero)}
   \item{S_2}{Total susceptible cattle in age category 2}
-  \item{I_2}{Total infected cattle in age category 2 (initialized to zero)}
+  \item{I_2}{Total infected cattle in age category 2 (initialized
+  to zero)}
   \item{S_3}{Total susceptible cattle in age category 3}
-  \item{I_3}{Total infected cattle in age category 3 (initialized to zero)}
+  \item{I_3}{Total infected cattle in age category 3 (initialized
+  to zero)}
 }
 
-The herd size distribution and age structure reflect realistic
-heterogeneity observed in cattle populations, making it suitable
-for testing age-dependent disease dynamics with environmental
-transmission.
+The herd size distribution and age structure is synthetically
+generated to reflect heterogeneity typical of large-scale
+populations, making it suitable for illustrating how to
+incorporate scheduled events in the SimInf framework.
 }
 \examples{
 ## For reproducibility, call the set.seed() function and specify the
@@ -57,26 +61,28 @@ set_num_threads(1)
 ## between-node movements of individuals.
 u0 <- u0_SISe3
 u0$I_1[1] <- 10
-model <- SISe3(u0 = u0,
-               tspan = seq(from = 1, to = 4*365, by = 7),
-               events = events_SISe3,
-               phi = rep(0, nrow(u0)),
-               upsilon_1 = 1.8e-2,
-               upsilon_2 = 1.8e-2,
-               upsilon_3 = 1.8e-2,
-               gamma_1 = 0.1,
-               gamma_2 = 0.1,
-               gamma_3 = 0.1,
-               alpha = 1,
-               beta_t1 = 1.0e-1,
-               beta_t2 = 1.0e-1,
-               beta_t3 = 1.25e-1,
-               beta_t4 = 1.25e-1,
-               end_t1 = 91,
-               end_t2 = 182,
-               end_t3 = 273,
-               end_t4 = 365,
-               epsilon = 0)
+model <- SISe3(
+    u0 = u0,
+    tspan = seq(from = 1, to = 4*365, by = 7),
+    events = events_SISe3,
+    phi = rep(0, nrow(u0)),
+    upsilon_1 = 1.8e-2,
+    upsilon_2 = 1.8e-2,
+    upsilon_3 = 1.8e-2,
+    gamma_1 = 0.1,
+    gamma_2 = 0.1,
+    gamma_3 = 0.1,
+    alpha = 1,
+    beta_t1 = 1.0e-1,
+    beta_t2 = 1.0e-1,
+    beta_t3 = 1.25e-1,
+    beta_t4 = 1.25e-1,
+    end_t1 = 91,
+    end_t2 = 182,
+    end_t3 = 273,
+    end_t4 = 365,
+    epsilon = 0
+)
 
 ## Display the number of cattle affected by each event type per day.
 plot(events(model))

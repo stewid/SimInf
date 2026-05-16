@@ -16,15 +16,13 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_pmcmc"}
+##' Class \code{SimInf_pmcmc}
 ##'
 ##' @slot model The \code{SimInf_model} object to estimate parameters
 ##'     in.
 ##' @template priors-slot
-##' @slot target Character vector (\code{gdata} or \code{ldata}) that
-##'     determines if the \code{pmcmc} method estimates parameters in
-##'     \code{model@@gdata} or in \code{model@@ldata}.
-##' @slot pars Index to the parameters in \code{target}.
+##' @template target-slot
+##' @template pars-slot
 ##' @slot n_particles An integer with the number of particles (> 1) to
 ##'     use in the bootstrap particle filter.
 ##' @slot data A \code{data.frame} holding the time series data for
@@ -34,9 +32,13 @@
 ##'     \code{parameters} for each iteration.
 ##' @slot covmat A named numeric \code{(npars x npars)} matrix with
 ##'     covariances to use as initial proposal matrix.
-##' @slot adaptmix Mixing proportion for adaptive proposal.
-##' @slot adaptive Controls when to start adaptive update.
-##' @seealso \code{\link{pmcmc}} and \code{\link{continue_pmcmc}}.
+##' @slot adaptmix A numeric scalar specifying the mixing proportion
+##'     for the adaptive proposal distribution.
+##' @slot adaptive An integer specifying when to start the adaptive
+##'     update of the proposal distribution (iteration number).
+##' @seealso \code{\link{pmcmc}} for the main PMCMC function,
+##'     \code{\link{continue_pmcmc}} for continuing an existing PMCMC
+##'     run, and \code{\link{abc}} for ABC-SMC parameter estimation.
 ##' @export
 setClass(
     "SimInf_pmcmc",
@@ -86,11 +88,26 @@ setAs(
     }
 )
 
-##' Coerce to data frame
+##' Coerce a \code{SimInf_pmcmc} object to a \code{data.frame}
 ##'
+##' Extract the posterior samples from the MCMC chain stored in a
+##' \code{SimInf_pmcmc} object and convert them into a
+##' \code{data.frame}.
+##'
+##' The resulting \code{data.frame} contains one row per MCMC
+##' iteration and one column per parameter. These samples represent
+##' the joint posterior distribution of the parameters.  This format
+##' is convenient for post-processing and visualization.
+##'
+##' @param x A \code{SimInf_pmcmc} object.
+##' @param ... Additional arguments (currently ignored).
+##' @return A \code{data.frame} where rows represent MCMC iterations
+##'     and columns represent the posterior samples of the parameters.
+##' @seealso \code{\link{pmcmc}} for running the PMCMC analysis,
+##'     \code{\linkS4class{SimInf_pmcmc}} for the class definition,
+##'     and \code{\link{continue_pmcmc}} for continuing an existing
+##'     PMCMC run.
 ##' @method as.data.frame SimInf_pmcmc
-##'
-##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_pmcmc <- function(x, ...) {
     methods::as(x, "data.frame")
@@ -532,8 +549,13 @@ pmcmc_proposal <- function(x, i, n_accepted, covmat) {
 
 ##' Length of the MCMC chain
 ##'
-##' @param x The \code{SimInf_pmcmc} object determine the length of
-##'     the MCMC chain for.
+##' Get the number of iterations (samples) in the Markov Chain Monte
+##' Carlo (MCMC) chain stored in a \code{SimInf_pmcmc} object.
+##'
+##' @param x A \code{SimInf_pmcmc} object containing the MCMC results.
+##' @return An integer scalar representing the number of rows in the
+##'     \code{chain} slot (i.e., the total number of samples in the
+##'     chain).
 ##' @export
 setMethod(
     "length",

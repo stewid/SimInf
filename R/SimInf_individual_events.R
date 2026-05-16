@@ -17,23 +17,57 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_individual_events"}
+##' Class \code{SimInf_individual_events}
 ##'
-##' @slot id an integer or character identifier of the individual.
-##' @slot event four event types are supported: \emph{exit},
-##'     \emph{enter}, \emph{internal transfer}, and \emph{external
-##'     transfer}.  When assigning the events, they can either be
-##'     coded as a numerical value or a character string: \emph{exit;}
-##'     \code{0} or \code{'exit'}, \emph{enter;} \code{1} or
-##'     \code{'enter'}, \emph{internal transfer;} \code{2} or
-##'     \code{'intTrans'}, and \emph{external transfer;} \code{3} or
-##'     \code{'extTrans'}.
-##' @slot time an integer, character, or date (of class \code{Date})
-##'     for when the event occured. If it's a character it must be
-##'     able to coerce to \code{Date}.
-##' @slot node an integer or character identifier of the source node.
-##' @slot dest an integer or character identifier of the destination
-##'     node.
+##' Storage class for cleaned individual-level event data, such as
+##' births, deaths, and movements. This class serves as an
+##' intermediate step in the data preparation pipeline, holding raw
+##' records that will later be aggregated into the scheduled events
+##' (\code{\linkS4class{SimInf_events}}) required by a
+##' \code{\linkS4class{SimInf_model}} at predefined time-points.
+##'
+##' The typical workflow is:
+##' \enumerate{
+##'   \item Collect raw individual event data (e.g., from a database).
+##'   \item Clean and validate it using
+##'     \code{\link{individual_events}}, which returns a
+##'     \code{SimInf_individual_events} object.
+##'   \item Aggregate the individual events into node-level scheduled
+##'     events for the model, for example using
+##'     \code{\link{u0_from_individual_events}} to derive the initial
+##'     state.
+##' }
+##'
+##' @slot id An integer or character vector serving as a unique
+##'     identifier for each individual.
+##' @slot event The type of event. Four types are supported:
+##'     \emph{exit}, \emph{enter}, \emph{internal transfer}, and
+##'     \emph{external transfer}.  These can be specified as either a
+##'     numeric code or a character string:
+##'     \itemize{
+##'       \item \code{0} or \code{"exit"}: Individual leaves the
+##'       system.
+##'       \item \code{1} or \code{"enter"}: Individual enters the
+##'       system.
+##'       \item \code{2} or \code{"intTrans"}: Individual moves within
+##'       the same node.
+##'       \item \code{3} or \code{"extTrans"}: Individual moves to a
+##'       different node.
+##'     }
+##' @slot time A numeric, character, or \code{Date} vector indicating
+##'     when the event occurred. Character strings must be coercible
+##'     to \code{Date} (e.g., "2023-01-15").
+##' @slot node An integer or character vector identifying the
+##'     \strong{source} node for the event.
+##' @slot dest An integer or character vector identifying the
+##'     \strong{destination} node. For \emph{exit} and \emph{enter}
+##'     events, this value is typically \code{NA} or unused.
+##' @seealso
+##' \code{\link{individual_events}} for cleaning and processing raw
+##' event data into this class format,
+##' \code{\link{u0_from_individual_events}} for deriving the initial
+##' state from these events, and \code{\linkS4class{SimInf_events}}
+##' for the node-level aggregated event format used by the solver.
 ##' @export
 setClass(
     "SimInf_individual_events",
@@ -82,11 +116,35 @@ setAs(
     }
 )
 
-##' Coerce to data frame
+##' Coerce a \code{SimInf_individual_events} object to a \code{data.frame}
 ##'
+##' Convert the cleaned individual-level events stored in a
+##' \code{SimInf_individual_events} object into a
+##' \code{data.frame}. This function extracts the individual
+##' identifier, event type, time, source node, and destination node.
+##' The resulting \code{data.frame} has one row per event.
+##'
+##' @param x A \code{SimInf_individual_events} object.
+##' @param ... Additional arguments (currently ignored).
+##' @return A \code{data.frame} with columns:
+##'   \itemize{
+##'     \item \code{id}: Identifier of the individual (integer or
+##'     character, depending on input).
+##'     \item \code{event}: Event type (integer or character,
+##'     depending on input).
+##'     \item \code{time}: Time of the event (numeric or \code{Date},
+##'     depending on input).
+##'     \item \code{node}: Source node identifier (integer or
+##'     character, depending on input).
+##'     \item \code{dest}: Destination node identifier (integer or
+##'     character, depending on input) (may be \code{NA}).
+##'   }
+##'
+##' @seealso \code{\linkS4class{SimInf_individual_events}} for the
+##'     class definition and \code{\link{individual_events}} for
+##'     cleaning livestock event data and prepare it for usage in
+##'     SimInf.
 ##' @method as.data.frame SimInf_individual_events
-##'
-##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_individual_events <- function(x, ...) {
     methods::as(x, "data.frame")
@@ -719,6 +777,212 @@ setMethod(
         }
 
         events
+    }
+)
+
+##' Derive the initial compartment state from individual events
+##'
+##' Compute the initial number of individuals in each compartment for
+##' each node based on a set of individual events. The function sums
+##' the net effect of all events occurring before a specified
+##' \code{time} point to determine the starting state of the
+##' simulation.
+##'
+##' This function accepts two types of input for the \code{events}
+##' argument:
+##' \itemize{
+##'   \item A \code{SimInf_individual_events} object (already cleaned
+##'     by \code{\link{individual_events}}).
+##'   \item A raw \code{data.frame} of events. If a data frame is
+##'     provided, it is automatically cleaned and processed using
+##'     \code{\link{individual_events}} before the initial state is
+##'     calculated.
+##' }
+##'
+##' This is particularly useful for initializing models from
+##' historical movement or demographic data, ensuring the simulation
+##' starts with the correct population structure derived from the
+##' event log.
+##'
+##' @param events A \code{SimInf_individual_events} object or a
+##'     \code{data.frame} containing individual events.
+##'     \itemize{
+##'       \item If a \code{SimInf_individual_events} object is
+##'       provided, it is used directly.
+##'       \item If a \code{data.frame} is provided, it is
+##'         automatically cleaned and processed using
+##'         \code{\link{individual_events}}. The data frame must
+##'         conform to the input format required by
+##'         \code{\link{individual_events}} (see its documentation for
+##'         details on required columns).
+##'     }
+##' @param time A numeric scalar specifying the time point at which to
+##'     calculate the initial state. If \code{NULL} (default), the
+##'     earliest time point among the events is used.
+##' @param target A character string specifying the target model type
+##'     (e.g., \code{"SIR"}, \code{"SEIR"}, \code{"SISe3"}). If
+##'     provided, the function ensures the output \code{u0} includes
+##'     all required compartments for that model (e.g., adding
+##'     zero-initialized \code{I}, \code{R}, or age-specific
+##'     compartments like \code{S_1}, \code{S_2}).  If \code{NULL}
+##'     (default), the output contains only the compartments derived
+##'     from the events (typically \code{S} or age-stratified
+##'     \code{S_*}), which may require manual renaming or expansion
+##'     for specific models.
+##' @param age An integer vector of break points (in days) defining
+##'     age categories. The intervals are defined as:
+##'     \itemize{
+##'       \item Category 1: Age < \code{age[1]}
+##'       \item Category 2: \code{age[1]} <= Age < \code{age[2]}
+##'       \item ...
+##'       \item Last Category: Age >= \code{tail(age, 1)}
+##'     }
+##'     If \code{NULL} (default), all individuals are assigned to a
+##'     single non-age-stratified susceptible compartment
+##'     (\code{S}). If provided, the output will include columns
+##'     \code{S_1}, \code{S_2}, etc., corresponding to the defined age
+##'     intervals.
+##'
+##' @return A \code{data.frame} with one row per node and columns
+##'     representing the initial state. The columns include:
+##'     \itemize{
+##'       \item \code{key}: The original node identifier from the
+##'       events.
+##'       \item \code{node}: A sequential integer node index (1, 2,
+##'       ...).
+##'       \item \code{S_*}: Columns for susceptible individuals
+##'         (either \code{S} or age-stratified \code{S_1}, \code{S_2},
+##'         etc.).
+##'       \item Additional compartments (e.g., \code{I}, \code{R},
+##'         \code{E}) if \code{target} is specified, initialized to
+##'         zero.
+##'     }
+##' @seealso
+##' \code{\link{individual_events}} for processing raw event data,
+##' \code{\link{u0}} for retrieving the initial state of a model, and
+##' \code{\link{u0<-}} for updating the initial state.
+##' @export
+## nolint start: brace_linter
+setGeneric(
+    "u0_from_individual_events",
+    signature = "events",
+    function(events,
+             time = NULL,
+             target = NULL,
+             age = NULL)
+        standardGeneric("u0_from_individual_events")
+)
+## nolint end
+
+u0_target <- function(u0, target) {
+    if (is.null(target))
+        return(u0)
+
+    if (target %in% c("SISe3", "SISe3_sp")) {
+        u0$I_1 <- 0L
+        u0$I_2 <- 0L
+        u0$I_3 <- 0L
+        return(u0)
+    }
+
+    if (target %in% c("SIS", "SISe", "SISe_sp")) {
+        colnames(u0) <- c("key", "node", "S")
+        u0$I <- 0L
+        return(u0)
+    }
+
+    if (target %in% c("SIR")) {
+        colnames(u0) <- c("key", "node", "S")
+        u0$I <- 0L
+        u0$R <- 0L
+        return(u0)
+    }
+
+    if (target %in% c("SEIR")) {
+        colnames(u0) <- c("key", "node", "S")
+        u0$E <- 0L
+        u0$I <- 0L
+        u0$R <- 0L
+        return(u0)
+    }
+
+    stop("Invalid 'target' for 'u0'.", call. = FALSE)
+}
+
+##' @rdname u0_from_individual_events
+##' @export
+setMethod(
+    "u0_from_individual_events",
+    signature(events = "SimInf_individual_events"),
+    function(events,
+             time,
+             target,
+             age) {
+        age <- check_age(age)
+        target <- check_target(target, age)
+
+        ## Determine the location and age for all individuals.
+        individuals <- get_individuals(events, time)
+
+        ## Ensure all nodes are included in u0.
+        all_nodes <- unique(c(events@node, events@dest))
+        all_nodes <- all_nodes[!is.na(all_nodes)]
+        missing_nodes <- setdiff(all_nodes, individuals$node)
+        S_columns <- paste0("S_", seq_along(age))
+
+        if (nrow(individuals)) {
+            ## Determine the age categories.
+            age_category <- paste0("S_", findInterval(individuals$age, age))
+            age_category <- c(age_category,
+                              rep(NA_character_, length(missing_nodes)))
+
+            ## Create u0.
+            nodes <- c(individuals$node, missing_nodes)
+            u0 <- as.data.frame.matrix(table(nodes, age_category))
+
+            ## Ensure all age categories exist in u0
+            age_category <- setdiff(S_columns, colnames(u0))
+            if (length(age_category)) {
+                u0 <- cbind(u0,
+                            matrix(data = 0L,
+                                   nrow = length(all_nodes),
+                                   ncol = length(age_category),
+                                   dimnames = list(NULL, age_category)))
+            }
+        } else {
+            ## Create an empty u0.
+            u0 <- as.data.frame.matrix(
+                matrix(data = 0L,
+                       nrow = length(all_nodes),
+                       ncol = length(age),
+                       dimnames = list(all_nodes, S_columns)))
+        }
+
+        u0 <- cbind(key = rownames(u0), u0)
+        mode(u0$key) <- mode(all_nodes)
+        rownames(u0) <- NULL
+        u0 <- u0[order(u0$key), ]
+        u0$node <- seq_len(nrow(u0))
+        u0 <- u0[, c("key", "node", S_columns), drop = FALSE]
+
+        u0_target(u0, target)
+    }
+)
+
+##' @rdname u0_from_individual_events
+##' @export
+setMethod(
+    "u0_from_individual_events",
+    signature(events = "data.frame"),
+    function(events,
+             time,
+             target,
+             age) {
+        events <- individual_events(events)
+        u0_from_individual_events(events = events,
+                                  time = time,
+                                  target = target,
+                                  age = age)
     }
 )
 

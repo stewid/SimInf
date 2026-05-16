@@ -2,7 +2,7 @@
 % Please edit documentation in R/distance.R
 \name{add_spatial_coupling_to_ldata}
 \alias{add_spatial_coupling_to_ldata}
-\title{Add information about spatial coupling between nodes to 'ldata'}
+\title{Add spatial coupling information to local data}
 \usage{
 add_spatial_coupling_to_ldata(
   x,
@@ -14,11 +14,13 @@ add_spatial_coupling_to_ldata(
 )
 }
 \arguments{
-\item{x}{Projected x coordinate}
+\item{x}{Numeric vector of projected x coordinates for each node.}
 
-\item{y}{Projected y coordinate}
+\item{y}{Numeric vector of projected y coordinates for each node.}
 
-\item{cutoff}{The distance cutoff}
+\item{cutoff}{Numeric scalar. The maximum distance for considering
+two nodes as neighbors. Pairs of nodes farther apart than this
+value are excluded from the neighbor data.}
 
 \item{ldata}{local data for the nodes. Can either be specified as
 a \code{data.frame} with one row per node. Or as a matrix
@@ -27,33 +29,75 @@ vector for the node \code{j}. The local data vector is passed
 as an argument to the transition rate functions and the post
 time step function.}
 
-\item{min_dist}{The minimum distance to separate two nodes.  If
-the coordinates for two nodes are identical, the min_dist must
-be assigned or an error is raised.  Default is \code{NULL},
-i.e., to raise an error.}
+\item{min_dist}{Numeric scalar. The value to use for the distance
+between two nodes if their coordinates are identical (distance
+= 0).  This prevents division by zero errors in downstream
+calculations (e.g., inverse distance weighting). If
+\code{NULL} (default) and identical coordinates are found, an
+error is raised.}
 
-\item{na_fail}{A logical indicating whether missing values in
-\code{x} or \code{y} should raise an error or assign zero to
-all distances involving missing values.  Default is
-\code{TRUE}, i.e., to raise an error.}
+\item{na_fail}{Logical. If \code{TRUE} (default), missing values
+(\code{NA}) in \code{x} or \code{y} will raise an error. If
+\code{FALSE}, distances involving missing coordinates are set
+to zero.}
 }
 \value{
-matrix
+A numeric matrix with the same number of rows as
+    \code{ldata}, but with additional columns containing the
+    neighbor indices and distances as described in the
+    \sQuote{Output Format} section.
 }
 \description{
-A utility function to combine local model parameters
-(\code{ldata}) and spatial coupling to other nodes and add the
-result to \code{ldata}.
+A utility function to augment local model parameters
+(\code{ldata}) with spatial coupling data from neighboring nodes.
 }
 \details{
-Format for ldata: the first n indicies (1, 2, ..., n) are the
-local model parameters, i.e, the indata to the function. They are
-followed by the neighbor data, pairs of (index, value) and then a
-stop pair (-1, 0) where 'index' is the zero-based index to the
-neighbor and the value is determined by the metric argument.
+The function calculates distances between nodes based on projected
+coordinates (\code{x}, \code{y}) and appends neighbor data to the
+\code{ldata} matrix for each node.
+
+\strong{Output Format:}
+The returned matrix has the same number of rows as the input
+\code{ldata}.  The columns are organized as follows:
+\itemize{
+  \item \strong{Local Parameters}: The first \eqn{n} columns
+    correspond to the original local parameters passed in
+    \code{ldata}.
+  \item \strong{Neighbor Pairs}: Following the local parameters,
+    the data is stored as pairs of columns: \code{(neighbor_index,
+    distance)}.  The \code{neighbor_index} is a zero-based index
+    of the neighbor node.  The \code{distance} is the Euclidean
+    distance to that neighbor.
+  \item \strong{Stop Marker}: Each node's neighbor list is
+    terminated by a pair \code{(-1, 0)} in the position where the
+    next \code{neighbor_index} would appear. This marker appears
+    exactly once per node, immediately after the last neighbor.
+}
 }
 \examples{
-ldata <- add_spatial_coupling_to_ldata(x = nodes$x,
-                                       y = nodes$y,
-                                       cutoff = 5000)
+## Generate a 5 x 5 grid of nodes separated by 1000m.
+nodes <- expand.grid(
+  x = seq(from = 0, to = 4000, by = 1000),
+  y = seq(from = 0, to = 4000, by = 1000)
+)
+
+## Create local data with one parameter per node.
+ldata <- matrix(0.1, nrow = 1, ncol = nrow(nodes))
+
+## Add spatial coupling with a 2500m cutoff.
+ldata_augmented <- add_spatial_coupling_to_ldata(
+  x = nodes$x,
+  y = nodes$y,
+  cutoff = 2500,
+  ldata = ldata
+)
+
+## Inspect the result for the first node.
+ldata_augmented[, 1]
+}
+\seealso{
+\code{\link{distance_matrix}} for computing pairwise
+    distances between nodes, and
+    \code{\link{edge_properties_to_matrix}} for a similar utility
+    that converts edge properties to a matrix format.
 }

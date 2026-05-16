@@ -2,46 +2,47 @@
 % Please edit documentation in R/SIR.R
 \name{u0_SIR}
 \alias{u0_SIR}
-\title{Example initial population data for the \acronym{SIR} model}
+\title{Example initial population data for the SIR model}
 \usage{
 u0_SIR()
 }
 \value{
-A \code{data.frame} with 1,600 rows (one per herd) and 3 columns:
-  \describe{
-    \item{S}{Number of susceptible cattle in the herd}
-    \item{I}{Number of infected cattle in the herd (all zero at start)}
-    \item{R}{Number of recovered cattle in the herd (all zero at start)}
-  }
+A \code{data.frame} with 1,600 rows (one per node) and 3
+    columns:
+    \describe{
+      \item{S}{Number of susceptible cattle (individuals) in the
+      herd (node)}
+      \item{I}{Number of infected cattle (individuals) in the herd
+      (node) (all zero at start)}
+      \item{R}{Number of recovered cattle (individuals) in the
+      herd (node) (all zero at start)}
+    }
 }
 \description{
-Dataset containing the initial number of susceptible, infected,
-and recovered cattle across 1,600 herds. Provides realistic
-population structure for demonstrating SIR model simulations in a
-cattle disease epidemiology context.
+Synthetic dataset containing the initial number of susceptible,
+infected, and recovered cattle (individuals) across 1,600 cattle
+herds (nodes).  Provides a heterogeneous population structure for
+demonstrating SIR model simulations in a compartmental modeling
+context.
 }
 \details{
-This dataset represents initial disease states in a population of
-1,600 cattle herds. Each node (row) represents a single herd, and
-the data is derived from the structured \code{u0_SISe3} data by
-aggregating age-stratified compartments into single S, I, and R
-compartments for each herd.
+This dataset represents initial disease states in a synthetic
+population of 1,600 cattle herds (nodes). Each row represents a
+single herd (node).
 
-The aggregated values represent:
+The data contains:
 \describe{
-  \item{S}{Total susceptible cattle across all age groups in the herd}
-  \item{I}{Total infected cattle (initialized to zero)}
-  \item{R}{Total recovered cattle (initialized to zero)}
+  \item{S}{Total susceptible cattle (individuals) in the node}
+  \item{I}{Total infected cattle (individuals) (initialized to
+  zero)}
+  \item{R}{Total recovered cattle (individuals) (initialized to
+  zero)}
 }
 
-The herd size distribution reflects realistic heterogeneity
-observed in cattle populations, making it suitable for testing
-spatial disease dynamics at the herd level, such as:
-\itemize{
-  \item Transmission within and between herds
-  \item Impact of cattle movement on disease spread
-  \item Effectiveness of herd-level interventions
-}
+The herd size distribution is synthetically generated to reflect
+heterogeneity typical of large-scale populations, making it
+suitable for illustrating how to incorporate scheduled events in
+the SimInf framework.
 }
 \examples{
 ## For reproducibility, call the set.seed() function and specify the
@@ -58,11 +59,13 @@ set_num_threads(1)
 ## of individuals.
 u0 <- u0_SIR()
 u0$I[1] <- 1
-model <- SIR(u0     = u0,
-             tspan  = seq(from = 1, to = 4*365, by = 1),
-             events = events_SIR(),
-             beta   = 0.16,
-             gamma  = 0.01)
+model <- SIR(
+    u0     = u0,
+    tspan  = seq(from = 1, to = 4*365, by = 1),
+    events = events_SIR(),
+    beta   = 0.16,
+    gamma  = 0.01
+)
 
 ## Display the number of cattle affected by each event type per day.
 plot(events(model))
@@ -82,7 +85,7 @@ plot(result, index = 1)
 summary(result)
 }
 \seealso{
-\code{\link{SIR}} for creating cattle disease models with this
-initial state and \code{\link{events_SIR}} for associated cattle
-movement and demographic events
+\code{\link{SIR}} for creating SIR models with this
+    initial state and \code{\link{events_SIR}} for associated
+    movement and demographic events
 }

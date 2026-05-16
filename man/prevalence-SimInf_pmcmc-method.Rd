@@ -57,9 +57,10 @@ every iteration.}
 \value{
 A \code{data.frame} where the first column is the
     \code{iteration} and the remaining columns are the result from
-    calling \code{\link{prevalence,SimInf_model-method}} with the
-    arguments \code{formula}, \code{level} and \code{index} for
-    each iteration.
+    calling
+    \code{\link[=prevalence,SimInf_model-method]{prevalence}} with
+    the arguments \code{formula}, \code{level} and \code{index}
+    for each iteration.
 }
 \description{
 Calculate the proportion of \emph{cases} (specified on the

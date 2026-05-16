@@ -431,11 +431,58 @@ setAs(
     }
 )
 
-##' Coerce events to a data frame
+##' Coerce a \code{SimInf_events} object to a \code{data.frame}
 ##'
+##' Convert the scheduled events stored in a \code{SimInf_events}
+##' object into a \code{data.frame}. This function extracts the event
+##' type, time, source node, destination node, number of individuals,
+##' proportion, and the specific columns from the select (\code{E})
+##' and shift (\code{N}) matrices that define how each event modifies
+##' the compartment state.  The resulting \code{data.frame} has one
+##' row per scheduled event.
+##'
+##' @param x A \code{SimInf_events} object.
+##' @param ... Additional arguments (currently ignored).
+##' @return A \code{data.frame} with columns:
+##'   \itemize{
+##'     \item \code{event}: Event type (integer or character,
+##'     depending on input).
+##'     \item \code{time}: Time of the event (integer or \code{Date},
+##'     depending on input).
+##'     \item \code{node}: Source node identifier.
+##'     \item \code{dest}: Destination node identifier (may be
+##'     \code{NA}).
+##'     \item \code{n}: Number of individuals affected.
+##'     \item \code{proportion}: Proportion of the population affected
+##'     (if applicable).
+##'     \item \code{select}: The column vector from the select matrix
+##'       (\code{E}) that defines how the event modifies the
+##'       compartment state.
+##'     \item \code{shift}: The column vector from the shift matrix
+##'       (\code{N}) that defines how the event modifies the
+##'       compartment state.
+##'   }
+##' @seealso \code{\linkS4class{SimInf_events}} for the class
+##'     definition and \code{\link{events}} for extracting events from
+##'     a model.
 ##' @method as.data.frame SimInf_events
-##' @inheritParams base::as.data.frame
 ##' @export
+##' @examples
+##' ## Create an 'SIR' model with 1600 cattle herds (nodes) and
+##' ## initialize it to run over 4*365 days. Define 'tspan' to record
+##' ## the state of the system at daily time-points. Load scheduled
+##' ## events for the population of nodes with births, deaths and
+##' ## between-node movements of individuals.
+##' model <- SIR(
+##'   u0     = u0_SIR(),
+##'   tspan  = seq(from = 1, to = 4*365, by = 1),
+##'   events = events_SIR(),
+##'   beta   = 0.16,
+##'   gamma  = 0.01
+##' )
+##'
+##' ## Extract the events from the model and convert to a data frame.
+##' head(as.data.frame(events(model)))
 as.data.frame.SimInf_events <- function(x, ...) {
     methods::as(x, "data.frame")
 }
@@ -566,26 +613,48 @@ setMethod(
     }
 )
 
-##' Extract the events from a \code{SimInf_model} object
+##' Extract the scheduled events from a \code{SimInf_model} object
 ##'
-##' Extract the scheduled events from a \code{SimInf_model} object.
-##' @param object The \code{model} to extract the events from.
-##' @param ... Additional arguments affecting the generated events.
-##' @return \code{\linkS4class{SimInf_events}} object.
+##' Retrieve the \code{SimInf_events} object containing the schedule
+##' of discrete events (e.g., births, deaths, movements) associated
+##' with a \code{SimInf_model}. This object holds the timing,
+##' location, and type of each event, as well as the matrices defining
+##' how events affect the model state.
+##'
+##' @param object A \code{SimInf_model} object.
+##' @param ... Additional arguments (currently ignored).
+##' @return A \code{\linkS4class{SimInf_events}} object containing the
+##'     event schedule and associated matrices (\code{E} and
+##'     \code{N}).
+##' @seealso
+##' \code{\linkS4class{SimInf_events}} for details on the structure of
+##' the returned event object (slots \code{E} (select matrix),
+##' \code{N} (shift matrix), \code{event}, etc.).
+##' \code{\link{events_SIR}}, \code{\link{events_SEIR}},
+##' \code{\link{events_SISe3}} for examples of pre-defined event
+##' datasets.  \code{\link{mparse}} for defining custom models with
+##' event schedules.  \code{\link{run}} for executing the simulation
+##' with the scheduled events.  Vignette \code{"Scheduled events"} for
+##' a comprehensive tutorial on defining event data, using the
+##' \strong{select} (\code{E}) and \strong{shift} (\code{N}) matrices,
+##' and simulating complex demographic and movement processes.
 ##' @export
 ##' @examples
-##' ## Create an SIR model that includes scheduled events.
-##' model <- SIR(u0     = u0_SIR(),
-##'              tspan  = 1:(4 * 365),
-##'              events = events_SIR(),
-##'              beta   = 0.16,
-##'              gamma  = 0.077)
+##' ## Create an SIR model with scheduled events.
+##' model <- SIR(
+##'   u0     = u0_SIR(),
+##'   tspan  = 1:(4 * 365),
+##'   events = events_SIR(),
+##'   beta   = 0.16,
+##'   gamma  = 0.077
+##' )
 ##'
-##' ## Extract the scheduled events from the model and display summary
-##' summary(events(model))
+##' ## Extract the events and display a summary.
+##' ev <- events(model)
+##' summary(ev)
 ##'
-##' ## Extract the scheduled events from the model and plot them
-##' plot(events(model))
+##' ## Plot the event schedule over time.
+##' plot(ev)
 ## nolint start: brace_linter
 setGeneric(
     "events",

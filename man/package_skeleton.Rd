@@ -15,39 +15,55 @@ package_skeleton(
 )
 }
 \arguments{
-\item{model}{The \code{model} \code{\linkS4class{SimInf_model}}
-object with your model to create the package skeleton from.}
+\item{model}{A \code{\linkS4class{SimInf_model}} object to create
+the package skeleton from.}
 
-\item{name}{Character string with the package name. It should
-contain only (ASCII) letters, numbers and dot, have at least
-two characters and start with a letter and not end in a dot.
+\item{name}{Character string with the package name. It must
+contain only ASCII letters, numbers, and dots; have at least
+two characters; start with a letter; and not end in a dot.
 The package name is also used for the class name of the model
 and the directory name of the package.}
 
-\item{path}{Path to put the package directory in. Default is '.'
-i.e. the current directory.}
+\item{path}{Path to put the package directory in. Default is
+\code{"."} (the current directory).}
 
 \item{author}{Author of the package.}
 
-\item{email}{Email of the package maintainer.}
+\item{email}{Email address of the package maintainer.}
 
 \item{maintainer}{Maintainer of the package.}
 
-\item{license}{License of the package. Default is 'GPL-3'.}
+\item{license}{License of the package. Default is \code{"GPL-3"}.}
 }
 \value{
-invisible \code{NULL}.
+\code{invisible(NULL)}.
 }
 \description{
-Describe your model in a logical way in R, then \code{mparse}
-creates a \code{\linkS4class{SimInf_model}} object with your model
-definition that can be installed as an add-on R package.
+Generate a source package directory from a
+\code{\linkS4class{SimInf_model}} object, allowing the model to be
+installed as a standalone add-on R package. This is useful for
+distributing custom models or for improving startup performance by
+compiling the C code once during package installation rather than
+on the first call to \code{run()}.
+}
+\details{
+The typical workflow is:
+\enumerate{
+  \item Define the model using \code{\link{mparse}} or
+    \code{\link{SimInf_model}}.
+  \item Call \code{package_skeleton} to generate the package
+
+  \item Install the package using \code{\link{install.packages}}
+    or \code{R CMD INSTALL}.
+}
 }
 \references{
 Read the \emph{Writing R Extensions} manual for more
-    details.
-
-Once you have created a \emph{source} package you need to install
-it: see the \emph{R Installation and Administration} manual,
-\code{\link{INSTALL}} and \code{\link{install.packages}}.
+    details on building R packages.
+}
+\seealso{
+\code{\link{mparse}} for creating a \code{SimInf_model}
+    object from a model specification.  \code{\link{INSTALL}} and
+    \code{\link{install.packages}} for installing the generated
+    package.
 }

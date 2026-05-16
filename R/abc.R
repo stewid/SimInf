@@ -16,20 +16,26 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_abc"}
+##' Class \code{SimInf_abc}
 ##'
-##' @slot model The \code{SimInf_model} object to estimate parameters
-##'     in.
+##' Storage class for the results of an Approximate Bayesian
+##' Computation (ABC) parameter estimation using Sequential Monte
+##' Carlo (SMC). The \code{SimInf_abc} class holds the model
+##' definition, prior distributions, accepted parameter values
+##' (particles), weights, distances, and convergence diagnostics.
+##'
+##' @slot model A \code{\linkS4class{SimInf_model}} object containing
+##'     the model structure (transitions, compartments, etc.) for
+##'     which parameters are being estimated.
 ##' @template priors-slot
-##' @slot target Character vector (\code{gdata} or \code{ldata}) that
-##'     determines if the ABC-SMC method estimates parameters in
-##'     \code{model@@gdata} or in \code{model@@ldata}.
-##' @slot pars Index to the parameters in \code{target}.
+##' @template target-slot
+##' @template pars-slot
 ##' @slot nprop An integer vector with the number of simulated
-##'     proposals in each generation.
-##' @slot fn A function for calculating the summary statistics for the
-##'     simulated trajectory and determine the distance for each
-##'     particle, see \code{\link{abc}} for more details.
+##'     proposals (particles) generated in each generation.
+##' @slot fn A function used to calculate summary statistics from the
+##'     simulated trajectory and compute the distance for each
+##'     particle.  See \code{\link{abc}} for details on the required
+##'     function signature.
 ##' @slot tolerance A numeric matrix (number of summary statistics
 ##'     \eqn{\times} number of generations) where each column contains
 ##'     the tolerances for a generation and each row contains a
@@ -54,10 +60,12 @@
 ##' @slot init_model An optional function that, if non-NULL, is
 ##'     applied before running each proposal. The function must accept
 ##'     one argument of type \code{SimInf_model} with the current
-##'     model of the fitting process. This function can be useful to
-##'     specify the initial state of \code{u0} or \code{v0} of the
-##'     model before running a trajectory with proposed parameters.
-##' @seealso \code{\link{abc}} and \code{\link{continue_abc}}.
+##'     model of the fitting process and return a modified model. This
+##'     function can be useful to specify the initial state of
+##'     \code{u0} or \code{v0} of the model before running a
+##'     trajectory with proposed parameters.
+##' @seealso \code{\link{abc}} for the main ABC function and
+##'     \code{\link{continue_abc}} for continuing an ABC run.
 ##' @export
 setClass(
     "SimInf_abc",
@@ -118,21 +126,51 @@ setAs(
     }
 )
 
-##' Coerce to data frame
+##' Coerce a \code{SimInf_abc} object to a \code{data.frame}
 ##'
+##' Convert the results of an Approximate Bayesian Computation (ABC)
+##' analysis into a single \code{data.frame}. This function extracts
+##' the particle parameters, their acceptance weights, and the
+##' generation number for every particle across all generations.
+##'
+##' The resulting \code{data.frame} has one row per particle. The
+##' columns include:
+##' \itemize{
+##'   \item \code{generation}: The generation number (integer).
+##'   \item \code{weight}: The normalized weight of the particle
+##'   (numeric).
+##'   \item \strong{Parameter columns}: One column for each parameter
+##'     estimated in the ABC analysis (e.g., \code{beta},
+##'     \code{gamma}, \code{sigma}).  The column names match the
+##'     parameter names defined in the \code{priors}.
+##' }
+##'
+##' @param x A \code{SimInf_abc} object.
+##' @param ... Additional arguments (currently ignored).
+##' @return A \code{data.frame} containing all particles from all
+##'     generations.
+##' @seealso \code{\link{abc}} for running the ABC analysis,
+##'     \code{\linkS4class{SimInf_abc}} for the class definition, and
+##'     \code{\link{continue_abc}} for continuing an existing ABC run.
 ##' @method as.data.frame SimInf_abc
-##'
-##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_abc <- function(x, ...) {
     methods::as(x, "data.frame")
 }
 
-##' Determine the number of generations
+##' Determine the number of generations in an ABC analysis
 ##'
-##' @param object the \code{SimInf_abc} object to determine the number
-##'     of generations for.
-##' @return an integer with the number of generations.
+##' Extract the number of generations performed in an Approximate
+##' Bayesian Computation (ABC) analysis from a \code{SimInf_abc}
+##' object.  Each generation represents a sequential round of the
+##' algorithm, involving the simulation of particles,
+##' acceptance/rejection based on the distance threshold, and
+##' parameter perturbation for the next round.
+##'
+##' @param object A \code{SimInf_abc} object containing the results of
+##'     an ABC analysis.
+##' @return An integer scalar representing the total number of
+##'     generations executed in the analysis.
 ##' @export
 ## nolint start: brace_linter
 setGeneric(

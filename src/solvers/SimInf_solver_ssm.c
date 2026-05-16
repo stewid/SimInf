@@ -31,6 +31,7 @@
 #  include <omp.h>
 #endif
 #include <string.h>
+#include <stdbool.h>
 
 /**
  * Siminf solver

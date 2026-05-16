@@ -6,45 +6,101 @@
 \alias{SimInf}
 \title{A Framework for Data-Driven Stochastic Disease Spread Simulations}
 \description{
-The SimInf package provides a flexible framework for data-driven
-spatio-temporal disease spread modeling, designed to efficiently
-handle population demographics and network data. The framework
-integrates infection dynamics in each subpopulation as
-continuous-time Markov chains (CTMC) using the Gillespie
-stochastic simulation algorithm (SSA) and incorporates available
-data such as births, deaths or movements as scheduled events. A
-scheduled event is used to modify the state of a subpopulation at
-a predefined time-point.
+The \pkg{SimInf} package provides a flexible framework for
+data-driven spatio-temporal disease spread modeling, combining the
+speed of compiled C code with the flexibility of R. It is designed
+to efficiently simulate disease transmission dynamics alongside
+population demographics and dynamic contact networks.
 }
 \details{
-The \code{\linkS4class{SimInf_model}} is central and provides the
-basis for the framework. A \code{\linkS4class{SimInf_model}}
-object supplies the state-change matrix, the dependency graph, the
-scheduled events, and the initial state of the system.
+The \pkg{SimInf} framework models infection dynamics within each
+subpopulation (node) as continuous-time Markov chains (CTMC) using
+the Gillespie stochastic simulation algorithm (SSA). Additionally,
+SimInf can incorporate data—such as births, deaths, and
+movements—as scheduled events. These events trigger at predefined
+time points and modify the state of subpopulations by randomly
+selecting a specified number of individuals from the affected
+compartments. This capability allows simulations to be driven by
+empirical records or synthetic scenarios while maintaining the
+stochastic nature of population demographics and movement
+networks.
 
-All predefined models in SimInf have a generating function, with
-the same name as the model, for example \code{\link{SIR}}.
+The package supports both predefined models (e.g.,
+\code{\link{SIR}}, \code{\link{SIS}}) and custom model
+specifications via the \code{\link{mparse}} function.
+\code{\link{mparse}} serves as the primary interface for defining
+custom compartment models, allowing users to describe transitions
+using a simple, human-readable string syntax in R. The function
+then parses this description, generates model-specific C code, and
+returns a \code{\linkS4class{SimInf_model}} object ready for
+simulation. This approach combines the flexibility of R with the
+computational speed of compiled code, making it well-suited for
+models with complex propensity functions, multiple compartments,
+or node-specific parameters.  See the vignette
+"Getting started with mparse" for a detailed tutorial on defining
+custom models.
 
-A model can also be created from a model specification using the
-\code{\link{mparse}} method.
+To facilitate the use of real livestock data, SimInf provides
+functionality for preparing individual event records (e.g.,
+births, deaths, and movements) for simulation. The
+\code{\link{individual_events}} function cleans and validates raw
+livestock events, resolving inconsistencies and structuring the
+data into the format required by the simulation. This process
+transforms complex, individual-level logs into the scheduled
+events that drive population demographics and movement
+networks. See the vignette "Scheduled events" for a detailed guide
+on processing livestock data and integrating it into disease
+spread models.
 
-After a model is created, a simulation is started with a call to
-the \code{\link{run}} method and if execution is successful, it
-returns a modified \code{\linkS4class{SimInf_model}} object with a
-single stochastic solution trajectory attached to it.
+After a model is created, a simulation is executed using the
+\code{\link{run}} method. Upon successful completion,
+\code{\link{run}} returns a new \code{\linkS4class{SimInf_model}}
+object containing the original configuration plus the simulated
+stochastic trajectory.
 
-SimInf provides several utility functions to inspect simulated
-data, for example, \code{show}, \code{summary} and \code{plot}.
-To facilitate custom analysis, it provides the
-\code{\link{trajectory,SimInf_model-method}} and
-\code{\link{prevalence}} methods.
+To inspect and analyze the results, SimInf provides a suite of
+utility functions:
+\itemize{
+  \item \code{\link[=summary,SimInf_model-method]{summary}} and
+    \code{\link[=show,SimInf_model-method]{show}} for a quick
+    overview of the model structure and simulation results.
+  \item \code{\link[=plot,SimInf_model-method]{plot}} for
+    visualizing the time series of compartments and continuous
+    state variables.
+  \item \code{\link[=trajectory,SimInf_model-method]{trajectory}}
+    for extracting the full time series data for custom analysis.
+  \item \code{\link{prevalence}} for calculating and summarizing
+    disease prevalence across nodes and time.
+}
+These functions facilitate both rapid exploratory analysis and
+detailed post-processing of simulation outcomes. See the vignette
+"Post-process data in a trajectory" for a comprehensive tutorial
+on extracting and analyzing simulation results.
 
-One of our design goal was to make SimInf extendable and enable
-usage of the numerical solvers from other R extension packages in
-order to facilitate complex epidemiological research.  To support
-this, SimInf has functionality to generate the required C and R
-code from a model specification, see
-\code{\link{package_skeleton}}
+Beyond simulation, the package provides functionality to fit
+models to time series data using two Bayesian inference methods:
+\itemize{
+  \item Approximate Bayesian Computation Sequential Monte Carlo
+    (ABC-SMC), implemented in \code{\link{abc}}, based on the
+    approach by Toni and others (2009)
+    \doi{10.1098/rsif.2008.0172}.
+  \item Particle Markov Chain Monte Carlo (PMCMC), implemented in
+    \code{\link{pmcmc}}, based on the approach by Andrieu and
+    others (2010) \doi{10.1111/j.1467-9868.2009.00736.x}.
+}
+Both methods enable parameter estimation in stochastic models
+where the likelihood function is intractable, by using simulated
+data to estimate the posterior distributions of model parameters.
+
+Finally, one of the core design goals of SimInf is extensibility.
+The package provides functionality to generate the required C and
+R code from a model specification, enabling users to create custom
+R packages that leverage the numerical solvers of SimInf. This
+facilitates complex epidemiological research by allowing
+researchers to encapsulate their specific model structures within
+a standard R package, ensuring reproducibility and ease of
+sharing. See \code{\link{package_skeleton}} for details on
+creating a new R package based on a custom model specification.
 }
 \references{
 \Widgren2019
@@ -53,7 +109,7 @@ code from a model specification, see
 Useful links:
 \itemize{
   \item \url{https://github.com/stewid/SimInf}
-  \item \url{http://stewid.github.io/SimInf/}
+  \item \url{https://stewid.github.io/SimInf/}
   \item Report bugs at \url{https://github.com/stewid/SimInf/issues}
 }
 

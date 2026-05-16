@@ -97,7 +97,7 @@ trajectory_data <- function(model, name) {
 ##' @template compartments-param
 ##' @template index-param
 ##' @param ... Additional arguments, see
-##'     \code{\link{trajectory,SimInf_model-method}}
+##'     \code{\link[=trajectory,SimInf_model-method]{trajectory}}
 ## nolint start: brace_linter
 setGeneric(
     "trajectory",
@@ -253,7 +253,7 @@ setMethod(
 ##'     compartment. Using \code{format = "matrix"} returns the result
 ##'     as a matrix, which is the internal format (see
 ##'     \sQuote{Details} in
-##'     \code{\link{trajectory,SimInf_model-method}}).
+##'     \code{\link[=trajectory,SimInf_model-method]{trajectory}}).
 ##' @return A \code{data.frame} if \code{format = "data.frame"}, else
 ##'     a matrix.
 ##' @include pfilter.R
@@ -264,35 +264,5 @@ setMethod(
     function(model, compartments, index,
              format = c("data.frame", "matrix")) {
         trajectory(model@model, compartments, index, format)
-    }
-)
-
-##' Extract filtered trajectories from fitting a PMCMC algorithm
-##'
-##' Extract filtered trajectories from a particle Markov chain Monte
-##' Carlo algorithm.
-##' @param model the \code{SimInf_pmcmc} object to extract the
-##'     filtered trajectories from.
-##' @template compartments-param
-##' @template index-param
-##' @template start-param
-##' @template end-param
-##' @template thin-param
-##' @return A \code{data.frame} where the first column is the
-##'     \code{iteration} and the remaining columns are the result from
-##'     calling \code{\link{trajectory,SimInf_model-method}} with the
-##'     arguments \code{compartments} and \code{index} for each
-##'     iteration.
-##' @include pmcmc.R
-##' @export
-setMethod(
-    "trajectory",
-    signature(model = "SimInf_pmcmc"),
-    function(model, compartments, index, start = 1, end = NULL, thin = 1) {
-        iterations <- pmcmc_iterations(model, start, end, thin)
-        do.call("rbind", lapply(iterations, function(i) {
-            cbind(iteration = i,
-                  trajectory(model@pf[[i]], compartments, index))
-        }))
     }
 )

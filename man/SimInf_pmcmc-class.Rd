@@ -3,9 +3,9 @@
 \docType{class}
 \name{SimInf_pmcmc-class}
 \alias{SimInf_pmcmc-class}
-\title{Class \code{"SimInf_pmcmc"}}
+\title{Class \code{SimInf_pmcmc}}
 \description{
-Class \code{"SimInf_pmcmc"}
+Class \code{SimInf_pmcmc}
 }
 \section{Slots}{
 
@@ -13,25 +13,39 @@ Class \code{"SimInf_pmcmc"}
 \item{\code{model}}{The \code{SimInf_model} object to estimate parameters
 in.}
 
-\item{\code{priors}}{A \code{data.frame} containing the four columns
-\code{parameter}, \code{distribution}, \code{p1} and
-\code{p2}. The column \code{parameter} gives the name of the
-parameter referred to in the model. The column
-\code{distribution} contains the name of the prior
-distribution. Valid distributions are 'gamma', 'normal' or
-'uniform'. The column \code{p1} is a numeric vector with the
-first hyperparameter for each prior: 'gamma') shape,
-'lognormal') logmean, 'normal') mean, and 'uniform') lower
-bound. The column \code{p2} is a numeric vector with the
-second hyperparameter for each prior: 'gamma') rate,
-'lognormal') standard deviation on the log scale, 'normal')
-standard deviation, and 'uniform') upper bound.}
+\item{\code{priors}}{A \code{data.frame} defining the prior distributions
+for the parameters. It contains four columns:
+\itemize{
+  \item \code{parameter}: The name of the parameter in the
+  model.
+  \item \code{distribution}: The prior distribution
+    type. Valid values are \code{"gamma"}, \code{"lognormal"},
+    \code{"normal"}, or \code{"uniform"}.
+  \item \code{p1}: The first hyperparameter:
+    \itemize{
+      \item \code{"gamma"}: \emph{shape}
+      \item \code{"lognormal"}: \emph{meanlog} (mean on the
+      log scale)
+      \item \code{"normal"}: \emph{mean}
+      \item \code{"uniform"}: \emph{lower} bound
+    }
+  \item \code{p2}: The second hyperparameter:
+    \itemize{
+      \item \code{"gamma"}: \emph{rate}
+      \item \code{"lognormal"}: \emph{sdlog} (standard
+      deviation on the log scale)
+      \item \code{"normal"}: \emph{sd} (standard deviation)
+      \item \code{"uniform"}: \emph{upper} bound
+    }
+}}
 
-\item{\code{target}}{Character vector (\code{gdata} or \code{ldata}) that
-determines if the \code{pmcmc} method estimates parameters in
-\code{model@gdata} or in \code{model@ldata}.}
+\item{\code{target}}{Character vector (\code{"gdata"} or \code{"ldata"})
+that determines if the ABC-SMC method estimates parameters in
+\code{model@gdata} (global data) or in \code{model@ldata}
+(local data).}
 
-\item{\code{pars}}{Index to the parameters in \code{target}.}
+\item{\code{pars}}{An integer vector with the indices of the parameters in
+\code{target} that are being estimated.}
 
 \item{\code{n_particles}}{An integer with the number of particles (> 1) to
 use in the bootstrap particle filter.}
@@ -46,11 +60,15 @@ the observation process.}
 \item{\code{covmat}}{A named numeric \code{(npars x npars)} matrix with
 covariances to use as initial proposal matrix.}
 
-\item{\code{adaptmix}}{Mixing proportion for adaptive proposal.}
+\item{\code{adaptmix}}{A numeric scalar specifying the mixing proportion
+for the adaptive proposal distribution.}
 
-\item{\code{adaptive}}{Controls when to start adaptive update.}
+\item{\code{adaptive}}{An integer specifying when to start the adaptive
+update of the proposal distribution (iteration number).}
 }}
 
 \seealso{
-\code{\link{pmcmc}} and \code{\link{continue_pmcmc}}.
+\code{\link{pmcmc}} for the main PMCMC function,
+    \code{\link{continue_pmcmc}} for continuing an existing PMCMC
+    run, and \code{\link{abc}} for ABC-SMC parameter estimation.
 }

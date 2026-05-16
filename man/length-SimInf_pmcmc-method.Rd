@@ -7,9 +7,14 @@
 \S4method{length}{SimInf_pmcmc}(x)
 }
 \arguments{
-\item{x}{The \code{SimInf_pmcmc} object determine the length of
-the MCMC chain for.}
+\item{x}{A \code{SimInf_pmcmc} object containing the MCMC results.}
+}
+\value{
+An integer scalar representing the number of rows in the
+    \code{chain} slot (i.e., the total number of samples in the
+    chain).
 }
 \description{
-Length of the MCMC chain
+Get the number of iterations (samples) in the Markov Chain Monte
+Carlo (MCMC) chain stored in a \code{SimInf_pmcmc} object.
 }

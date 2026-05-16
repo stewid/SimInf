@@ -114,7 +114,7 @@ res <- assertError(
            u0 = matrix(c(10, 10), nrow = 1, ncol = 2,
                        dimnames = list(NULL, c("A", "W"))),
            tspan = 1:5))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(
     mparse(transitions = c("@->c1->D", "D->c2*D->D+D",

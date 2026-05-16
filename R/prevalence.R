@@ -140,7 +140,7 @@ calculate_prevalence <- function(model, compartments, level,
 ##' @template prevalence-level-param
 ##' @template index-param
 ##' @param ... Additional arguments, see
-##'     \code{\link{prevalence,SimInf_model-method}}
+##'     \code{\link[=prevalence,SimInf_model-method]{prevalence}}
 ## nolint start: brace_linter
 setGeneric(
     "prevalence",
@@ -185,16 +185,25 @@ setGeneric(
 ##' @include match_compartments.R
 ##' @export
 ##' @examples
-##' ## Create an 'SIR' model with 6 nodes.
-##' u0 <- data.frame(S = 100:105, I = c(0, 1, 0, 2, 0, 3), R = rep(0, 6))
-##' model <- SIR(u0 = u0, tspan = 1:10, beta = 0.16, gamma = 0.077)
-##'
-##' ## Run the model. For reproducibility, we first call the
-##' ## set.seed() function and specify the number of threads to use
-##' ## since there is random sampling involved when picking individuals
-##' ## from the compartments.
+##' ## For reproducibility, set the seed and number of threads.
 ##' set.seed(1)
 ##' set_num_threads(1)
+##'
+##' ## Create an 'SIR' model with 6 nodes.
+##' u0 <- data.frame(
+##'   S = 100:105,
+##'   I = c(0, 1, 0, 2, 0, 3),
+##'   R = rep(0, 6)
+##' )
+##'
+##' model <- SIR(
+##'   u0 = u0,
+##'   tspan = 1:10,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Run the model.
 ##' result <- run(model)
 ##'
 ##' ## 1. Population Prevalence (level = 1, default)
@@ -307,9 +316,10 @@ setMethod(
 ##' @template thin-param
 ##' @return A \code{data.frame} where the first column is the
 ##'     \code{iteration} and the remaining columns are the result from
-##'     calling \code{\link{prevalence,SimInf_model-method}} with the
-##'     arguments \code{formula}, \code{level} and \code{index} for
-##'     each iteration.
+##'     calling
+##'     \code{\link[=prevalence,SimInf_model-method]{prevalence}} with
+##'     the arguments \code{formula}, \code{level} and \code{index}
+##'     for each iteration.
 ##' @include pmcmc.R
 ##' @export
 setMethod(

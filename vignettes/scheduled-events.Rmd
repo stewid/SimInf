@@ -37,10 +37,10 @@ SimInf supports four types of scheduled events:
 - **External transfer**: Move individuals between nodes (e.g.,
     livestock movements)
 
-$~$
-
 ```{r pressure, echo=FALSE, fig.align="left", fig.cap="**Figure 1.** Illustration of movements between nodes. Each time step depicts movements during one time unit, for example, a day. The network has *N=4* nodes where node *1* is infected and nodes *2*--*4* are non-infected. Arrows indicate movements of individuals from a source node to a destination node and labels denote the size of the shipment. Here, infection may spread from node *1* to node *3* at *t=2* and then from node *3* to node *2* at *t=3*.", out.width = '100%'}
-url <- "https://raw.githubusercontent.com/stewid/SimInf/refs/heads/main/vignettes/img/temporal-network.svg"
+url <- paste0(
+  "https://raw.githubusercontent.com/",
+  "stewid/SimInf/refs/heads/main/vignettes/img/temporal-network.svg")
 knitr::include_graphics(url)
 ```
 
@@ -84,15 +84,25 @@ and have a look at the `data.frame`
 events
 ```
 
-Now, create an SIR model where we turn off the disease dynamics
-(beta=0, gamma=0) to focus on the scheduled events. Let us start with
-different number of individuals in each node.
+Now, we create an SIR model where we turn off the disease dynamics
+(`beta = 0`, `gamma = 0`) to focus exclusively on the scheduled
+events. First, we define the initial state with different numbers of
+individuals in each node:
+
+```{r}
+u0 <- data.frame(
+  S = c(10, 15, 20, 25),
+  I = c(5,  0,  0,  0),
+  R = c(0,  0,  0,  0)
+)
+```
+
+Next, we create the model using this initial state and the events
+defined above:
 
 ```{r}
 model <- SIR(
-  u0 = data.frame(S = c(10, 15, 20, 25),
-                  I = c(5,  0,  0,  0),
-                  R = c(0,  0,  0,  0)),
+  u0 = u0,
   tspan = 0:3,
   beta = 0,
   gamma = 0,
@@ -134,8 +144,6 @@ range bands, making it easier to read the exact compartment counts.
 plot(result, range = FALSE)
 ```
 
-$~$
-
 Or use the `trajectory()` function to more easily inspect the outcome
 in each node in detail.
 
@@ -159,25 +167,23 @@ u0 <- data.frame(
   I = c(100, 0),
   R = c(100, 0)
 )
-```
 
-```{r}
 events <- data.frame(
-  event = rep("extTrans", 300), ## Event "extTrans" is a movement between nodes
-  time = 1:300,                 ## The time that the event happens
-  node = 1,                     ## In which node does the event occur
-  dest = 2,                     ## Which node is the destination node
-  n = 1,                        ## How many individuals are moved
-  proportion = 0,               ## This is not used when n > 0
-  select = 4,                   ## Use the 4th column in the model select matrix
-  shift = 0                     ## Not used in this example
+  event      = rep("extTrans", 300), ## "extTrans" is a movement between nodes
+  time       = 1:300,                ## The time that the event happens
+  node       = rep(1, 300),          ## In which node does the event occur
+  dest       = rep(2, 300),          ## Which node is the destination node
+  n          = rep(1, 300),          ## How many individuals are moved
+  proportion = rep(0, 300),          ## This is not used when n > 0
+  select     = rep(4, 300),          ## Use the 4th column in the select matrix
+  shift      = rep(0, 300)           ## Not used in this example
 )
 ```
 
 Now, create the model. Then run it, and plot the number of individuals
 in the second node.
 
-```{r}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 3.** The individuals have an equal probability of being selected regardless of compartment."}
 model <- SIR(
   u0 = u0,
   tspan = 1:300,
@@ -185,13 +191,9 @@ model <- SIR(
   beta = 0,
   gamma = 0
 )
-```
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 3.** The individuals have an equal probability of being selected regardless of compartment."}
 plot(run(model), index = 2)
 ```
-
-$~$
 
 The probability to sample an individual from each compartment is
 
@@ -210,30 +212,52 @@ $$
 Where $w_S$, $w_I$ and $w_R$ are the weights in E.  These
 probabilities are applied sequentially, that is the probability of
 choosing the next item is proportional to the weights amongst the
-remaining items.  Let us now double the weight to sample individuals
-from the $I$ compartment and then run the model again.
+remaining items.
+
+To modify these weights, we can use the `select_matrix()` replacement
+function with a `data.frame` to modify a model's internal select
+matrix.  In the SIR model, the 4th column of the select matrix ($E[,
+4]$) is used for exit and transfer events, targeting all compartments
+(S, I, and R).  By default, the weights are 1 for each
+compartment. Let us double the weight for the $I$ compartment while
+keeping the others at 1. We specify the compartment name, the column
+index (`select = 4`), and the desired weight (`value`).
+
+```{r}
+select_matrix(model) <- data.frame(
+  compartment = c("S", "I", "R"),
+  select      = c(4, 4, 4),
+  value       = c(1, 2, 1)
+)
+```
+
+Now, run the model again to see the effect.
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 4.** The individuals in the $I$ compartment are more likely of being selected for a movement event."}
-model@events@E[2, 4] <- 2
 plot(run(model), index = 2)
 ```
 
-$~$
-
-And a much larger weight to sample individuals from the $I$
-compartment.
+Next, let us apply a much larger weight to the $I$ compartment.
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 5.** The individuals in the $I$ compartment are even more likely of being selected for a movement event compared to the previous example."}
-model@events@E[2, 4] <- 10
+select_matrix(model) <- data.frame(
+  compartment = c("S", "I", "R"),
+  select      = c(4, 4, 4),
+  value       = c(1, 10, 1)
+)
+
 plot(run(model), index = 2)
 ```
 
-$~$
-
-Increase the weight for the $R$ compartment and run the model again.
+Finally, increase the weight for the $R$ compartment as well.
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 6.** The individuals in the $I$ and $R$ compartments are more likely of being selected for a movement event compared to individuals in the $S$ compartment."}
-model@events@E[3, 4] <- 4
+select_matrix(model) <- data.frame(
+  compartment = c("S", "I", "R"),
+  select      = c(4, 4, 4),
+  value       = c(1, 10, 4)
+)
+
 plot(run(model), index = 2)
 ```
 
@@ -262,7 +286,7 @@ We schedule births at times 5, 10, and 15, adding 10 individuals each
 time. All newborns enter the susceptible compartment (column 1 in the
 E matrix).
 
-```{r}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 7.** The number of susceptible ($S$) individuals increases by 10 individuals at each scheduled event."}
 events <- data.frame(
   event      = rep("enter", 3), ## "enter" add new individuals to a node
   time       = c(5, 10, 15),    ## The time that the event happens
@@ -273,9 +297,7 @@ events <- data.frame(
   select     = c(1, 1, 1),      ## Target the S compartment
   shift      = c(0, 0, 0)       ## Not used in this example
 )
-```
 
-```{r}
 model <- SIR(
   u0 = u0,
   tspan = 0:20,
@@ -283,9 +305,7 @@ model <- SIR(
   beta = 0,
   gamma = 0
 )
-```
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 7.** The number of susceptible ($S$) individuals increases by 10 individuals at each scheduled event."}
 plot(run(model))
 ```
 
@@ -325,9 +345,7 @@ events <- data.frame(
                                   ## (after modifying E)
   shift      = rep(0, 300)        ## Not used in this example
 )
-```
 
-```{r}
 model <- SIR(
   u0 = u0,
   tspan = 0:300,
@@ -362,15 +380,13 @@ plot(run(model))
 Let us modify the E matrix so that newborns are more likely to enter
 the S compartment compared to the R compartment.
 
-```{r}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 9.** Individuals are more likely to enter as susceptible ($S$) compared to as recovered ($R$)"}
 select_matrix(model) <- data.frame(
   compartment = c("S", "R"),
   select      = c(1, 1),
   value       = c(2, 1)
 )
-```
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 9.** Individuals are more likely to enter as susceptible ($S$) compared to as recovered ($R$)"}
 plot(run(model))
 ```
 
@@ -385,15 +401,13 @@ multiple compartments are selected.
 
 Let us create a model where individuals die at scheduled times.
 
-```{r}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 10.** The number of susceptible ($S$) individuals decreases by 5 individuals at each scheduled event."}
 u0 <- data.frame(
   S = 20,
   I = 10,
   R = 0
 )
-```
 
-```{r}
 events <- data.frame(
   event      = rep("exit", 3),  ## "exit" remove individuals from a node
   time       = c(5, 10, 15),    ## The time that the event happens
@@ -404,9 +418,7 @@ events <- data.frame(
   select     = c(1, 1, 1),      ## Target the S compartment
   shift      = c(0, 0, 0)       ## Not used in this example
 )
-```
 
-```{r}
 model <- SIR(
   u0 = u0,
   tspan = 0:20,
@@ -414,9 +426,7 @@ model <- SIR(
   beta = 0,
   gamma = 0
 )
-```
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 10.** The number of susceptible ($S$) individuals decreases by 5 individuals at each scheduled event."}
 plot(run(model))
 ```
 
@@ -432,9 +442,7 @@ u0 <- data.frame(
   I = 100,
   R = 0
 )
-```
 
-```{r}
 events <- data.frame(
   event      = rep("exit", 100), ## "exit" remove individuals from a node
   time       = 1:100,            ## The time that the event happens
@@ -446,9 +454,7 @@ events <- data.frame(
                                  ## (after modifying E)
   shift      = rep(0, 100)       ## Not used in this example
 )
-```
 
-```{r}
 model <- SIR(
   u0 = u0,
   tspan = 0:100,
@@ -461,15 +467,13 @@ model <- SIR(
 Let us increase the weight for the I compartment to make infected
 individuals more likely to be removed:
 
-```{r}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 11.** The number of infected ($I$) individuals decreases faster compared to susceptibles ($S$)."}
 select_matrix(model) <- data.frame(
   compartment = c("S", "I"),
   select      = c(1, 1),
   value       = c(1, 5)
 )
-```
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 11.** The number of infected ($I$) individuals decreases faster compared to susceptibles ($S$)."}
 plot(run(model))
 ```
 
@@ -509,9 +513,7 @@ events <- data.frame(
   select     = 1,          ## Target the S compartment
   shift      = 1           ## Use shift column 1 (after modifying N)
 )
-```
 
-```{r}
 model <- SIR(
   u0 = u0,
   tspan = 0:20,
@@ -576,7 +578,7 @@ u0 <- data.frame(
 
 Remove 20% of the population at time 10:
 
-```{r}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 13.** The number of individuals decrease at $t=10$."}
 events <- data.frame(
   event      = "exit", ## "exit" remove individuals from a node
   time       = 10,     ## The time that the event happens
@@ -587,9 +589,7 @@ events <- data.frame(
   select     = 4,      ## Target all compartments
   shift      = 0       ## Not used in this example
 )
-```
 
-```{r}
 model <- SIR(
   u0 = u0,
   tspan = 0:20,
@@ -597,9 +597,7 @@ model <- SIR(
   beta = 0,
   gamma = 0
 )
-```
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 13.** The number of individuals decrease at $t=10$."}
 plot(run(model))
 ```
 
@@ -633,7 +631,7 @@ At time 5, we schedule:
 - 5 vaccinations (internal transfer)
 - 15 movements to node 2 (external transfer)
 
-```{r}
+```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 14.** Multiple events have been processed at $t=5$."}
 events <- data.frame(
   event      = c("exit", "enter", "intTrans", "extTrans"),
   time       = c(5, 5, 5, 5),
@@ -644,9 +642,7 @@ events <- data.frame(
   select     = c(4, 1, 1, 4),
   shift      = c(0, 0, 1, 0)
 )
-```
 
-```{r}
 model <- SIR(
   u0 = u0,
   tspan = 0:10,
@@ -654,17 +650,13 @@ model <- SIR(
   beta = 0,
   gamma = 0
 )
-```
 
-```{r}
 shift_matrix(model) <- data.frame(
   compartment = "S",
   shift = 1,
   value = 2
 )
-```
 
-```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 14.** Multiple events have been processed at $t=5$."}
 plot(run(model), range = FALSE)
 ```
 
