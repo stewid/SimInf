@@ -18,20 +18,77 @@
 
 ##' Create a \code{SimInf_raster_model}
 ##'
-##' Create a \code{SimInf_raster_model} object.  It is a model where
-##' the nodes are not fixed at one position but can move between cells
-##' on a raster.
-##' @param raster FIXME.
+##' Construct a low-level \code{SimInf_raster_model} object.  It is a
+##' model where the nodes are not fixed at one position but can move
+##' between cells on a raster.  This function is typically used
+##' internally by model constructors (e.g., \code{mparse()}) or for
+##' advanced usage where custom model definitions (e.g., user-provided
+##' C code or non-standard matrices) are required.
+##'
+##' @param raster integer matrix with the landcover class in each
+##'     cell.  Dimensions should be \code{nrow \times ncol} matching
+##'     the spatial extent of the model. Landcover classes are
+##'     zero-based integers (i.e., the first class is 0, second is 1,
+##'     etc.). Row indices start at 1 at the top and increase toward
+##'     the bottom; column indices start at 1 at the left and increase
+##'     to the right. Values must be non-negative integers; NA values
+##'     are not supported.
+##'
 ##' @param tr_type FIXME.
-##' @template G-param
-##' @template S-param
+##'
+##' @param G \strong{Dependency Graph}.  Indicates which transition
+##'     rates need updating after a state transition.  Can be provided
+##'     as a sparse matrix (class \code{dgCMatrix}) or a dense matrix.
+##'     If a dense matrix is provided, it is automatically converted
+##'     to a sparse format internally.  See
+##'     \code{\linkS4class{SimInf_model}} for detailed matrix layout.
+##'
+##' @param S \strong{State Transition Matrix}.  Defines the change in
+##'     the state vector for each transition.  Can be provided as a
+##'     sparse matrix (class \code{dgCMatrix}) or a dense matrix.  If
+##'     a dense matrix is provided, it is automatically converted to a
+##'     sparse format internally.  See
+##'     \code{\linkS4class{SimInf_model}} for detailed matrix layout.
+##'
 ##' @param cell_S FIXME.
-##' @template tspan-param
-##' @template ldata-param
-##' @template gdata-param
-##' @template u0-param
-##' @template v0-param
-##' @template C_code-param
+##'
+##' @param tspan \strong{Time Span} (numeric or Date vector).
+##'     Increasing time points for output. If \code{Date}, converted
+##'     to days with names, where \code{tspan[1]} becomes the day of
+##'     the year of the first year of \code{tspan}. The dates are
+##'     added as names to the numeric vector.
+##'
+##' @param ldata \strong{Local Data}.
+##'     Parameters specific to each node. Can be:
+##'     \itemize{
+##'       \item A \code{data.frame} with one row per node.
+##'       \item A matrix where each column \code{ldata[, j]} is the
+##'       data vector for node \code{j}.
+##'     }
+##'     Passed to transition rate and post-step functions.
+##'
+##' @param gdata \strong{Global Data} (numeric vector).  Parameters
+##'     common to all nodes. Passed to transition rate and post-step
+##'     functions.
+##'
+##' @param u0 \strong{Initial State}.  Initial number of individuals
+##'     per compartment/node. Can be:
+##'     \itemize{
+##'       \item A matrix (\eqn{N_c \times N_n}).
+##'       \item A \code{data.frame} with columns corresponding to
+##'       compartments.
+##'       \item Any object coercible to a \code{data.frame} (e.g., a
+##'         named numeric vector will be coerced to a one-row
+##'         \code{data.frame}).
+##'     }
+##'
+##' @param v0 \strong{Initial Continuous State} (numeric matrix).
+##'     Initial values for continuous states per node.
+##'
+##' @param C_code \strong{C Source Code} (character vector).  Optional
+##'     C code for custom transition rates. If provided, it is
+##'     compiled and loaded when \code{run()} is called.
+##'
 ##' @export
 SimInf_raster_model <- function(raster,
                                 tr_type,

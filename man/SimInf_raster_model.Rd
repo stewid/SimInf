@@ -19,66 +19,75 @@ SimInf_raster_model(
 )
 }
 \arguments{
-\item{raster}{FIXME.}
+\item{raster}{integer matrix with the landcover class in each
+cell.  Dimensions should be \code{nrow \times ncol} matching
+the spatial extent of the model. Landcover classes are
+zero-based integers (i.e., the first class is 0, second is 1,
+etc.). Row indices start at 1 at the top and increase toward
+the bottom; column indices start at 1 at the left and increase
+to the right. Values must be non-negative integers; NA values
+are not supported.}
 
 \item{tr_type}{FIXME.}
 
-\item{G}{Dependency graph that indicates the transition rates that
-need to be updated after a given state transition has occured.
-A non-zero entry in element \code{G[i, i]} indicates that
-transition rate \code{i} needs to be recalculated if the state
-transition \code{j} occurs. Sparse matrix (\eqn{Nt \times Nt})
-of object class
-\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
+\item{G}{\strong{Dependency Graph}.  Indicates which transition
+rates need updating after a state transition.  Can be provided
+as a sparse matrix (class \code{dgCMatrix}) or a dense matrix.
+If a dense matrix is provided, it is automatically converted
+to a sparse format internally.  See
+\code{\linkS4class{SimInf_model}} for detailed matrix layout.}
 
-\item{S}{Each column corresponds to a transition, and execution of
-state transition \code{j} amounts to adding the \code{S[, j]}
-to the state vector of the node where the state transition
-occurred.  Sparse matrix (\eqn{Nc \times Nt}) of object class
-\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}.}
+\item{S}{\strong{State Transition Matrix}.  Defines the change in
+the state vector for each transition.  Can be provided as a
+sparse matrix (class \code{dgCMatrix}) or a dense matrix.  If
+a dense matrix is provided, it is automatically converted to a
+sparse format internally.  See
+\code{\linkS4class{SimInf_model}} for detailed matrix layout.}
 
 \item{cell_S}{FIXME.}
 
-\item{tspan}{A vector (length >= 1) of increasing time points
-where the state of each node is to be returned. Can be either
-an \code{integer} or a \code{Date} vector. A \code{Date}
-vector is coerced to a numeric vector as days, where
-\code{tspan[1]} becomes the day of the year of the first year
-of \code{tspan}. The dates are added as names to the numeric
-vector.}
+\item{tspan}{\strong{Time Span} (numeric or Date vector).
+Increasing time points for output. If \code{Date}, converted
+to days with names, where \code{tspan[1]} becomes the day of
+the year of the first year of \code{tspan}. The dates are
+added as names to the numeric vector.}
 
-\item{ldata}{local data for the nodes. Can either be specified as
-a \code{data.frame} with one row per node. Or as a matrix
-where each column \code{ldata[, j]} contains the local data
-vector for the node \code{j}. The local data vector is passed
-as an argument to the transition rate functions and the post
-time step function.}
+\item{ldata}{\strong{Local Data}.
+Parameters specific to each node. Can be:
+\itemize{
+  \item A \code{data.frame} with one row per node.
+  \item A matrix where each column \code{ldata[, j]} is the
+  data vector for node \code{j}.
+}
+Passed to transition rate and post-step functions.}
 
-\item{gdata}{A numeric vector with global data that is common to
-all nodes. The global data vector is passed as an argument to
-the transition rate functions and the post time step function.}
+\item{gdata}{\strong{Global Data} (numeric vector).  Parameters
+common to all nodes. Passed to transition rate and post-step
+functions.}
 
-\item{u0}{A \code{data.frame} with the initial state in each node,
-i.e., the number of individuals in each compartment in each
-node when the simulation starts (see \sQuote{Details}). The
-parameter \code{u0} can also be an object that can be coerced
-to a \code{data.frame}, e.g., a named numeric vector will be
-coerced to a one row \code{data.frame}.}
+\item{u0}{\strong{Initial State}.  Initial number of individuals
+per compartment/node. Can be:
+\itemize{
+  \item A matrix (\eqn{N_c \times N_n}).
+  \item A \code{data.frame} with columns corresponding to
+  compartments.
+  \item Any object coercible to a \code{data.frame} (e.g., a
+    named numeric vector will be coerced to a one-row
+    \code{data.frame}).
+}}
 
-\item{v0}{The initial continuous state vector in every node.
-(\code{dim(ldata)[1]} \eqn{\times N_N}). The continuous state
-vector is updated by the specific model during the simulation
-in the post time step function.}
+\item{v0}{\strong{Initial Continuous State} (numeric matrix).
+Initial values for continuous states per node.}
 
-\item{C_code}{Character vector with optional model C code. If
-non-empty, the C code is written to a temporary C-file when
-the \code{run} method is called.  The temporary C-file is
-compiled and the resulting DLL is dynamically loaded. The DLL
-is unloaded and the temporary files are removed after running
-the model.}
+\item{C_code}{\strong{C Source Code} (character vector).  Optional
+C code for custom transition rates. If provided, it is
+compiled and loaded when \code{run()} is called.}
 }
 \description{
-Create a \code{SimInf_raster_model} object.  It is a model where
-the nodes are not fixed at one position but can move between cells
-on a raster.
+Construct a low-level \code{SimInf_raster_model} object.  It is a
+model where the nodes are not fixed at one position but can move
+between cells on a raster.  This function is typically used
+internally by model constructors (e.g., \code{mparse()}) or for
+advanced usage where custom model definitions (e.g., user-provided
+C code or non-standard matrices) are required.
 }
