@@ -110,7 +110,19 @@ between compartments during events.  See
 post-time-step function.  Should contain only the function
 body (code between curly brackets).}
 
-\item{raster}{FIXME.}
+\item{raster}{integer matrix defining the landcover class for each
+cell in the spatial grid. This parameter is required only when
+the \code{compartments} argument includes cell-specific
+compartments (names starting with \code{"cell."}). If cell
+compartments are present but \code{raster} is \code{NULL}, the
+function will error.  The matrix dimensions must match the
+spatial layout of the model (\code{nrow} = number of rows,
+\code{ncol} = number of columns).  Row indices start at 1 at
+the top and increase toward the bottom; column indices start
+at 1 at the left and increase to the right.  Values must be
+non-negative integers representing landcover classes
+(zero-based, i.e., 0, 1, 2, ...).  NA values are not
+supported.}
 
 \item{use_enum}{Logical. If \code{TRUE}, generates C enumeration
 constants for parameters found in the \code{u}, \code{v},
