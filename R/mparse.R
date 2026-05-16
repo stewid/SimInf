@@ -856,7 +856,7 @@ mparse <- function(transitions = NULL,
     cell_compartments <- compartments[i]
     i <- setdiff(seq_along(compartments), i)
     compartments <- compartments[i]
-    u0 <- check_u0(u0, compartments)
+    u0 <- check_initial_state(u0, compartments)
 
     ## Extract variable names from data.
     ldata_names <- variable_names(ldata, nrow(u0) == 1L)
