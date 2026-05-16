@@ -30,7 +30,8 @@ model <- mparse(
   compartments = c("S", "I", "R"),
   gdata = c(beta = 0.16, gamma = 0.077),
   u0 = data.frame(S = 99, I = 1, R = 0),
-  tspan = 1:10
+  tspan = 1:10,
+  use_enum = TRUE
 )
 
 C_code(model)
