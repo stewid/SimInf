@@ -87,7 +87,8 @@ from.</p></dd>
 <span class="r-in"><span>  compartments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  gdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.16</span>, gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">99</span>, I <span class="op">=</span> <span class="fl">1</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span></span></span>
+<span class="r-in"><span>  tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span></span>
+<span class="r-in"><span>  use_enum <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">C_code</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
@@ -121,117 +122,131 @@ from.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [28] "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing."         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [29] "#endif"                                                             </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [30] ""                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [31] "/**"                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [32] " * @param u The compartment state vector in the node."              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [33] " * @param v The continuous state vector in the node."               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [34] " * @param ldata The local data vector in the node."                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [35] " * @param gdata The global data vector."                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [36] " * @param t Current time."                                          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [37] " * @return propensity."                                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [38] " */"                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [39] "static double trFun1("                                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [40] "    const int *u,"                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [41] "    const double *v,"                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [42] "    const double *ldata,"                                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [43] "    const double *gdata,"                                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [44] "    double t)"                                                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [45] "{"                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [46] "    return gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2]);"                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [47] "}"                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [48] ""                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [49] "/**"                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [50] " * @param u The compartment state vector in the node."              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [51] " * @param v The continuous state vector in the node."               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [52] " * @param ldata The local data vector in the node."                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [53] " * @param gdata The global data vector."                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [54] " * @param t Current time."                                          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [55] " * @return propensity."                                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [56] " */"                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [57] "static double trFun2("                                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [58] "    const int *u,"                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [59] "    const double *v,"                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [60] "    const double *ldata,"                                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [61] "    const double *gdata,"                                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [62] "    double t)"                                                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [63] "{"                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [64] "    return gdata[1]*u[1];"                                          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [65] "}"                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [66] ""                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [67] "/**"                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [68] " * Post time step function."                                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [69] " *"                                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [70] " * @param v_new If a continuous state vector is used by a model,"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [71] " *        this is the new continuous state vector in the node after"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [72] " *        the post time step."                                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [73] " * @param u The compartment state vector in the node."              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [74] " * @param v The current continuous state vector in the node."       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [75] " * @param ldata The local data vector in the node."                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [76] " * @param gdata The global data vector that is common to all nodes."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [77] " * @param node The node index. Note the node index is zero-based,"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [78] " *        i.e., the first node is 0."                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [79] " * @param t Current time in the simulation."                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [80] " * @return error code (&lt;0), or 1 if node needs to update the"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [81] " *         transition rates, or 0 when it doesn't need to update"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [82] " *         the transition rates."                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [83] " */"                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [84] "static int ptsFun("                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [85] "    double *v_new,"                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [86] "    const int *u,"                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [87] "    const double *v,"                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [88] "    const double *ldata,"                                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [89] "    const double *gdata,"                                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [90] "    int node,"                                                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [91] "    double t)"                                                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [92] "{"                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [93] "    return 0;"                                                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [94] "}"                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [95] ""                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [96] "/**"                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [97] " * Run a trajectory of the model."                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [98] " *"                                                                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [99] " * @param model The model."                                         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [100] " * @param solver The name of the numerical solver."                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [101] " * @return A model with a trajectory attached to it."               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [102] " */"                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [103] "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP solver)"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [104] "{"                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [105] "    static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [106] "    TRFun tr_fun[] = {&amp;trFun1, &amp;trFun2};"                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [107] ""                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [108] "    if (!SimInf_run) {"                                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [109] "        SimInf_run = (SEXP(*)(SEXP, SEXP, TRFun*, PTSFun))"         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [110] "            R_GetCCallable(\"SimInf\", \"SimInf_run\");"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [111] ""                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [112] "        if (!SimInf_run) {"                                         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [113] "            Rf_error(\"Cannot find function 'SimInf_run'.\");"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [114] "        }"                                                          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [115] "    }"                                                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [116] ""                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [117] "    return SimInf_run(model, solver, tr_fun, &amp;ptsFun);"             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [118] "}"                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [119] ""                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [120] "/**"                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [121] " * A NULL-terminated array of routines to register for the .Call"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [122] " * interface, see section '5.4 Registering native routines' in"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [123] " * the 'Writing R Extensions' manual."                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [124] " */"                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [125] "static const R_CallMethodDef callMethods[] ="                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [126] "{"                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [127] "    SIMINF_CALLDEF(SIMINF_MODEL_RUN, 2),"                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [128] "    {NULL, NULL, 0}"                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [129] "};"                                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [31] "/* Enumeration constants for indicies in the 'u' vector. */"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [32] "enum {"                                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [33] "    S = 0,"                                                         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [34] "    I = 1,"                                                         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [35] "    R = 2,"                                                         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [36] "    N_COMPARTMENTS_U = 3"                                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [37] "};"                                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [38] ""                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [39] "/* Enumeration constants for indicies in the 'gdata' vector. */"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [40] "enum {"                                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [41] "    BETA = 0,"                                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [42] "    GAMMA = 1"                                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [43] "};"                                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [44] ""                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [45] "/**"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [46] " * @param u The compartment state vector in the node."              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [47] " * @param v The continuous state vector in the node."               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [48] " * @param ldata The local data vector in the node."                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [49] " * @param gdata The global data vector."                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [50] " * @param t Current time."                                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [51] " * @return propensity."                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [52] " */"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [53] "static double trFun1("                                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [54] "    const int *u,"                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [55] "    const double *v,"                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [56] "    const double *ldata,"                                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [57] "    const double *gdata,"                                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [58] "    double t)"                                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [59] "{"                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [60] "    return gdata[BETA]*u[S]*u[I]/(u[S]+u[I]+u[R]);"                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [61] "}"                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [62] ""                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [63] "/**"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [64] " * @param u The compartment state vector in the node."              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [65] " * @param v The continuous state vector in the node."               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [66] " * @param ldata The local data vector in the node."                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [67] " * @param gdata The global data vector."                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [68] " * @param t Current time."                                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [69] " * @return propensity."                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [70] " */"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [71] "static double trFun2("                                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [72] "    const int *u,"                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [73] "    const double *v,"                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [74] "    const double *ldata,"                                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [75] "    const double *gdata,"                                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [76] "    double t)"                                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [77] "{"                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [78] "    return gdata[GAMMA]*u[I];"                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [79] "}"                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [80] ""                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [81] "/**"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [82] " * Post time step function."                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [83] " *"                                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [84] " * @param v_new If a continuous state vector is used by a model,"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [85] " *        this is the new continuous state vector in the node after"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [86] " *        the post time step."                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [87] " * @param u The compartment state vector in the node."              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [88] " * @param v The current continuous state vector in the node."       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [89] " * @param ldata The local data vector in the node."                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [90] " * @param gdata The global data vector that is common to all nodes."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [91] " * @param node The node index. Note the node index is zero-based,"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [92] " *        i.e., the first node is 0."                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [93] " * @param t Current time in the simulation."                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [94] " * @return error code (&lt;0), or 1 if node needs to update the"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [95] " *         transition rates, or 0 when it doesn't need to update"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [96] " *         the transition rates."                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [97] " */"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [98] "static int ptsFun("                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [99] "    double *v_new,"                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [100] "    const int *u,"                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [101] "    const double *v,"                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [102] "    const double *ldata,"                                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [103] "    const double *gdata,"                                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [104] "    int node,"                                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [105] "    double t)"                                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [106] "{"                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [107] "    return 0;"                                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [108] "}"                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [109] ""                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [110] "/**"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [111] " * Run a trajectory of the model."                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [112] " *"                                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [113] " * @param model The model."                                         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [114] " * @param solver The name of the numerical solver."                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [115] " * @return A model with a trajectory attached to it."               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [116] " */"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [117] "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP solver)"              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [118] "{"                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [119] "    static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [120] "    TRFun tr_fun[] = {&amp;trFun1, &amp;trFun2};"                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [121] ""                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [122] "    if (!SimInf_run) {"                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [123] "        SimInf_run = (SEXP(*)(SEXP, SEXP, TRFun*, PTSFun))"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [124] "            R_GetCCallable(\"SimInf\", \"SimInf_run\");"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [125] ""                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [126] "        if (!SimInf_run) {"                                         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [127] "            Rf_error(\"Cannot find function 'SimInf_run'.\");"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [128] "        }"                                                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [129] "    }"                                                              </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [130] ""                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [131] "/**"                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [132] " * This routine will be invoked when R loads the shared object/DLL,"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [133] " * see section '5.4 Registering native routines' in the"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [134] " * 'Writing R Extensions' manual."                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [135] " */"                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [136] "void SIMINF_R_INIT(DllInfo *info)"                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [137] "{"                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [138] "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [139] "    R_useDynamicSymbols(info, FALSE);"                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [140] "    R_forceSymbols(info, SIMINF_FORCE_SYMBOLS);"                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [141] "}"                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [131] "    return SimInf_run(model, solver, tr_fun, &amp;ptsFun);"             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [132] "}"                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [133] ""                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [134] "/**"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [135] " * A NULL-terminated array of routines to register for the .Call"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [136] " * interface, see section '5.4 Registering native routines' in"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [137] " * the 'Writing R Extensions' manual."                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [138] " */"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [139] "static const R_CallMethodDef callMethods[] ="                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [140] "{"                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [141] "    SIMINF_CALLDEF(SIMINF_MODEL_RUN, 2),"                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [142] "    {NULL, NULL, 0}"                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [143] "};"                                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [144] ""                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [145] "/**"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [146] " * This routine will be invoked when R loads the shared object/DLL,"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [147] " * see section '5.4 Registering native routines' in the"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [148] " * 'Writing R Extensions' manual."                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [149] " */"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [150] "void SIMINF_R_INIT(DllInfo *info)"                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [151] "{"                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [152] "    R_registerRoutines(info, NULL, callMethods, NULL, NULL);"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [153] "    R_useDynamicSymbols(info, FALSE);"                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [154] "    R_forceSymbols(info, SIMINF_FORCE_SYMBOLS);"                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [155] "}"                                                                  </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
