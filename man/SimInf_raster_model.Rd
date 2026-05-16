@@ -20,13 +20,13 @@ SimInf_raster_model(
 }
 \arguments{
 \item{raster}{integer matrix with the landcover class in each
-cell.  Dimensions should be \code{nrow \times ncol} matching
-the spatial extent of the model. Landcover classes are
-zero-based integers (i.e., the first class is 0, second is 1,
-etc.). Row indices start at 1 at the top and increase toward
-the bottom; column indices start at 1 at the left and increase
-to the right. Values must be non-negative integers; NA values
-are not supported.}
+cell.  Dimensions should be \code{nrow} \eqn{\times}
+\code{ncol} matching the spatial extent of the
+model. Landcover classes are zero-based integers (i.e., the
+first class is 0, second is 1, etc.). Row indices start at 1
+at the top and increase toward the bottom; column indices
+start at 1 at the left and increase to the right. Values must
+be non-negative integers; NA values are not supported.}
 
 \item{tr_type}{FIXME.}
 
