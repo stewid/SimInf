@@ -383,12 +383,8 @@ SEXP SimInf_raster_run(
 
     /* Raster matrix. */
     args.raster = INTEGER(R_do_slot(result, Rf_install("raster")));
-    args.nrow =
-        INTEGER(R_do_slot
-                (R_do_slot(result, Rf_install("raster")), R_DimSymbol))[0];
-    args.ncol =
-        INTEGER(R_do_slot
-                (R_do_slot(result, Rf_install("raster")), R_DimSymbol))[1];
+    args.nrow = INTEGER(R_do_slot(result, Rf_install("nrow")))[0];
+    args.ncol = INTEGER(R_do_slot(result, Rf_install("ncol")))[0];
 
     /* Output array (to hold a single trajectory) */
     PROTECT(U_sparse = R_do_slot(result, Rf_install("U_sparse")));

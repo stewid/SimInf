@@ -263,12 +263,16 @@ setClass(
 ##'     from top to bottom. The last cell number equals the number of
 ##'     cells of the raster. Row numbers start at 1 at the top, column
 ##'     numbers start at 1 at the left.
+##' @slot nrow FIXME.
+##' @slot ncol FIXME.
 ##' @slot tr_type FIXME.
 ##' @export
 setClass(
     "SimInf_raster_model",
     slots = c(cell_S = "dgCMatrix",
-              raster = "matrix",
+              raster = "integer",
+              nrow = "integer",
+              ncol = "integer",
               tr_type = "integer"),
     contains = "SimInf_model"
 )

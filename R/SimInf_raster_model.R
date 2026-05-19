@@ -113,7 +113,9 @@ SimInf_raster_model <- function(raster,
 
     model <- methods::as(model, "SimInf_raster_model")
     model@cell_S <- init_sparse_matrix(cell_S)
-    model@raster <- init_x0(raster)
+    model@raster <- as.integer(t(init_x0(raster)))
+    model@nrow <- nrow(raster)
+    model@ncol <- ncol(raster)
     model@tr_type <- as.integer(tr_type)
 
     model
@@ -127,7 +129,7 @@ setMethod(
     "dim",
     signature(x = "SimInf_raster_model"),
     function(x) {
-        dim(x@raster)
+        c(x@nrow, x@ncol)
     }
 )
 

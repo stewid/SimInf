@@ -22,6 +22,10 @@ from top to bottom. The last cell number equals the number of
 cells of the raster. Row numbers start at 1 at the top, column
 numbers start at 1 at the left.}
 
+\item{\code{nrow}}{FIXME.}
+
+\item{\code{ncol}}{FIXME.}
+
 \item{\code{tr_type}}{FIXME.}
 }}
 
