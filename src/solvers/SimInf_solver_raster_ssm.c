@@ -339,7 +339,7 @@ SimInf_solver_raster_ssm(
                         double cum, rand, tau, delta = 0.0;
                         int tr;
 
-                        /* 1a) Compute time to next event for this
+                        /* Compute time to next event for this
                          * node. */
                         if (m.sum_t_rate[node] <= 0.0) {
                             m.t_time[node] = m.next_unit_of_time;
@@ -571,10 +571,14 @@ SimInf_solver_raster_ssm(
                  * nodes that are indicated for update */
                 for (ptrdiff_t node = 0; node < m.Nn; node++) {
                     const int rc =
-                        m.pts_fun(&m.v_new[node * m.Nd], &m.u[node * m.Nc],
-                                  &m.v[node * m.Nd],
-                                  &m.ldata[node * m.Nld],
-                                  m.gdata, (int) (m.Ni + node), m.tt);
+                        m.pts_fun(
+                            &m.v_new[node * m.Nd],
+                            &m.u[node * m.Nc],
+                            &m.v[node * m.Nd],
+                            &m.ldata[node * m.Nld],
+                            m.gdata,
+                            (int) (m.Ni + node),
+                            m.tt);
 
                     if (rc < 0) {
                         m.error = rc;
