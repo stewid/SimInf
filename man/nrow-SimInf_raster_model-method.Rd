@@ -6,6 +6,12 @@
 \usage{
 \S4method{nrow}{SimInf_raster_model}(x)
 }
+\arguments{
+\item{x}{\code{SimInf_raster_model} object.}
+}
+\value{
+integer vector with the number of rows.
+}
 \description{
 Get the number of rows (\code{nrow}) of the landcover raster.
 }

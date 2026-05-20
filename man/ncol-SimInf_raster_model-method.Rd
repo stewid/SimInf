@@ -6,6 +6,12 @@
 \usage{
 \S4method{ncol}{SimInf_raster_model}(x)
 }
+\arguments{
+\item{x}{\code{SimInf_raster_model} object.}
+}
+\value{
+integer vector with the number of columns.
+}
 \description{
 Get the number of columns (\code{ncol}) of the landcover raster.
 }

@@ -6,6 +6,12 @@
 \usage{
 \S4method{dim}{SimInf_raster_model}(x)
 }
+\arguments{
+\item{x}{\code{SimInf_raster_model} object.}
+}
+\value{
+integer vector with the number of rows and columns.
+}
 \description{
 Get the dimension (\code{dim}) of the landcover raster.
 }

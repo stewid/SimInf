@@ -124,6 +124,8 @@ SimInf_raster_model <- function(raster,
 ##' Dimension of the landcover raster.
 ##'
 ##' Get the dimension (\code{dim}) of the landcover raster.
+##' @param x \code{SimInf_raster_model} object.
+##' @return integer vector with the number of rows and columns.
 ##' @export
 setMethod(
     "dim",
@@ -136,6 +138,8 @@ setMethod(
 ##' Number of rows in the landcover raster
 ##'
 ##' Get the number of rows (\code{nrow}) of the landcover raster.
+##' @param x \code{SimInf_raster_model} object.
+##' @return integer vector with the number of rows.
 ##' @export
 setMethod(
     "nrow",
@@ -148,6 +152,8 @@ setMethod(
 ##' Number of columns in the landcover raster
 ##'
 ##' Get the number of columns (\code{ncol}) of the landcover raster.
+##' @param x \code{SimInf_raster_model} object.
+##' @return integer vector with the number of columns.
 ##' @export
 setMethod(
     "ncol",
