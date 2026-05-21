@@ -494,6 +494,7 @@ SimInf_solver_raster_ssm(
 #  pragma omp critical(cell_event)
 #endif
                             {
+                                /* Accumulate events affecting cells. */
                                 const SimInf_cell_event e = {cell, tr, m.t_time[node]};
                                 kv_push(SimInf_cell_event, cell_events, e);
                             }
