@@ -98,6 +98,58 @@ typedef
 kvec_t(
     SimInf_cell_event) SimInf_cell_events_t;
 
+static void
+SimInf_print_cell_status(
+    const SimInf_raster_model *raster,
+    const int cell,
+    const double tt,
+    const int tr,
+    const double rate)
+{
+    REprintf("\nStatus:\n");
+    REprintf("-------\n");
+    REprintf("Time: %g\n", tt);
+
+    if (cell < 0 || cell >= raster->nrow * raster->ncol) {
+        /* Cell is one based in R */
+        REprintf("Cell: %i:\n", cell + 1);
+        R_FlushConsole();
+        return;
+    }
+
+    /* Cell is one based in R */
+    REprintf("Current state in cell = %i: {", cell + 1);
+    for (int i = 0; i < raster->cell_Nc; i++) {
+        REprintf("%i", raster->cell_u[i]);
+        if (i < (raster->cell_Nc - 1))
+            REprintf(", ");
+    }
+    REprintf("}\n");
+
+    /* for (size_t i = 0; i < kv_size(model->nodes[cell]); i++) { */
+    /*     int node = kv_A(model->nodes[cell], i); */
+
+    /*     /\* Node is one based in R *\/ */
+    /*     REprintf("Current state in node = %i: {", node + 1); */
+    /*     for (int j = 0; j < model->Nc; j++) { */
+    /*         REprintf("%i", model->u[node * model->Nc + j]); */
+    /*         if (j < (model->Nc - 1)) */
+    /*             REprintf(", "); */
+    /*     } */
+    /*     REprintf("}\n"); */
+    /* } */
+
+    if (tr >= 0)
+        REprintf("Transition: %i\n", tr + 1); /* One based in R */
+
+    if (!R_FINITE(rate) || rate < 0.0)
+        REprintf("Rate: %g\n", rate);
+
+    REprintf("\n");
+
+    R_FlushConsole();
+}
+
 /**
  * Free allocated memory for a raster model.
  *
@@ -522,7 +574,7 @@ SimInf_solver_raster_ssm(
                         const int j = cell * raster->cell_Nc + raster->cell_irS[i];
                         raster->cell_u[j] += raster->cell_prS[i];
                         if (raster->cell_u[j] < 0) {
-                            /* SimInf_print_cell_status(model, cell, tt, -1, 0.0); */
+                            SimInf_print_cell_status(raster, cell, tt, -1, 0.0);
                             model[0].error = SIMINF_ERR_NEGATIVE_STATE;
                         }
                     }
@@ -552,7 +604,7 @@ SimInf_solver_raster_ssm(
                         raster->cell_u[e.cell * raster->cell_Nc + raster->cell_irS[j]] +=
                             raster->cell_prS[j];
                         if (raster->cell_u[e.cell * raster->cell_Nc + raster->cell_irS[j]] < 0) {
-                            /* SimInf_print_cell_status(model, cell, tt, -1, 0.0); */
+                            SimInf_print_cell_status(raster, e.cell, raster->cell_time[0], -1, 0.0);
                             model[0].error = SIMINF_ERR_NEGATIVE_STATE;
                         }
                     }
