@@ -629,6 +629,13 @@ state_change_matrix <- function(transitions,
 
 ## Create the dependency graph G
 dependency_graph <- function(transitions, S) {
+    ## Ensure that if a node is moved, i.e. 'cell' is updated, then
+    ## all transitions involving a cell compartment ('cell.*') must
+    ## also be updated.
+    if ("cell" %in% rownames(S) && any(startsWith(rownames(S), "cell."))) {
+        S[startsWith(rownames(S), "cell."), abs(S["cell", ]) > 0] <- 1
+    }
+
     depends <- do.call("rbind", lapply(transitions, "[[", "depends"))
     G <- ((depends %*% abs(S)) > 0) * 1
     colnames(G) <- as.character(seq_len(dim(G)[2]))
