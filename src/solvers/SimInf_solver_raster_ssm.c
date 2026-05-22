@@ -334,10 +334,15 @@ SimInf_solver_raster_ssm(
                     m.t_rate[node * m.Nt + j] = rate;
                     m.sum_t_rate[node] += rate;
                     if (!R_FINITE(rate) || rate < 0.0) {
-                        SimInf_print_status(m.Nc, &m.u[node * m.Nc],
-                                            m.Nd, &m.v[node * m.Nd],
-                                            m.Nld, &m.ldata[node * m.Nld],
-                                            (int) (m.Ni + node), m.tt, rate, j);
+                        SimInf_print_status(
+                            m.Nc,
+                            &m.u[node * m.Nc],
+                            m.Nd,
+                            &m.v[node * m.Nd],
+                            m.Nld,
+                            &m.ldata[node * m.Nld],
+                            (int) (m.Ni + node),
+                            m.tt, rate, j);
                         m.error = SIMINF_ERR_INVALID_RATE;
                     }
                 }
@@ -437,14 +442,15 @@ SimInf_solver_raster_ssm(
                         for (int j = m.jcS[tr]; j < m.jcS[tr + 1]; j++) {
                             m.u[node * m.Nc + m.irS[j]] += m.prS[j];
                             if (m.u[node * m.Nc + m.irS[j]] < 0) {
-                                SimInf_print_status(m.Nc,
-                                                    &m.u[node * m.Nc],
-                                                    m.Nd,
-                                                    &m.v[node * m.Nd],
-                                                    m.Nld,
-                                                    &m.ldata[node * m.Nld],
-                                                    (int) (m.Ni + node),
-                                                    m.t_time[node], 0, tr);
+                                SimInf_print_status(
+                                    m.Nc,
+                                    &m.u[node * m.Nc],
+                                    m.Nd,
+                                    &m.v[node * m.Nd],
+                                    m.Nld,
+                                    &m.ldata[node * m.Nld],
+                                    (int) (m.Ni + node),
+                                    m.t_time[node], 0, tr);
                                 m.error = SIMINF_ERR_NEGATIVE_STATE;
                             }
                         }
