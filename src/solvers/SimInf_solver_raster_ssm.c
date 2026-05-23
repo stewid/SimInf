@@ -393,16 +393,13 @@ SimInf_solver_raster_ssm(
                  * epidemiological compartment model. */
                 for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
                     while (true) {
-                        double cum, rand, tau, delta = 0.0;
-                        int tr;
-
                         /* Compute time to next event for this
                          * node. */
                         if (m.sum_t_rate[node] <= 0.0) {
                             m.t_time[node] = m.next_unit_of_time;
                             break;
                         }
-                        tau = -log(gsl_rng_uniform_pos(e.rng)) /
+                        const double tau = -log(gsl_rng_uniform_pos(e.rng)) /
                             m.sum_t_rate[node];
                         if ((tau + m.t_time[node]) >= m.next_unit_of_time) {
                             m.t_time[node] = m.next_unit_of_time;
@@ -412,7 +409,9 @@ SimInf_solver_raster_ssm(
 
                         /* Determine the transition that did occur
                          * (direct SSA). */
-                        rand = gsl_rng_uniform_pos(e.rng) * m.sum_t_rate[node];
+                        const double rand = gsl_rng_uniform_pos(e.rng) * m.sum_t_rate[node];
+                        double cum;
+                        int tr;
                         for (tr = 0, cum = m.t_rate[node * m.Nt];
                              tr < m.Nt && rand > cum;
                              tr++, cum += m.t_rate[node * m.Nt + tr]);
@@ -461,33 +460,37 @@ SimInf_solver_raster_ssm(
                          * decrement the cell with one. */
                         const int cell = m.u[node * m.Nc + raster->cell_i] - 1;
                         const int *cell_u = &raster->cell_u[cell * raster->cell_Nc];
+                        double delta = 0.0;
                         for (int j = m.jcG[tr]; j < m.jcG[tr + 1]; j++) {
-                            const double old = m.t_rate[node * m.Nt + m.irG[j]];
-                            const double rate =
-                                (*raster->tr_fun[m.irG[j]]) (
-                                    raster->raster,
-                                    raster->nrow,
-                                    raster->ncol,
-                                    cell_u,
-                                    &m.u[node * m.Nc],
-                                    &m.v[node * m.Nd],
-                                    &m.ldata[node * m.Nld],
-                                    m.gdata,
-                                    m.t_time[node]);
+                            if (raster->tr_type[m.irG[i]] & TR_IN_NODE) {
+                                const double old = m.t_rate[node * m.Nt + m.irG[j]];
+                                const double rate =
+                                    (*raster->tr_fun[m.irG[j]]) (
+                                        raster->raster,
+                                        raster->nrow,
+                                        raster->ncol,
+                                        cell_u,
+                                        &m.u[node * m.Nc],
+                                        &m.v[node * m.Nd],
+                                        &m.ldata[node * m.Nld],
+                                        m.gdata,
+                                        m.t_time[node]);
 
-                            m.t_rate[node * m.Nt + m.irG[j]] = rate;
-                            delta += rate - old;
-                            if (!R_FINITE(rate) || rate < 0.0) {
-                                SimInf_print_status(m.Nc,
-                                                    &m.u[node * m.Nc],
-                                                    m.Nd,
-                                                    &m.v[node * m.Nd],
-                                                    m.Nld,
-                                                    &m.ldata[node * m.Nld],
-                                                    (int) (m.Ni + node),
-                                                    m.t_time[node], rate,
-                                                    m.irG[j]);
-                                m.error = SIMINF_ERR_INVALID_RATE;
+                                m.t_rate[node * m.Nt + m.irG[j]] = rate;
+                                delta += rate - old;
+                                if (!R_FINITE(rate) || rate < 0.0) {
+                                    SimInf_print_status(
+                                        m.Nc,
+                                        &m.u[node * m.Nc],
+                                        m.Nd,
+                                        &m.v[node * m.Nd],
+                                        m.Nld,
+                                        &m.ldata[node * m.Nld],
+                                        (int) (m.Ni + node),
+                                        m.t_time[node], rate,
+                                        m.irG[j]);
+                                    m.error = SIMINF_ERR_INVALID_RATE;
+                                }
                             }
                         }
                         m.sum_t_rate[node] += delta;
