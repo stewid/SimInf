@@ -320,30 +320,32 @@ SimInf_solver_raster_ssm(
 
                 m.sum_t_rate[node] = 0.0;
                 for (int j = 0; j < m.Nt; j++) {
-                    const double rate = (*raster->tr_fun[j]) (
-                        raster->raster,
-                        raster->nrow,
-                        raster->ncol,
-                        cell_u,
-                        &m.u[node * m.Nc],
-                        &m.v[node * m.Nd],
-                        &m.ldata[node * m.Nld],
-                        m.gdata,
-                        m.tt);
-
-                    m.t_rate[node * m.Nt + j] = rate;
-                    m.sum_t_rate[node] += rate;
-                    if (!R_FINITE(rate) || rate < 0.0) {
-                        SimInf_print_status(
-                            m.Nc,
+                    if (raster->tr_type[j] & TR_IN_NODE) {
+                        const double rate = (*raster->tr_fun[j]) (
+                            raster->raster,
+                            raster->nrow,
+                            raster->ncol,
+                            cell_u,
                             &m.u[node * m.Nc],
-                            m.Nd,
                             &m.v[node * m.Nd],
-                            m.Nld,
                             &m.ldata[node * m.Nld],
-                            (int) (m.Ni + node),
-                            m.tt, rate, j);
-                        m.error = SIMINF_ERR_INVALID_RATE;
+                            m.gdata,
+                            m.tt);
+
+                        m.t_rate[node * m.Nt + j] = rate;
+                        m.sum_t_rate[node] += rate;
+                        if (!R_FINITE(rate) || rate < 0.0) {
+                            SimInf_print_status(
+                                m.Nc,
+                                &m.u[node * m.Nc],
+                                m.Nd,
+                                &m.v[node * m.Nd],
+                                m.Nld,
+                                &m.ldata[node * m.Nld],
+                                (int) (m.Ni + node),
+                                m.tt, rate, j);
+                            m.error = SIMINF_ERR_INVALID_RATE;
+                        }
                     }
                 }
 
