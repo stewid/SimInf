@@ -320,6 +320,7 @@ SimInf_solver_raster_ssm(
 
                 m.sum_t_rate[node] = 0.0;
                 for (int j = 0; j < m.Nt; j++) {
+                    m.t_rate[node * m.Nt + j] = 0.0;
                     if (raster->tr_type[j] & TR_IN_NODE) {
                         const double rate = (*raster->tr_fun[j]) (
                             raster->raster,
@@ -593,9 +594,48 @@ SimInf_solver_raster_ssm(
 
                     /* Compute time to the next event for this cell
                      * and update the heap. */
+                    double cell_delta = 0.0;
                     for (int i = model->jcG[tr]; i < model->jcG[tr + 1]; i++) {
-                        if (raster->tr_type[model->irG[i]] & TR_IN_NODE) {
+                        if (raster->tr_type[model->irG[i]] == TR_IN_CELL) {
+                            const double old_rate =
+                                raster->cell_rate[cell * model->Nt
+                                                  + model->irG[i]];
+
+                            const double rate = (*raster->tr_fun[model->irG[i]])(
+                                raster->raster,
+                                raster->nrow,
+                                raster->ncol,
+                                &raster->cell_u[cell * raster->cell_Nc],
+                                NULL, /* u */
+                                NULL, /* v */
+                                NULL, /* ldata */
+                                model->gdata,
+                                tt);
+
+                            if (!R_FINITE(rate) || rate < 0.0) {
+                                SimInf_print_cell_status(
+                                    raster,
+                                    cell,
+                                    tt,
+                                    tr,
+                                    rate);
+                                model[0].error = SIMINF_ERR_INVALID_RATE;
+                            }
+
+                            raster->cell_rate[cell * model->Nt
+                                              + model->irG[i]] = rate;
+                            cell_delta += (rate - old_rate);
                         }
+                    }
+
+                    raster->sum_cell_rate[cell] += cell_delta;
+                    if (raster->sum_cell_rate[cell] > 0.0) {
+                        raster->cell_time[raster->heap[cell]] =
+                            -log(gsl_rng_uniform_pos(events[0].rng)) /
+                            raster->sum_cell_rate[cell]
+                            + tt;
+                    } else {
+                        raster->cell_time[raster->heap[cell]] = R_PosInf;
                     }
 
                     update_heap(
@@ -613,13 +653,74 @@ SimInf_solver_raster_ssm(
                     for (int j = raster->cell_jcS[e.transition];
                          j < raster->cell_jcS[e.transition + 1];
                          j++) {
-                        raster->cell_u[e.cell * raster->cell_Nc + raster->cell_irS[j]] +=
-                            raster->cell_prS[j];
-                        if (raster->cell_u[e.cell * raster->cell_Nc + raster->cell_irS[j]] < 0) {
-                            SimInf_print_cell_status(raster, e.cell, raster->cell_time[0], -1, 0.0);
+                        const int k = e.cell * raster->cell_Nc + raster->cell_irS[j];
+                        raster->cell_u[k] += raster->cell_prS[j];
+                        if (raster->cell_u[k] < 0) {
+                            SimInf_print_cell_status(
+                                raster,
+                                e.cell,
+                                raster->cell_time[0],
+                                -1,
+                                0.0);
                             model[0].error = SIMINF_ERR_NEGATIVE_STATE;
                         }
                     }
+
+                    /* Compute time to the next event for this cell
+                     * and update the heap. */
+                    double cell_delta = 0.0;
+                    for (int i = model->jcG[e.transition];
+                         i < model->jcG[e.transition + 1];
+                         i++) {
+                        if (raster->tr_type[model->irG[i]] == TR_IN_CELL) {
+                            const double old_rate =
+                                raster->cell_rate[e.cell * model->Nt
+                                                  + model->irG[i]];
+
+                            const double rate = (*raster->tr_fun[model->irG[i]])(
+                                raster->raster,
+                                raster->nrow,
+                                raster->ncol,
+                                &raster->cell_u[e.cell * raster->cell_Nc],
+                                NULL, /* u */
+                                NULL, /* v */
+                                NULL, /* ldata */
+                                model->gdata,
+                                model->next_unit_of_time);
+
+                            if (!R_FINITE(rate) || rate < 0.0) {
+                                SimInf_print_cell_status(
+                                    raster,
+                                    e.cell,
+                                    model->next_unit_of_time,
+                                    e.transition,
+                                    rate);
+                                model[0].error = SIMINF_ERR_INVALID_RATE;
+                            }
+
+                            raster->cell_rate[e.cell * model->Nt
+                                              + model->irG[i]] = rate;
+                            cell_delta += (rate - old_rate);
+                        }
+                    }
+
+                    raster->sum_cell_rate[e.cell] += cell_delta;
+                    if (raster->sum_cell_rate[e.cell] > 0.0) {
+                        raster->cell_time[raster->heap[e.cell]] =
+                            -log(gsl_rng_uniform_pos(events[0].rng)) /
+                            raster->sum_cell_rate[e.cell]
+                            + model->next_unit_of_time;
+                    } else {
+                        raster->cell_time[raster->heap[e.cell]] = R_PosInf;
+                    }
+
+                    update_heap(
+                        raster->heap[e.cell],
+                        raster->cell_time,
+                        raster->cells,
+                        raster->heap,
+                        raster->nrow * raster->ncol);
+
                 }
             }
 
@@ -647,7 +748,7 @@ SimInf_solver_raster_ssm(
                     if (rc < 0) {
                         m.error = rc;
                         break;
-                    } else if (rc > 0 || m.update_node[node]) {
+                    } else if (rc >= 0 || m.update_node[node]) {
                         /* Update the transition rates.  Note that the
                          *  cell location in R is one-based,
                          *  therefore, decrement the cell with one. */
