@@ -24,6 +24,8 @@ in the simulation.
 }
 \examples{
 ## Extract code from an mparse-generated SIR model.
+## Using writeLines formats the character vector output for
+## readability.
 model <- mparse(
   transitions = c("S -> beta * S * I/(S + I + R) -> I",
                   "I -> gamma * I -> R"),
@@ -34,5 +36,5 @@ model <- mparse(
   use_enum = TRUE
 )
 
-C_code(model)
+writeLines(C_code(model))
 }

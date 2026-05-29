@@ -369,6 +369,8 @@ C_code_mparse <- function(transitions, pts_fun, compartments,
 ##' @export
 ##' @examples
 ##' ## Extract code from an mparse-generated SIR model.
+##' ## Using writeLines formats the character vector output for
+##' ## readability.
 ##' model <- mparse(
 ##'   transitions = c("S -> beta * S * I/(S + I + R) -> I",
 ##'                   "I -> gamma * I -> R"),
@@ -379,7 +381,7 @@ C_code_mparse <- function(transitions, pts_fun, compartments,
 ##'   use_enum = TRUE
 ##' )
 ##'
-##' C_code(model)
+##' writeLines(C_code(model))
 C_code <- function(model) {
     check_model_argument(model)
     model@C_code
