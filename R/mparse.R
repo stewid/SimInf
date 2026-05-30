@@ -600,6 +600,15 @@ dependency_graph <- function(transitions, S) {
 ##'     variable names. Default is \code{FALSE} (parameters accessed
 ##'     by integer indices).
 ##'
+##' @param pre_code Optional character vector with C code to be
+##'     inserted into the generated model code, after the enumeration
+##'     constants and before the transition rate functions. This
+##'     allows users to define helper functions or include statements
+##'     that can be referenced from transition propensity
+##'     expressions. Include statements, if needed, should be placed
+##'     at the beginning of the vector. Default is \code{NULL}, i.e.,
+##'     no additional code is injected.
+##'
 ##' @return a \code{\linkS4class{SimInf_model}} object
 ##'
 ##' @seealso
@@ -644,7 +653,8 @@ mparse <- function(transitions = NULL,
                    E = NULL,
                    N = NULL,
                    pts_fun = NULL,
-                   use_enum = FALSE) {
+                   use_enum = FALSE,
+                   pre_code = NULL) {
     ## Check transitions
     if (!is.vector(transitions, mode = "character") ||
         any(nchar(transitions) == 0)) {
@@ -676,17 +686,25 @@ mparse <- function(transitions = NULL,
     }
 
     ## Parse transitions
-    transitions <- parse_transitions(transitions, compartments,
-                                     ldata_names, gdata_names,
-                                     v0_names, use_enum)
+    transitions <- parse_transitions(transitions,
+                                     compartments,
+                                     ldata_names,
+                                     gdata_names,
+                                     v0_names,
+                                     use_enum)
 
     S <- state_change_matrix(transitions$propensities, compartments)
     G <- dependency_graph(transitions$propensities, S)
 
     ## Generate C code.
-    C_code <- C_code_mparse(transitions, pts_fun, compartments,
-                            ldata_names, gdata_names, v0_names,
-                            use_enum)
+    C_code <- C_code_mparse(transitions,
+                            pts_fun,
+                            compartments,
+                            ldata_names,
+                            gdata_names,
+                            v0_names,
+                            use_enum,
+                            pre_code)
 
     SimInf_model(G      = G,
                  S      = S,

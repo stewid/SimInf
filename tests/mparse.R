@@ -618,13 +618,20 @@ stopifnot(
                    G_rowname = "beta*S*I/(S+I+R)",
                    variables = character(0))))
 
-## Check init function
-model <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I",
+## Check init function and optional code
+model <- mparse(transitions = c("S -> rate(S, I, S+I+R, b) -> I",
                                 "I -> g*I -> R"),
                 compartments = c("S", "I", "R"),
                 gdata = c(b = 0.16, g = 0.077),
                 u0 = data.frame(S = 100, I = 1, R = 0),
-                tspan = 1:10)
+                tspan = 1:10,
+                pre_code = c(
+                    "double rate(double S, double I, double N, double beta) {",
+                    "    if (N == 0)",
+                    "        return 0;",
+                    "    return beta * S * I / N;",
+                    "}"))
+
 C_code <- c(
     "",
     "#include <R_ext/Rdynload.h>",
@@ -655,6 +662,13 @@ C_code <- c(
     "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing.",
     "#endif",
     "",
+    "/* User defined code. */",
+    "double rate(double S, double I, double N, double beta) {",
+    "    if (N == 0)",
+    "        return 0;",
+    "    return beta * S * I / N;",
+    "}",
+    "",
     "/**",
     " * @param u The compartment state vector in the node.",
     " * @param v The continuous state vector in the node.",
@@ -670,7 +684,7 @@ C_code <- c(
     "    const double *gdata,",
     "    double t)",
     "{",
-    "    return gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2]);",
+    "    return rate(u[0],u[1],u[0]+u[1]+u[2],gdata[0]);",
     "}",
     "",
     "/**",
@@ -1239,3 +1253,10 @@ stopifnot(identical(show_observed, show_expected))
 stopifnot(identical(
     SimInf:::C_enumeration_constants("ldata", character(0)),
     character(0)))
+
+stopifnot(identical(
+    SimInf:::C_pre_code(NULL),
+    character(0)))
+
+res <- assertError(SimInf:::C_pre_code(5))
+check_error(res, "'pre_code' must be a character vector.")

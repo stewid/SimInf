@@ -120,6 +120,44 @@ C_enum <- function(compartments, ldata_names, gdata_names, v0_names,
      C_enumeration_constants("gdata", gdata_names))
 }
 
+##' Insert optional C code
+##'
+##' Formats a character vector of C code to be inserted into the
+##' generated model file. Adds comments and spacing for readability.
+##' The input is processed to ensure it is a character vector of
+##' lines.
+##'
+##' @param pre_code Optional character vector with C code to be
+##'     inserted into the generated model code, after the enumeration
+##'     constants and before the transition rate functions. This
+##'     allows users to define helper functions or include statements
+##'     that can be referenced from transition propensity
+##'     expressions. Include statements, if needed, should be placed
+##'     at the beginning of the vector. Default is \code{NULL}, i.e.,
+##'     no additional code is injected.
+##'
+##' @return Character vector containing the formatted C code block, or
+##'     an empty character vector if \code{pre_code} is \code{NULL}.
+##'
+##' @noRd
+C_pre_code <- function(pre_code) {
+    if (is.null(pre_code))
+        return(character(0))
+
+    if (!is.character(pre_code))
+        stop("'pre_code' must be a character vector.", call. = FALSE)
+
+    ## Use textConnection to handle potential multi-line strings or
+    ## ensure consistent line splitting if pre_code is a single
+    ## string.
+    f <- textConnection(pre_code)
+    on.exit(close(f), add = TRUE)
+
+    c("/* User defined code. */",
+      readLines(f),
+      "")
+}
+
 ##' Generate C code for the variables
 ##'
 ##' Generate C code for the variables in the model transition rate
@@ -336,16 +374,33 @@ C_R_init <- function() {
 ##'     time step function. The C code should contain only the body of
 ##'     the function i.e. the code between the opening and closing
 ##'     curly brackets.
+##' @param pre_code Optional character vector with C code to be
+##'     inserted into the generated model code, after the enumeration
+##'     constants and before the transition rate functions. This
+##'     allows users to define helper functions or include statements
+##'     that can be referenced from transition propensity
+##'     expressions. Include statements, if needed, should be placed
+##'     at the beginning of the vector. Default is \code{NULL}, i.e.,
+##'     no additional code is injected.
 ##' @return character vector with C code.
 ##' @noRd
-C_code_mparse <- function(transitions, pts_fun, compartments,
-                          ldata_names, gdata_names, v0_names,
-                          use_enum) {
+C_code_mparse <- function(transitions,
+                          pts_fun,
+                          compartments,
+                          ldata_names,
+                          gdata_names,
+                          v0_names,
+                          use_enum,
+                          pre_code) {
     c(C_heading(),
       C_include(),
       C_define(),
-      C_enum(compartments, ldata_names, gdata_names, v0_names,
+      C_enum(compartments,
+             ldata_names,
+             gdata_names,
+             v0_names,
              use_enum),
+      C_pre_code(pre_code),
       C_trFun(transitions),
       C_ptsFun(pts_fun),
       C_run(transitions),

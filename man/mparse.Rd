@@ -16,7 +16,8 @@ mparse(
   E = NULL,
   N = NULL,
   pts_fun = NULL,
-  use_enum = FALSE
+  use_enum = FALSE,
+  pre_code = NULL
 )
 }
 \arguments{
@@ -133,6 +134,15 @@ These constants facilitate indexing of the \code{u} and
 and \code{N_COMPARTMENTS_V} cannot be used as compartment or
 variable names. Default is \code{FALSE} (parameters accessed
 by integer indices).}
+
+\item{pre_code}{Optional character vector with C code to be
+inserted into the generated model code, after the enumeration
+constants and before the transition rate functions. This
+allows users to define helper functions or include statements
+that can be referenced from transition propensity
+expressions. Include statements, if needed, should be placed
+at the beginning of the vector. Default is \code{NULL}, i.e.,
+no additional code is injected.}
 }
 \value{
 a \code{\linkS4class{SimInf_model}} object
