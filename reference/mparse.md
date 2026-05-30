@@ -162,7 +162,7 @@ mparse(
   functions or include statements that can be referenced from transition
   propensity expressions. Include statements, if needed, should be
   placed at the beginning of the vector. Default is `NULL`, i.e., no
-  additional code is injected.
+  additional code is inserted.
 
 ## Value
 
