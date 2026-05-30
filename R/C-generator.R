@@ -224,8 +224,8 @@ C_ptsFun <- function(pts_fun) {
         stop("'pts_fun' must be a character vector.", call. = FALSE)
 
     f <- textConnection(pts_fun)
+    on.exit(close(f), add = TRUE)
     lines <- readLines(f)
-    close(f)
 
     c("/**",
       " * Post time step function.",
