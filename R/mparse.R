@@ -607,7 +607,7 @@ dependency_graph <- function(transitions, S) {
 ##'     that can be referenced from transition propensity
 ##'     expressions. Include statements, if needed, should be placed
 ##'     at the beginning of the vector. Default is \code{NULL}, i.e.,
-##'     no additional code is injected.
+##'     no additional code is inserted.
 ##'
 ##' @return a \code{\linkS4class{SimInf_model}} object
 ##'

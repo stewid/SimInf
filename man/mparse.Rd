@@ -142,7 +142,7 @@ allows users to define helper functions or include statements
 that can be referenced from transition propensity
 expressions. Include statements, if needed, should be placed
 at the beginning of the vector. Default is \code{NULL}, i.e.,
-no additional code is injected.}
+no additional code is inserted.}
 }
 \value{
 a \code{\linkS4class{SimInf_model}} object

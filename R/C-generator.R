@@ -134,7 +134,7 @@ C_enum <- function(compartments, ldata_names, gdata_names, v0_names,
 ##'     that can be referenced from transition propensity
 ##'     expressions. Include statements, if needed, should be placed
 ##'     at the beginning of the vector. Default is \code{NULL}, i.e.,
-##'     no additional code is injected.
+##'     no additional code is inserted.
 ##'
 ##' @return Character vector containing the formatted C code block, or
 ##'     an empty character vector if \code{pre_code} is \code{NULL}.
@@ -381,7 +381,7 @@ C_R_init <- function() {
 ##'     that can be referenced from transition propensity
 ##'     expressions. Include statements, if needed, should be placed
 ##'     at the beginning of the vector. Default is \code{NULL}, i.e.,
-##'     no additional code is injected.
+##'     no additional code is inserted.
 ##' @return character vector with C code.
 ##' @noRd
 C_code_mparse <- function(transitions,
