@@ -66,7 +66,8 @@ ready for simulation.</p>
 <span>  E <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  N <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pts_fun <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  use_enum <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  use_enum <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  pre_code <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -197,6 +198,17 @@ automatically generated:</p><ul><li><p><code>N_COMPARTMENTS_U</code>: The number
 and <code>N_COMPARTMENTS_V</code> cannot be used as compartment or
 variable names. Default is <code>FALSE</code> (parameters accessed
 by integer indices).</p></dd>
+
+
+<dt id="arg-pre-code">pre_code<a class="anchor" aria-label="anchor" href="#arg-pre-code"></a></dt>
+<dd><p>Optional character vector with C code to be
+inserted into the generated model code, after the enumeration
+constants and before the transition rate functions. This
+allows users to define helper functions or include statements
+that can be referenced from transition propensity
+expressions. Include statements, if needed, should be placed
+at the beginning of the vector. Default is <code>NULL</code>, i.e.,
+no additional code is injected.</p></dd>
 
 </dl></div>
     <div class="section level2">
