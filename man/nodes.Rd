@@ -55,7 +55,7 @@ plot(
     nodes,
     col = ifelse(infected, "blue", "yellow"),
     pch = 20,
-    cex = 2
+    asp = 1
 )
 }
 \keyword{dataset}
