@@ -1,7 +1,8 @@
 # Example data with spatial distribution of nodes
 
-Example data to initialize a population of 1600 nodes and demonstrate
-various models.
+Example data containing spatial coordinates for 1600 nodes, used to
+initialize spatially distributed population models and visualize
+simulation results.
 
 ## Usage
 
@@ -11,15 +12,21 @@ data(nodes)
 
 ## Format
 
-A `data.frame`
+A `data.frame` with 1600 rows and 2 columns:
+
+- x:
+
+  Numeric vector of x-coordinates.
+
+- y:
+
+  Numeric vector of y-coordinates.
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-## For reproducibility, call the set.seed() function and specify
-## the number of threads to use. To use all available threads,
-## remove the set_num_threads() call.
+## For reproducibility, set the seed and limit threads to 1.
+## To use all available threads, remove the set_num_threads() call.
 set.seed(123)
 set_num_threads(1)
 
@@ -29,11 +36,14 @@ set_num_threads(1)
 u0 <- u0_SIR()
 u0$I[1] <- 1
 tspan <- seq(from = 1, to = 4*365, by = 1)
-model <- SIR(u0     = u0,
-             tspan  = tspan,
-             events = events_SIR(),
-             beta   = 0.16,
-             gamma  = 0.077)
+
+model <- SIR(
+    u0     = u0,
+    tspan  = tspan,
+    events = events_SIR(),
+    beta   = 0.16,
+    gamma  = 0.077
+)
 
 ## Run the model to generate a single stochastic trajectory.
 result <- run(model)
@@ -45,7 +55,11 @@ infected <- colSums(trajectory(result, ~ I, format = "matrix")) > 0
 
 ## Display infected nodes in 'blue' and non-infected nodes in 'yellow'.
 data("nodes", package = "SimInf")
-col <- ifelse(infected, "blue", "yellow")
-plot(y ~ x, nodes, col = col, pch = 20, cex = 2)
-} # }
+plot(
+    y ~ x,
+    nodes,
+    col = ifelse(infected, "blue", "yellow"),
+    pch = 20,
+    cex = 2
+)
 ```
