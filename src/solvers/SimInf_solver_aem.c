@@ -31,8 +31,8 @@
 #ifdef _OPENMP
 #  include <omp.h>
 #endif
-#include <string.h>
 #include <stdbool.h>
+#include <string.h>
 
 /**
  * Structure to hold AEM solver specific data/arguments for simulation.
