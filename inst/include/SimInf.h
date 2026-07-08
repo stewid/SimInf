@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2025 Stefan Widgren
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ enum {EXIT_EVENT,
 
 #define SIMINF_UNUSED(x) ((void)(x))
 #define SIMINF_STR(name) #name
-#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &name, n}
+#define SIMINF_CALLDEF(name, n) {SIMINF_STR(name), (DL_FUNC) &(name), (n)}
 
 /* Error constants */
 typedef enum {
