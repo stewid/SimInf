@@ -34,8 +34,38 @@
 #include <string.h>
 
 /**
- * Siminf solver
+ * SimInf split-step method (ssm) solver.
  *
+ * Advances the simulation by repeatedly performing the following
+ * steps for each unit of time:
+ *
+ * 1. Integrate the internal epidemiological model as a
+ *    continuous-time Markov chain using direct SSA (Gillespie's
+ *    algorithm). Within each node, transition times are sampled
+ *    from an exponential distribution and the firing transition is
+ *    selected proportionally to its rate.
+ * 2. Incorporate all scheduled E1 events (internal events, such as
+ *    individuals moving between compartments within a node).
+ * 3. Incorporate all scheduled E2 events (external events, such as
+ *    individuals transferring between nodes).
+ * 4. Call the post time step function to perform model-specific
+ *    actions after each unit of time (e.g., update the infectious
+ *    pressure). Transition rates are recalculated in nodes flagged
+ *    for update.
+ * 5. Advance the global time to the next unit of time.
+ * 6. Store the solution if the current time has reached or passed
+ *    the next time point in tspan. The solution is stored in a
+ *    dense matrix (6a) or, optionally, in a sparse matrix (6b).
+ *
+ * Steps 1, 2, 4, 5, and 6a are executed per thread in parallel.
+ * Steps 3 and 6b are executed serially due to inter-thread
+ * dependencies.
+ *
+ * @param model Array of compartment model structures, one per
+ *     thread, holding the node state, transition rates, and solution
+ *     buffers.
+ * @param events Array of scheduled event structures, one per thread,
+ *     holding the event queues and RNG state.
  * @return 0 if Ok, else error code.
  */
 static int
