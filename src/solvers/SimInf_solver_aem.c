@@ -482,6 +482,7 @@ SimInf_aem_arguments_free(
                 for (int j = 0; j < mod->Nn * mod->Nt; j++)
                     gsl_rng_free(m->rng_vec[j]);
             }
+            free(m->rng_vec);
             m->rng_vec = NULL;
             free(m->reactHeap);
             m->reactHeap = NULL;
