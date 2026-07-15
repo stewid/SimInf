@@ -155,10 +155,10 @@ SimInf_solver_mssm(
                                      tr--);
 
                                 /* No nonzero rate found, but a
-                                   transition was sampled. This can
-                                   happen due to floating point errors
-                                   in the iterated recalculated
-                                   rates. */
+                                 * transition was sampled. This can
+                                 * happen due to floating point errors
+                                 * in the iterated recalculated
+                                 * rates. */
                                 if (m.t_rate[node * m.Nt + tr] == 0.0) {
                                     /* nil event: zero out and move on */
                                     m.sum_t_rate[node] = 0.0;
