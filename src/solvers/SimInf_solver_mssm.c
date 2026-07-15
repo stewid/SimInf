@@ -277,26 +277,47 @@ SimInf_solver_mssm(
 
                     /* (6) Store solution if tt has passed the next
                      * time in tspan. Report solution up to, but not
-                     * including tt. The default is to store the
-                     * solution in a dense matrix (U and/or V non-null
-                     * pointers).  Copy compartment state to U */
-                    while (m.U && m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
-                        memcpy(&m.U[(ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
-                                    m.U_it++], m.u,
-                               (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
-                               sizeof(int));
+                     * including tt. */
+                    if (m.U) {
+                        /* 6a) Dense matrix: copy compartment state to
+                         * U. */
+                        while (m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
+                            memcpy(&m.U[(ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
+                                        m.U_it++], m.u,
+                                   (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
+                                   sizeof(int));
+                        }
+                    } else {
+                        /* 6b) Sparse matrix: copy compartment state
+                         * to U_sparse. */
+                        while (m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
+                            for (int j = m.jcU[m.U_it]; j < m.jcU[m.U_it + 1]; j++)
+                                m.prU[j] = m.u[m.irU[j]];
+                            m.U_it++;
+                        }
                     }
 
-                    /* Copy continuous state to V */
-                    while (m.V && m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
-                        const ptrdiff_t v_len = (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nd *
-                            sizeof(double);
-                        if (v_len > 0) {
-                            memcpy(&m.V[(ptrdiff_t) m.Nd * (ptrdiff_t) m.Ntot * m.V_it],
-                                   m.v_new,
-                                   v_len);
+                    if (m.V) {
+                        /* 6a) Dense matrix: copy continuous state to
+                         * V. */
+                        while (m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
+                            const ptrdiff_t v_len = (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nd *
+                                sizeof(double);
+                            if (v_len > 0) {
+                                memcpy(&m.V[(ptrdiff_t) m.Nd * (ptrdiff_t) m.Ntot * m.V_it],
+                                       m.v_new,
+                                       v_len);
+                            }
+                            m.V_it++;
                         }
-                        m.V_it++;
+                    } else {
+                        /* 6b) Sparse matrix: copy continuous state to
+                         * V_sparse. */
+                        while (m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
+                            for (int j = m.jcV[m.V_it]; j < m.jcV[m.V_it + 1]; j++)
+                                m.prV[j] = m.v_new[m.irV[j]];
+                            m.V_it++;
+                        }
                     }
 
                     /* Swap the pointers to the continuous state
