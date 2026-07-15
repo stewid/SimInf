@@ -277,10 +277,10 @@ SimInf_solver_mssm(
 
                     /* (6) Store solution if tt has passed the next
                      * time in tspan. Report solution up to, but not
-                     * including tt. The mssm solver always stores the
+                     * including tt. The default is to store the
                      * solution in a dense matrix (U and/or V non-null
                      * pointers).  Copy compartment state to U */
-                    while (m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
+                    while (m.U && m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
                         memcpy(&m.U[(ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
                                     m.U_it++], m.u,
                                (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
@@ -288,7 +288,7 @@ SimInf_solver_mssm(
                     }
 
                     /* Copy continuous state to V */
-                    while (m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
+                    while (m.V && m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
                         const ptrdiff_t v_len = (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nd *
                             sizeof(double);
                         if (v_len > 0) {
