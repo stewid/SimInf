@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -155,7 +155,7 @@ ldata_exp <- structure(c(91, 182, 273, 365, 1, 3, 2, 4, -1, 0, 0, 0, 0, 0,
                          91, 182, 273, 365, 5, 4, 6, 4, 8, 3, 9, 2, -1, 0,
                          91, 182, 273, 365, 6, 4, 7, 4, 9, 2, -1, 0, 0, 0,
                          91, 182, 273, 365, 7, 4, 8, 3, -1, 0, 0, 0, 0, 0),
-                       .Dim = c(14L, 10L))
+                       dim = c(14L, 10L))
 ldata_obs <- .Call(SimInf:::SimInf_ldata_sp, l, d, 0L)
 stopifnot(all(abs(ldata_obs - ldata_exp) < tol))
 
@@ -187,7 +187,7 @@ ldata_exp <- structure(c(91, 182, 273, 365, 1, 1.4142135623731,
                          -1, 0, 0, 0,
                          91, 182, 273, 365, 7, 2.82842712474619,
                          8, 1.4142135623731, -1, 0, 0, 0, 0, 0),
-                       .Dim = c(14L, 10L))
+                       dim = c(14L, 10L))
 ldata_obs <- add_spatial_coupling_to_ldata(x = 1:10, y = 1:10,
                                            cutoff = 3, ldata = l)
 stopifnot(all(abs(ldata_obs - ldata_exp) < tol))
@@ -220,7 +220,7 @@ ldata_exp <- structure(c(91, 182, 273, 365, 1, 0.499999999999996, 2, 0.125,
                          -1, 0, 91, 182, 273, 365, 6, 0.125, 7,
                          0.499999999999996, 9, 0.499999999999996, -1, 0, 0,
                          0, 91, 182, 273, 365, 7, 0.125, 8, 0.499999999999996,
-                         -1, 0, 0, 0, 0, 0), .Dim = c(14L, 10L))
+                         -1, 0, 0, 0, 0, 0), dim = c(14L, 10L))
 
 ldata_obs <- .Call(SimInf:::SimInf_ldata_sp, l, d, 2L)
 stopifnot(all(abs(ldata_obs - ldata_exp) < tol))

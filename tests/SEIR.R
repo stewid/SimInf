@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L,
                           3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L,
                           4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
-                        .Dim = c(6L, 10L))
+                        dim = c(6L, 10L))
 
 S_observed <- trajectory(result, compartments = "S", format = "matrix")
 stopifnot(identical(S_observed, S_expected))
@@ -155,7 +155,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(6L, 10L))
+                        dim = c(6L, 10L))
 
 I_observed <- trajectory(result, compartments = "I", format = "matrix")
 stopifnot(identical(I_observed, I_expected))
@@ -165,7 +165,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(6L, 10L))
+                        dim = c(6L, 10L))
 
 R_observed <- trajectory(result, compartments = "R", format = "matrix")
 stopifnot(identical(R_observed, R_expected))
@@ -198,7 +198,7 @@ R_observed <- trajectory(result, compartments = "R", index = 1)
 stopifnot(identical(R_observed, R_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                       .Dim = c(1L, 10L))
+                        dim = c(1L, 10L))
 R_observed <- trajectory(result, compartments = "R",
                          index = 1, format = "matrix")
 stopifnot(identical(R_observed, R_expected))
@@ -217,7 +217,7 @@ stopifnot(identical(R_observed, R_expected))
 
 R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(2L, 10L))
+                        dim = c(2L, 10L))
 R_observed <- trajectory(result, compartments = "R", index = c(1, 3),
                          format = "matrix")
 stopifnot(identical(R_observed, R_expected))
@@ -320,7 +320,7 @@ U_expected <- structure(
       242L, 422L, 442L, 223L, 243L, 423L, 443L, 224L, 244L, 424L, 444L,
       225L, 245L, 425L, 445L, 226L, 246L, 426L, 446L, 227L, 247L, 427L,
       447L, 228L, 248L, 428L, 448L, 229L, 249L, 429L, 449L),
-    .Dim = c(4L, 10L))
+    dim = c(4L, 10L))
 U_observed <- trajectory(result, compartments = c("E", "R"),
                          index = c(2, 4), format = "matrix")
 stopifnot(identical(U_observed, U_expected))
@@ -343,12 +343,9 @@ p_observed <- prevalence(result, I ~ .)
 stopifnot(identical(p_observed$time, p_expected$time))
 stopifnot(all(abs(p_observed$prevalence - p_expected$prevalence) < tol))
 
-p_expected <- structure(
-    list(time = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
-         prevalence = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
-    .Names = c("time", "prevalence"),
-    row.names = c(NA, -10L),
-    class = "data.frame")
+p_expected <- data.frame(
+    time = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
+    prevalence = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1))
 p_observed <- prevalence(result, I ~ S + E + I + R, level = 2)
 stopifnot(identical(p_observed, p_expected))
 p_observed <- prevalence(result, I ~ ., level = 2)

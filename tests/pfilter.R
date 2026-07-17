@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -63,12 +63,12 @@ check_error(res, "data$time[1] must be >= tspan[1].")
 data <- SimInf:::pfilter_data(model, data.frame(time = 1:3))
 stopifnot(identical(
     SimInf:::pfilter_tspan(model, data),
-    structure(c(NA, NA, NA, 1, 2, 3), .Dim = 3:2)))
+    structure(c(NA, NA, NA, 1, 2, 3), dim = 3:2)))
 
 data <- SimInf:::pfilter_data(model, data.frame(time = 2:3))
 stopifnot(identical(
     SimInf:::pfilter_tspan(model, data),
-    structure(c(1, NA, 2, 3), .Dim = c(2L, 2L))))
+    structure(c(1, NA, 2, 3), dim = c(2L, 2L))))
 
 ## Create an SIR model object where tspan is specified as Dates.
 model <- SIR(
@@ -86,13 +86,13 @@ df <- data.frame(time = c("2021-01-05", "2021-01-06", "2021-01-07"))
 data <- SimInf:::pfilter_data(model, df)
 stopifnot(identical(
     SimInf:::pfilter_tspan(model, data),
-    structure(c(NA, NA, NA, 5, 6, 7), .Dim = 3:2)))
+    structure(c(NA, NA, NA, 5, 6, 7), dim = 3:2)))
 
 df <- data.frame(time = c("2021-01-06", "2021-01-07"))
 data <- SimInf:::pfilter_data(model, df)
 stopifnot(identical(
     SimInf:::pfilter_tspan(model, data),
-    structure(c(5, NA, 6, 7), .Dim = c(2L, 2L))))
+    structure(c(5, NA, 6, 7), dim = c(2L, 2L))))
 
 ## Check invalid n_particles
 model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
@@ -117,19 +117,19 @@ res <- assertError(.Call(SimInf:::SimInf_split_events, 1L, integer(0)))
 check_error(res, "'t_end' must be an integer vector with length >= 1.")
 
 stopifnot(identical(.Call(SimInf:::SimInf_split_events, 1L, 1L),
-                    structure(c(1L, 1L), .Dim = 1:2)))
+                    structure(c(1L, 1L), dim = 1:2)))
 
 stopifnot(identical(.Call(SimInf:::SimInf_split_events, 1L, 1:3),
-                    structure(c(1L, 0L, 0L, 1L, 0L, 0L), .Dim = 3:2)))
+                    structure(c(1L, 0L, 0L, 1L, 0L, 0L), dim = 3:2)))
 
 stopifnot(identical(.Call(SimInf:::SimInf_split_events, 2L, 1:3),
-                    structure(c(0L, 1L, 0L, 0L, 1L, 0L), .Dim = 3:2)))
+                    structure(c(0L, 1L, 0L, 0L, 1L, 0L), dim = 3:2)))
 
 stopifnot(identical(.Call(SimInf:::SimInf_split_events, 3L, 1:3),
-                    structure(c(0L, 0L, 1L, 0L, 0L, 1L), .Dim = 3:2)))
+                    structure(c(0L, 0L, 1L, 0L, 0L, 1L), dim = 3:2)))
 
 stopifnot(identical(.Call(SimInf:::SimInf_split_events, 4L, 1:3),
-                    structure(c(0L, 0L, 0L, 0L, 0L, 0L), .Dim = 3:2)))
+                    structure(c(0L, 0L, 0L, 0L, 0L, 0L), dim = 3:2)))
 
 ## Split events
 events <- data.frame(
@@ -161,7 +161,7 @@ stopifnot(identical(
                      x = c(1, 1, 1, 1, 1, 1),
                      factors = list()),
              N = structure(integer(0),
-                           .Dim = c(0L, 0L)),
+                           dim = c(0L, 0L)),
              event = c(3L, 3L, 3L, 3L),
              time = c(1L, 1L, 2L, 2L),
              node = c(3L, 3L, 1L, 4L),
@@ -179,7 +179,7 @@ stopifnot(identical(
                      x = c(1, 1, 1, 1, 1, 1),
                      factors = list()),
              N = structure(integer(0),
-                           .Dim = c(0L, 0L)),
+                           dim = c(0L, 0L)),
              event = c(3L, 3L),
              time = c(3L, 3L),
              node = 3:4,

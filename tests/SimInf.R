@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -211,14 +211,14 @@ dimnames(m) <- NULL
 stopifnot(identical(m,
                     structure(c(0L, 15L, 15L, 15L, 15L,
                                 15L, 15L, 15L, 15L, 15L, 15L),
-                              .Dim = c(1L, 11L))))
+                              dim = c(1L, 11L))))
 m <- trajectory(result, compartments = "S_3", index = 1, format = "matrix") +
     trajectory(result, compartments = "I_3", index = 1, format = "matrix")
 dimnames(m) <- NULL
 stopifnot(identical(m,
                     structure(c(0L, 15L, 15L, 15L, 15L,
                                 15L, 15L, 15L, 15L, 15L, 15L),
-                              .Dim = c(1L, 11L))))
+                              dim = c(1L, 11L))))
 stopifnot(identical(sum(trajectory(result, format = "matrix")[, 1]), 45L))
 stopifnot(identical(model@ldata, result@ldata))
 stopifnot(identical(model@tspan, result@tspan))
@@ -243,7 +243,7 @@ if (SimInf:::have_openmp() && max_threads > 1) {
     stopifnot(identical(m,
                         structure(c(0L, 15L, 15L, 15L, 15L,
                                     15L, 15L, 15L, 15L, 15L, 15L),
-                                  .Dim = c(1L, 11L))))
+                                  dim = c(1L, 11L))))
     m <- trajectory(result,
                     compartments = "S_3",
                     index = 1,
@@ -256,7 +256,7 @@ if (SimInf:::have_openmp() && max_threads > 1) {
     stopifnot(identical(m,
                         structure(c(0L, 15L, 15L, 15L, 15L,
                                     15L, 15L, 15L, 15L, 15L, 15L),
-                                  .Dim = c(1L, 11L))))
+                                  dim = c(1L, 11L))))
     stopifnot(identical(sum(result_omp@U[, 1]), 45L))
     stopifnot(identical(model@ldata, result_omp@ldata))
     stopifnot(identical(model@tspan, result_omp@tspan))
@@ -411,7 +411,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L,
                           0L, 15L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(36L, 11L))
+                        dim = c(36L, 11L))
 
 result <- run(model)
 stopifnot(identical(model@G, result@G))
@@ -517,7 +517,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L, 0L, 2L, 0L,
                           2L, 0L, 2L, 0L, 3L, 0L, 3L, 0L, 3L, 0L, 4L,
                           0L, 4L, 0L, 4L, 0L, 5L, 0L, 5L, 0L, 5L, 0L),
-                        .Dim = c(36L, 11L))
+                        dim = c(36L, 11L))
 
 result <- run(model)
 stopifnot(identical(model@G, result@G))
@@ -623,7 +623,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(36L, 11L))
+                        dim = c(36L, 11L))
 
 result <- run(model)
 stopifnot(identical(model@G, result@G))
@@ -730,7 +730,7 @@ U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L,
                           0L, 0L, 0L, 0L, 6L, 0L, 0L, 0L, 0L, 0L, 9L,
                           0L, 0L, 0L, 0L, 0L, 12L, 0L, 0L, 0L, 0L, 0L,
                           15L, 0L),
-                        .Dim = c(36L, 11L))
+                        dim = c(36L, 11L))
 
 result <- run(model)
 stopifnot(identical(model@G, result@G))

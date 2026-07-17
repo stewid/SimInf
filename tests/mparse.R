@@ -785,8 +785,8 @@ C_code <- c(
 stopifnot(identical(model@C_code[-1], C_code))
 
 u0 <- structure(c(100L, 1L, 0L),
-                .Dim = c(3L, 1L),
-                .Dimnames = list(c("S", "I", "R"), NULL))
+                dim = c(3L, 1L),
+                dimnames = list(c("S", "I", "R"), NULL))
 stopifnot(identical(model@u0, u0))
 
 ## Check mparse with ldata and gdata as data.frames

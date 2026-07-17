@@ -87,8 +87,8 @@ res <- SISe3(u0        = u0,
              epsilon   = 0.000011)
 stopifnot(identical(res@v0,
                     structure(c(0, 0, 0, 0, 0, 0),
-                              .Dim = c(1L, 6L),
-                              .Dimnames = list("phi", NULL))))
+                              dim = c(1L, 6L),
+                              dimnames = list("phi", NULL))))
 
 ## Check missing upsilon_1
 res <- assertError(SISe3(u0        = u0,
@@ -1364,7 +1364,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L,
                           3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L,
                           4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
-                        .Dim = c(6L, 10L))
+                        dim = c(6L, 10L))
 S_observed <- trajectory(result, compartments = "S_1", format = "matrix")
 stopifnot(identical(S_observed, S_expected))
 
@@ -1373,7 +1373,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(6L, 10L))
+                        dim = c(6L, 10L))
 I_observed <- trajectory(result, compartments = "I_1", format = "matrix")
 stopifnot(identical(I_observed, I_expected))
 

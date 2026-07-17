@@ -596,8 +596,8 @@ model <- SIR(cbind(S = 100, I = 10, R = 0), tspan = 1:10, beta = 1, gamma = 1)
 ## Set the shift matrix using a matrix
 shift_matrix(model) <- matrix(c(2, 1, 0), nrow = 3)
 
-N_expected <- structure(c(2L, 1L, 0L), .Dim = c(3L, 1L),
-                        .Dimnames = list(c("S", "I", "R"), "1"))
+N_expected <- structure(c(2L, 1L, 0L), dim = c(3L, 1L),
+                        dimnames = list(c("S", "I", "R"), "1"))
 
 ## Extract the shift matrix from the model
 N_observed <- shift_matrix(model)
