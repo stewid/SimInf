@@ -585,7 +585,7 @@ However, if you install \pkg{SimInf} from source (from CRAN or a
 compiler, and that the GNU Scientific Library (GSL)
 \citep{Gallassi2009} is installed on your system and is on the path.
 On a Windows machine you first need to download and install Rtools
-from \url{https://cran.r-project.org/bin/windows/Rtools}.  Note that
+from \url{https://cran.r-project.org/bin/windows/Rtools/}.  Note that
 GSL (\url{https://www.gnu.org/software/gsl/}) is not an \proglang{R}
 add-on package, but needs to be installed separately, for example,
 from a terminal using: \code{sudo apt-get install libgsl0-dev} on
@@ -597,8 +597,8 @@ manager.  On Windows, the GSL files are downloaded, if needed, from
 depending on features of the compiler, the package is compiled with
 support for \proglang{OpenMP}.  To find out more about installing
 \proglang{R} add-on packages in general, the \emph{R Installation and
-  Administration} (\url{https://cran.r-project.org/manuals.html})
-manual describes the process in detail.  After installing the package
+Administration} (\url{https://cran.r-project.org/manuals.html}) manual
+describes the process in detail.  After installing the package
 
 <<install-SimInf, eval=FALSE>>=
 install.packages("SimInf")
@@ -1627,7 +1627,7 @@ creating \proglang{R} add-on packages, the \emph{Writing R extensions}
 (\url{https://cran.r-project.org/doc/manuals/r-release/R-exts.html})
 manual is the official guide and describes the process in detail.
 Another useful resource is the \emph{R packages} book by
-\cite{Hadley2015} (\url{http://r-pkgs.had.co.nz/}).
+\cite{Hadley2015} (\url{https://r-pkgs.org/}).
 
 \subsection{Using the model parser to define a new model}
 \label{sec:mparse}
