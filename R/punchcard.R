@@ -129,13 +129,19 @@ setMethod(
     "punchcard<-",
     signature(model = "SimInf_model"),
     function(model, value) {
-        template <- create_template(value, model@tspan, seq_len(n_nodes(model)),
-                                    rownames(model@S), integer(0))
+        template <- create_template(value = value,
+                                    tspan = model@tspan,
+                                    nodes = seq_len(n_nodes(model)),
+                                    compartments = rownames(model@S),
+                                    data = integer(0))
         model@U <- template$dense
         model@U_sparse <- template$sparse
 
-        template <- create_template(value, model@tspan, seq_len(n_nodes(model)),
-                                    rownames(model@v0), numeric(0))
+        template <- create_template(value = value,
+                                    tspan = model@tspan,
+                                    nodes = seq_len(n_nodes(model)),
+                                    compartments = rownames(model@v0),
+                                    data = numeric(0))
         model@V <- template$dense
         model@V_sparse <- template$sparse
 
@@ -152,6 +158,7 @@ setMethod(
 ##'     model to record the number of inidividuals in each compartment
 ##'     in every node at each time-point in tspan.
 ##' @param tspan time points in trajectory.
+##' @param nodes available nodes in the model.
 ##' @param compartments available compartments in the simulated data.
 ##' @param data default data in dense matrix.
 ##' @noRd
