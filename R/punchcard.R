@@ -144,9 +144,9 @@ setMethod(
     }
 )
 
-##' Create  template for where to record result during a simualtion
+##' Create template for where to record result during a simulation
 ##'
-##' @param value A \code{data.frame} that specify the nodes,
+##' @param value a \code{data.frame} that specify the nodes,
 ##'     time-points and compartments to record the number of
 ##'     individuals at \code{tspan}. Use \code{NULL} to reset the
 ##'     model to record the number of inidividuals in each compartment
@@ -156,8 +156,10 @@ setMethod(
 ##' @param data default data in dense matrix.
 ##' @noRd
 create_template <- function(value, tspan, nodes, compartments, data) {
+    dense <- matrix(data = data, nrow = 0, ncol = 0)
+    dims <- c(length(nodes) * length(compartments), length(tspan))
+
     if (is.null(value)) {
-        dense <- matrix(data = data, nrow = 0, ncol = 0)
         sparse <- methods::new("dgCMatrix")
         return(list(dense = dense, sparse = sparse))
     }
@@ -166,8 +168,6 @@ create_template <- function(value, tspan, nodes, compartments, data) {
         stop("'value' argument is not a 'data.frame'.", call. = FALSE)
 
     if (nrow(value) == 0) {
-        dense <- matrix(data = data, nrow = 0, ncol = 0)
-        dims <- c(length(nodes) * length(compartments), length(tspan))
         sparse <- Matrix::sparseMatrix(i = numeric(0), j = numeric(0),
                                        x = NA_real_, dims = dims)
         return(list(dense = dense, sparse = sparse))
@@ -216,13 +216,11 @@ create_template <- function(value, tspan, nodes, compartments, data) {
         j <- rep(j, each = length(compartments))
         j <- j[value]
 
-        dims <- c(length(nodes) * length(compartments), length(tspan))
-        d1_times_d2 <- as.numeric(dims[1]) * as.numeric(dims[2])
-        if (sum(value, na.rm = TRUE) == d1_times_d2) {
-            dense <- matrix(data = data, nrow = 0, ncol = 0)
+        ## Use a dense matrix if all nodes and compartments are included.
+        d <- prod(c(length(nodes), length(compartments), length(tspan)))
+        if (sum(value, na.rm = TRUE) == d) {
             sparse <- methods::new("dgCMatrix")
         } else {
-            dense <- matrix(data = data, nrow = 0, ncol = 0)
             sparse <- Matrix::sparseMatrix(i = i, j = j, x = NA_real_,
                                            dims = dims)
         }
@@ -230,8 +228,6 @@ create_template <- function(value, tspan, nodes, compartments, data) {
         return(list(dense = dense, sparse = sparse))
     }
 
-    dense <- matrix(data = data, nrow = 0, ncol = 0)
-    dims <- c(length(nodes) * length(compartments), length(tspan))
     sparse <- Matrix::sparseMatrix(i = numeric(0), j = numeric(0),
                                    x = NA_real_, dims = dims)
     list(dense = dense, sparse = sparse)
