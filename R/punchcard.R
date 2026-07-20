@@ -133,7 +133,8 @@ setMethod(
                                     tspan = model@tspan,
                                     nodes = seq_len(n_nodes(model)),
                                     compartments = rownames(model@S),
-                                    data = integer(0))
+                                    data = integer(0),
+                                    replicates = n_replicates(model))
         model@U <- template$dense
         model@U_sparse <- template$sparse
 
@@ -141,7 +142,8 @@ setMethod(
                                     tspan = model@tspan,
                                     nodes = seq_len(n_nodes(model)),
                                     compartments = rownames(model@v0),
-                                    data = numeric(0))
+                                    data = numeric(0),
+                                    replicates = n_replicates(model))
         model@V <- template$dense
         model@V_sparse <- template$sparse
 
@@ -155,16 +157,23 @@ setMethod(
 ##' @param value a \code{data.frame} that specify the nodes,
 ##'     time-points and compartments to record the number of
 ##'     individuals at \code{tspan}. Use \code{NULL} to reset the
-##'     model to record the number of inidividuals in each compartment
+##'     model to record the number of individuals in each compartment
 ##'     in every node at each time-point in tspan.
 ##' @param tspan time points in trajectory.
 ##' @param nodes available nodes in the model.
 ##' @param compartments available compartments in the simulated data.
 ##' @param data default data in dense matrix.
+##' @param replicates number of parallel replicates simulated for this
+##'     model.
 ##' @noRd
-create_template <- function(value, tspan, nodes, compartments, data) {
+create_template <- function(value,
+                            tspan,
+                            nodes,
+                            compartments,
+                            data,
+                            replicates) {
     dense <- matrix(data = data, nrow = 0, ncol = 0)
-    dims <- c(length(nodes) * length(compartments), length(tspan))
+    dims <- c(length(nodes) * length(compartments), replicates * length(tspan))
 
     if (is.null(value)) {
         sparse <- methods::new("dgCMatrix")
@@ -228,6 +237,12 @@ create_template <- function(value, tspan, nodes, compartments, data) {
         if (sum(value, na.rm = TRUE) == d) {
             sparse <- methods::new("dgCMatrix")
         } else {
+            ## Create replicates of the punchcard.
+            i <- rep(i, replicates)
+            j <- rep(j, replicates) +
+                rep(seq(from = 0, length.out = replicates) * length(tspan),
+                    each = length(j))
+
             sparse <- Matrix::sparseMatrix(i = i, j = j, x = NA_real_,
                                            dims = dims)
         }

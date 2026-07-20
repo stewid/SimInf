@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -357,3 +357,34 @@ stopifnot(identical(
               0L, 0L, 0L, 0L),
         phi = c(1, NA, NA, 2, 1, NA, NA, 2, 1, NA, NA, 2, 1, NA, NA, 2, 1, NA,
                 NA, 2))))
+
+## Check punchcard for model with replicates. Remove columns from
+## ldata to set replicates.
+model <- SISe(u0 = data.frame(S = 101:106, I = 1:6),
+              tspan = 1:10, events = NULL,
+              phi = c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6),
+              upsilon = 0, gamma = 0, alpha = 1, epsilon = 0,
+              beta_t1 = 0, beta_t2 = 0, beta_t3 = 0, beta_t4 = 0,
+              end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
+
+model@ldata <- model@ldata[, 1:3, drop = FALSE]
+model@replicates <- 2L
+
+punchcard(model) <- data.frame(
+    node = rep(c(1, 3), 10),
+    time = rep(1:10, each = 2),
+    S = c(TRUE, FALSE, FALSE, TRUE),
+    I = c(FALSE, TRUE, TRUE, FALSE),
+    phi = c(TRUE, FALSE, FALSE, TRUE))
+
+i <- c(1, 6, 2, 5, 1, 6, 2, 5, 1, 6, 2, 5, 1, 6, 2, 5, 1, 6, 2, 5,
+       1, 6, 2, 5, 1, 6, 2, 5, 1, 6, 2, 5, 1, 6, 2, 5, 1, 6, 2, 5)
+j <- c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
+       12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20)
+sparse <- Matrix::sparseMatrix(i = i, j = j, x = NA_real_, dims = c(6, 20))
+stopifnot(identical(model@U_sparse, sparse))
+
+i <- c(1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3)
+j <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,  18, 19, 20)
+sparse <- Matrix::sparseMatrix(i = i, j = j, x = NA_real_, dims = c(3, 20))
+stopifnot(identical(model@V_sparse, sparse))
