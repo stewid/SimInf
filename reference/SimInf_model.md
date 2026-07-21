@@ -23,6 +23,7 @@ SimInf_model(
   V = NULL,
   E = NULL,
   N = NULL,
+  replicates = NULL,
   C_code = NULL
 )
 ```
@@ -132,6 +133,30 @@ SimInf_model(
   See
   [`SimInf_events`](http://stewid.github.io/SimInf/reference/SimInf_events-class.md)
   for usage details.
+
+- replicates:
+
+  Number of model replicates to simulate (default `NULL`, treated as
+  `1L`). When `replicates > 1L`, each replicate is simulated
+  independently using its own initial state (from `u0`), but shares the
+  same parameters (`gdata`, `ldata`), scheduled events, and structure
+  (transitions, compartments).
+
+  The `u0` argument must contain initial states for all replicates. Each
+  replicate requires *n* nodes, where *n* is the number of nodes in the
+  model. Thus, `u0` must have `replicates * n` nodes total. Nodes are
+  grouped by replicate: the first *n* nodes belong to replicate 1, the
+  next *n* to replicate 2, and so on. This allows different starting
+  conditions per replicate if desired.
+
+  `ldata` remains unchanged: its data per node is shared across all
+  replicates. Scheduled events are also shared—the same event schedule
+  applies to each replicate.
+
+  Use this when you need multiple independent stochastic trajectories
+  from the same model in a single simulation run. For identical starting
+  conditions across replicates, simply repeat the same node pattern in
+  `u0`.
 
 - C_code:
 

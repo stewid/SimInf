@@ -70,6 +70,7 @@ matrices) are required.</p>
 <span>  V <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  E <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  N <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  replicates <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  C_code <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -170,6 +171,29 @@ events.</p><ul><li><p><strong>Matrix</strong>: Standard integer matrix.</p></li>
     <code>compartment</code>, <code>shift</code>, and <code>value</code>
     (integer offset).</p></li>
 </ul><p>See <code><a href="SimInf_events-class.html">SimInf_events</a></code> for usage details.</p></dd>
+
+
+<dt id="arg-replicates">replicates<a class="anchor" aria-label="anchor" href="#arg-replicates"></a></dt>
+<dd><p>Number of model replicates to simulate (default
+    <code>NULL</code>, treated as <code>1L</code>). When <code>replicates &gt;
+    1L</code>, each replicate is simulated independently using its own
+    initial state (from <code>u0</code>), but shares the same parameters
+    (<code>gdata</code>, <code>ldata</code>), scheduled events, and structure
+    (transitions, compartments).</p>
+<p>The <code>u0</code> argument must contain initial states for all
+    replicates. Each replicate requires <em>n</em> nodes, where
+    <em>n</em> is the number of nodes in the model. Thus, <code>u0</code>
+    must have <code>replicates * n</code> nodes total. Nodes are grouped
+    by replicate: the first <em>n</em> nodes belong to replicate 1,
+    the next <em>n</em> to replicate 2, and so on. This allows
+    different starting conditions per replicate if desired.</p>
+<p><code>ldata</code> remains unchanged: its data per node is shared
+    across all replicates. Scheduled events are also shared—the
+    same event schedule applies to each replicate.</p>
+<p>Use this when you need multiple independent stochastic
+    trajectories from the same model in a single simulation run.
+    For identical starting conditions across replicates, simply
+    repeat the same node pattern in <code>u0</code>.</p></dd>
 
 
 <dt id="arg-c-code">C_code<a class="anchor" aria-label="anchor" href="#arg-c-code"></a></dt>
