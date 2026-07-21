@@ -137,6 +137,30 @@ setValidity("SimInf_model", valid_SimInf_model_object)
 ##'     }
 ##'     See \code{\linkS4class{SimInf_events}} for usage details.
 ##'
+##' @param replicates Number of model replicates to simulate (default
+##'     \code{NULL}, treated as \code{1L}). When \code{replicates >
+##'     1L}, each replicate is simulated independently using its own
+##'     initial state (from \code{u0}), but shares the same parameters
+##'     (\code{gdata}, \code{ldata}), scheduled events, and structure
+##'     (transitions, compartments).
+##'
+##'     The \code{u0} argument must contain initial states for all
+##'     replicates. Each replicate requires \emph{n} nodes, where
+##'     \emph{n} is the number of nodes in the model. Thus, \code{u0}
+##'     must have \code{replicates * n} nodes total. Nodes are grouped
+##'     by replicate: the first \emph{n} nodes belong to replicate 1,
+##'     the next \emph{n} to replicate 2, and so on. This allows
+##'     different starting conditions per replicate if desired.
+##'
+##'     \code{ldata} remains unchanged: its data per node is shared
+##'     across all replicates. Scheduled events are also shared—the
+##'     same event schedule applies to each replicate.
+##'
+##'     Use this when you need multiple independent stochastic
+##'     trajectories from the same model in a single simulation run.
+##'     For identical starting conditions across replicates, simply
+##'     repeat the same node pattern in \code{u0}.
+##'
 ##' @param C_code \strong{C Source Code} (character vector).  Optional
 ##'     C code for custom transition rates. If provided, it is
 ##'     compiled and loaded when \code{run()} is called.
@@ -165,6 +189,7 @@ SimInf_model <- function(G,
                          V      = NULL,
                          E      = NULL,
                          N      = NULL,
+                         replicates = NULL,
                          C_code = NULL) {
     u0 <- init_x0(u0)
     G <- init_sparse_matrix(G)
@@ -176,6 +201,7 @@ SimInf_model <- function(G,
     V <- init_output_matrix(V, "double")
     C_code <- init_C_code(C_code)
     tspan <- init_tspan(tspan)
+    replicates <- init_replicates(replicates)
 
     ## Check events
     if (!any(is.null(events), is.data.frame(events)))
@@ -197,7 +223,7 @@ SimInf_model <- function(G,
                  v0         = v0,
                  V          = V,
                  events     = events,
-                 replicates = 1L,
+                 replicates = replicates,
                  C_code     = C_code)
 }
 

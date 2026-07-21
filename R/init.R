@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -163,4 +163,22 @@ init_tspan <- function(tspan) {
     storage.mode(tspan) <- "double"
 
     list(tspan = tspan, t0 = t0)
+}
+
+##' Initialize replicates
+##'
+##' @param replicates Integer specifying the number of replicates.
+##' @return An integer scalar.
+##' @noRd
+init_replicates <- function(replicates) {
+    if (is.null(replicates))
+        return(1L)
+
+    check_integer_arg(replicates)
+    replicates <- as.integer(replicates)
+
+    if (length(replicates) != 1L || replicates < 1L)
+        stop("'replicates' must be an integer >= 1.", call. = FALSE)
+
+    replicates
 }
