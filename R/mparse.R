@@ -609,6 +609,8 @@ dependency_graph <- function(transitions, S) {
 ##'     at the beginning of the vector. Default is \code{NULL}, i.e.,
 ##'     no additional code is inserted.
 ##'
+##' @template replicates-param
+##'
 ##' @return a \code{\linkS4class{SimInf_model}} object
 ##'
 ##' @seealso
@@ -654,7 +656,8 @@ mparse <- function(transitions = NULL,
                    N = NULL,
                    pts_fun = NULL,
                    use_enum = FALSE,
-                   pre_code = NULL) {
+                   pre_code = NULL,
+                   replicates = NULL) {
     ## Check transitions
     if (!is.vector(transitions, mode = "character") ||
         any(nchar(transitions) == 0)) {
@@ -716,5 +719,6 @@ mparse <- function(transitions = NULL,
                  gdata  = gdata,
                  u0     = u0,
                  v0     = v0,
+                 replicates = replicates,
                  C_code = C_code)
 }

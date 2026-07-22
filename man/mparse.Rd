@@ -17,7 +17,8 @@ mparse(
   N = NULL,
   pts_fun = NULL,
   use_enum = FALSE,
-  pre_code = NULL
+  pre_code = NULL,
+  replicates = NULL
 )
 }
 \arguments{
@@ -143,6 +144,43 @@ that can be referenced from transition propensity
 expressions. Include statements, if needed, should be placed
 at the beginning of the vector. Default is \code{NULL}, i.e.,
 no additional code is inserted.}
+
+\item{replicates}{Number of parallel model replicates to simulate
+    (default \code{1L}). When \code{replicates > 1L}, each replicate
+    is simulated independently using its own initial state (from
+    \code{u0}), but shares the same parameters (\code{gdata},
+    \code{ldata}), scheduled events, and structure (transitions,
+    compartments).
+
+    The \code{u0} argument must specify initial states for
+    \code{replicates * N} nodes, where \code{N} is the number of
+    nodes in \code{ldata}. Each block of \code{N} nodes specifies
+    the initial state for one replicate. This allows different
+    starting conditions per replicate if desired.
+
+    Supported formats for \code{u0}:
+    \itemize{
+      \item \code{data.frame}: one row per node, with
+        \code{replicates * N} rows total.
+      \item \code{matrix}: columns are nodes, with
+        \code{replicates * N} columns total (row names identify
+        parameters).
+      \item \code{named vector}: for single-node models with
+        replicates (repeated pattern).
+    }
+
+    For \code{ldata}, the format remains unchanged: \code{N} nodes
+    (one row per node for data.frame, \code{N} columns for matrix,
+    or single vector for one node).
+
+    Scheduled events are shared across all replicates—the same event
+    schedule applies to each replicate. If you need replicate-specific
+    events, define separate models.
+
+    Use this when you need multiple independent stochastic
+    trajectories from the same model in a single simulation run.
+    For identical starting conditions across replicates, simply
+    repeat the same node pattern in \code{u0}.}
 }
 \value{
 a \code{\linkS4class{SimInf_model}} object
