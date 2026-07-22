@@ -21,7 +21,8 @@ mparse(
   N = NULL,
   pts_fun = NULL,
   use_enum = FALSE,
-  pre_code = NULL
+  pre_code = NULL,
+  replicates = NULL
 )
 ```
 
@@ -163,6 +164,42 @@ mparse(
   propensity expressions. Include statements, if needed, should be
   placed at the beginning of the vector. Default is `NULL`, i.e., no
   additional code is inserted.
+
+- replicates:
+
+  Number of parallel model replicates to simulate (default `1L`). When
+  `replicates > 1L`, each replicate is simulated independently using its
+  own initial state (from `u0`), but shares the same parameters
+  (`gdata`, `ldata`), scheduled events, and structure (transitions,
+  compartments).
+
+  The `u0` argument must specify initial states for `replicates * N`
+  nodes, where `N` is the number of nodes in `ldata`. Each block of `N`
+  nodes specifies the initial state for one replicate. This allows
+  different starting conditions per replicate if desired.
+
+  Supported formats for `u0`:
+
+  - `data.frame`: one row per node, with `replicates * N` rows total.
+
+  - `matrix`: columns are nodes, with `replicates * N` columns total
+    (row names identify parameters).
+
+  - `named vector`: for single-node models with replicates (repeated
+    pattern).
+
+  For `ldata`, the format remains unchanged: `N` nodes (one row per node
+  for data.frame, `N` columns for matrix, or single vector for one
+  node).
+
+  Scheduled events are shared across all replicates—the same event
+  schedule applies to each replicate. If you need replicate-specific
+  events, define separate models.
+
+  Use this when you need multiple independent stochastic trajectories
+  from the same model in a single simulation run. For identical starting
+  conditions across replicates, simply repeat the same node pattern in
+  `u0`.
 
 ## Value
 
