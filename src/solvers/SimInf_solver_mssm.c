@@ -70,10 +70,12 @@ SimInf_solver_mssm(
                 /* Move to the initial state of the model
                  * replicate. */
                 m.u = &u[replicate * m.Nn * m.Nc];
-                m.U = &U[replicate * m.tlen * m.Nn * m.Nc];
+                if (U)
+                    m.U = &U[replicate * m.tlen * m.Nn * m.Nc];
                 m.v = &v[replicate * m.Nn * m.Nd];
                 m.v_new = &v_new[replicate * m.Nn * m.Nd];
-                m.V = &V[replicate * m.tlen * m.Nn * m.Nd];
+                if (V)
+                    m.V = &V[replicate * m.tlen * m.Nn * m.Nd];
 
                 /* Initialize global time. */
                 m.tt = m.tspan[0];
@@ -291,8 +293,12 @@ SimInf_solver_mssm(
                         /* 6b) Sparse matrix: copy compartment state
                          * to U_sparse. */
                         while (m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
-                            for (int j = m.jcU[m.U_it]; j < m.jcU[m.U_it + 1]; j++)
+                            const ptrdiff_t col_offset = replicate * m.tlen;
+                            for (int j = m.jcU[m.U_it + col_offset];
+                                 j < m.jcU[m.U_it + col_offset + 1];
+                                 j++) {
                                 m.prU[j] = m.u[m.irU[j]];
+                            }
                             m.U_it++;
                         }
                     }
@@ -314,8 +320,12 @@ SimInf_solver_mssm(
                         /* 6b) Sparse matrix: copy continuous state to
                          * V_sparse. */
                         while (m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
-                            for (int j = m.jcV[m.V_it]; j < m.jcV[m.V_it + 1]; j++)
+                            const ptrdiff_t col_offset = replicate * m.tlen;
+                            for (int j = m.jcV[m.V_it + col_offset];
+                                 j < m.jcV[m.V_it + col_offset + 1];
+                                 j++) {
                                 m.prV[j] = m.v_new[m.irV[j]];
+                            }
                             m.V_it++;
                         }
                     }

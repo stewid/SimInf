@@ -1074,10 +1074,21 @@ SimInf_compartment_model_create(
                     goto on_error;      /* #nocov */
             }
 
-            if (args->U)
+            if (args->U) {
                 model[i].U = &args->U[tlen * l * Nn * Nc];
-            if (args->V)
+            } else {
+                model[i].irU = args->irU;
+                model[i].jcU = args->jcU;
+                model[i].prU = args->prU;
+            }
+
+            if (args->V) {
                 model[i].V = &args->V[tlen * l * Nn * Nd];
+            } else {
+                model[i].irV = args->irV;
+                model[i].jcV = args->jcV;
+                model[i].prV = args->prV;
+            }
         } else {
             /* The nodes are split between the threads when running
              * one replicate of a model. */
