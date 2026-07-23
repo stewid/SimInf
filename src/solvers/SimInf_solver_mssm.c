@@ -56,11 +56,11 @@ SimInf_solver_mssm(
             SimInf_compartment_model m = *&model[i];
 
             /* Store original pointers to the model state. */
-            int *u = m.u;
-            int *U = m.U;
-            double *v = m.v;
-            double *v_new = m.v_new;
-            double *V = m.V;
+            int * const u = m.u;
+            int * const U = m.U;
+            double * const v = m.v;
+            double * const v_new = m.v_new;
+            double * const V = m.V;
 
             for (ptrdiff_t replicate = 0; replicate < m.Nrep && !m.error;
                  replicate++) {
