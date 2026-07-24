@@ -30,6 +30,9 @@ max_threads <- set_num_threads(1)
 ## For debugging
 sessionInfo()
 
+## Define a tolerance
+tol <- 1e-8
+
 ## Create a model
 model <- SIR(u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
              tspan = 1:10,
@@ -363,7 +366,7 @@ stopifnot(identical(
 model <- SISe(u0 = data.frame(S = 101:106, I = 1:6),
               tspan = 1:10, events = NULL,
               phi = c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6),
-              upsilon = 0, gamma = 0, alpha = 1, epsilon = 0,
+              upsilon = 0, gamma = 0, alpha = 0, epsilon = 0,
               beta_t1 = 0, beta_t2 = 0, beta_t3 = 0, beta_t4 = 0,
               end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
 
@@ -388,3 +391,21 @@ i <- c(1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3)
 j <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,  18, 19, 20)
 sparse <- Matrix::sparseMatrix(i = i, j = j, x = NA_real_, dims = c(3, 20))
 stopifnot(identical(model@V_sparse, sparse))
+
+if (SimInf:::have_openmp() && max_threads > 1) {
+    set_num_threads(2)
+    result <- run(model)
+    set_num_threads(1)
+
+    stopifnot(identical(
+        c(101L, 3L, 1L, 103L, 101L, 3L, 1L, 103L, 101L, 3L, 1L, 103L,
+          101L, 3L, 1L, 103L, 101L, 3L, 1L, 103L, 104L, 6L, 4L, 106L, 104L,
+          6L, 4L, 106L, 104L, 6L, 4L, 106L, 104L, 6L, 4L, 106L, 104L, 6L,
+          4L, 106L),
+        as.integer(result@U_sparse@x)))
+
+    stopifnot(all(abs(result@V_sparse@x - c(0.1, 0.3, 0.1, 0.3, 0.1, 0.3,
+                                            0.1, 0.3, 0.1, 0.3, 0.4, 0.6,
+                                            0.4, 0.6, 0.4, 0.6, 0.4, 0.6,
+                                            0.4, 0.6)) < tol))
+}

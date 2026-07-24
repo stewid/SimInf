@@ -1078,7 +1078,7 @@ SimInf_compartment_model_create(
                 model[i].U = &args->U[tlen * l * Nn * Nc];
             } else {
                 model[i].irU = args->irU;
-                model[i].jcU = args->jcU;
+                model[i].jcU = &args->jcU[tlen * l];
                 model[i].prU = args->prU;
             }
 
@@ -1086,7 +1086,7 @@ SimInf_compartment_model_create(
                 model[i].V = &args->V[tlen * l * Nn * Nd];
             } else {
                 model[i].irV = args->irV;
-                model[i].jcV = args->jcV;
+                model[i].jcV = &args->jcV[tlen * l];
                 model[i].prV = args->prV;
             }
         } else {
