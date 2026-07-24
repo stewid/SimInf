@@ -168,7 +168,7 @@ SimInf_create_rowinfo(
         if (dm_sparse && cm_sparse) {
             *out = calloc(1, sizeof(rowinfo_vec));
             if (!*out)
-                return -1;      /* #nocov */
+                return SIMINF_ERR_ALLOC_MEMORY_BUFFER;      /* #nocov */
 
             return SimInf_insert_id_time2(*out, dm, cm, dm_stride,
                                           cm_stride, tlen, p_id, id_len);
@@ -176,13 +176,13 @@ SimInf_create_rowinfo(
     } else if (dm_i_len > 0 && dm_sparse) {
         *out = calloc(1, sizeof(rowinfo_vec));
         if (!*out)
-            return -1;          /* #nocov */
+            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;          /* #nocov */
 
         return SimInf_insert_id_time(*out, dm, dm_stride, tlen, p_id, id_len);
     } else if (cm_i_len > 0 && cm_sparse) {
         *out = calloc(1, sizeof(rowinfo_vec));
         if (!*out)
-            return -1;          /* #nocov */
+            return SIMINF_ERR_ALLOC_MEMORY_BUFFER;          /* #nocov */
 
         return SimInf_insert_id_time(*out, cm, cm_stride, tlen, p_id, id_len);
     }
@@ -562,12 +562,11 @@ SimInf_trajectory(
      * number of rows depends on unique combinations of identifier and
      * time information in the sparse matrices. */
     rowinfo_vec *ri = NULL;
-    if (SimInf_create_rowinfo(&ri, dm, cm, dm_i_len, cm_i_len, dm_sparse,
-                              cm_sparse, dm_stride, cm_stride, tlen, p_id,
-                              id_len)) {
-        err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;   /* #nocov */
+    err = SimInf_create_rowinfo(&ri, dm, cm, dm_i_len, cm_i_len, dm_sparse,
+                                cm_sparse, dm_stride, cm_stride, tlen, p_id,
+                                id_len);
+    if (err)
         goto cleanup;           /* #nocov */
-    }
     const R_xlen_t nrow = SimInf_number_of_rows(ri, tlen, id_len, replicates);
 
     /* Create a list for the 'data.frame' and add colnames and a
