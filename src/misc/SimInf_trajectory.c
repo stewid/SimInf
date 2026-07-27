@@ -53,11 +53,13 @@ SimInf_insert_id_time(
 {
     const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
+    const ptrdiff_t ncol = INTEGER(R_do_slot(m, Rf_install("Dim")))[1];
 
     if (m_stride < 1)
         return SIMINF_ERR_SPARSE_MODEL; /* #nocov */
 
-    for (ptrdiff_t t = 0; t < tlen; t++) {
+    for (ptrdiff_t col = 0; col < ncol; col++) {
+        const ptrdiff_t t = col % tlen;
         ptrdiff_t id_last = -1;
         ptrdiff_t i = 0;
 
@@ -98,11 +100,14 @@ SimInf_insert_id_time2(
     const int *m2_ir = INTEGER(R_do_slot(m2, Rf_install("i")));
     const int *m1_jc = INTEGER(R_do_slot(m1, Rf_install("p")));
     const int *m2_jc = INTEGER(R_do_slot(m2, Rf_install("p")));
+    const ptrdiff_t m1_ncol = INTEGER(R_do_slot(m1, Rf_install("Dim")))[1];
+    const ptrdiff_t m2_ncol = INTEGER(R_do_slot(m2, Rf_install("Dim")))[1];
 
-    if (m1_stride < 1 || m2_stride < 1)
+    if (m1_stride < 1 || m2_stride < 1 || m1_ncol != m2_ncol)
         return SIMINF_ERR_SPARSE_MODEL; /* #nocov */
 
-    for (ptrdiff_t t = 0; t < tlen; t++) {
+    for (ptrdiff_t col = 0; col < m1_ncol; col++) {
+        const ptrdiff_t t = col % tlen;
         ptrdiff_t id_last = -1;
         ptrdiff_t i = 0;
         ptrdiff_t j1 = m1_jc[t];
