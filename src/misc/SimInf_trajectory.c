@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2025 Stefan Widgren
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ SimInf_insert_id_time(
     const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
 
     if (m_stride < 1)
-        return -1;              /* #nocov */
+        return SIMINF_ERR_SPARSE_MODEL; /* #nocov */
 
     for (ptrdiff_t t = 0; t < tlen; t++) {
         ptrdiff_t id_last = -1;
@@ -100,7 +100,7 @@ SimInf_insert_id_time2(
     const int *m2_jc = INTEGER(R_do_slot(m2, Rf_install("p")));
 
     if (m1_stride < 1 || m2_stride < 1)
-        return -1;              /* #nocov */
+        return SIMINF_ERR_SPARSE_MODEL; /* #nocov */
 
     for (ptrdiff_t t = 0; t < tlen; t++) {
         ptrdiff_t id_last = -1;
