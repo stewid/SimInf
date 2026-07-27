@@ -78,6 +78,9 @@ SimInf_raise_error(
     case SIMINF_ERR_AEM_REPLICATED_MODEL:
         Rf_error("Cannot run the 'aem' solver on a replicated model.");
         break;
+    case SIMINF_ERR_SPARSE_MODEL:
+        Rf_error("Invalid sparse matrix in model.");
+        break;
     default:                   /* #nocov */
         Rf_error("Unknown error code: %i.", err);       /* #nocov */
         break;
