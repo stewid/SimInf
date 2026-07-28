@@ -284,20 +284,20 @@ static void
 SimInf_u_sparse2df(
     SEXP dst,
     rowinfo_vec *ri,
-    SEXP m,
-    const int *m_i,
-    const ptrdiff_t m_i_len,
-    const ptrdiff_t m_stride,
+    SEXP u,
+    const int *u_i,
+    const ptrdiff_t u_i_len,
+    const ptrdiff_t u_stride,
     const ptrdiff_t nrow,
     const ptrdiff_t tlen,
     const ptrdiff_t n_id,
     const ptrdiff_t col)
 {
-    const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
-    const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
-    const double *m_x = REAL(R_do_slot(m, Rf_install("x")));
+    const int *u_ir = INTEGER(R_do_slot(u, Rf_install("i")));
+    const int *u_jc = INTEGER(R_do_slot(u, Rf_install("p")));
+    const double *u_x = REAL(R_do_slot(u, Rf_install("x")));
 
-    for (ptrdiff_t i = 0; i < m_i_len; i++) {
+    for (ptrdiff_t i = 0; i < u_i_len; i++) {
         SEXP vec;
         SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(INTSXP, nrow));
         int *p_vec = INTEGER(vec);
@@ -309,16 +309,16 @@ SimInf_u_sparse2df(
             while (k < kv_size(*ri)) {
                 ptrdiff_t p_time = kv_A(*ri, k).time;
 
-                while (m_jc[p_time] <= j && j < m_jc[p_time + 1]) {
+                while (u_jc[p_time] <= j && j < u_jc[p_time + 1]) {
                     /* Check if data for column. */
-                    if (m_ir[j] % m_stride == (m_i[i] - 1)) {
-                        ptrdiff_t m_id = m_ir[j] / m_stride;
+                    if (u_ir[j] % u_stride == (u_i[i] - 1)) {
+                        ptrdiff_t u_id = u_ir[j] / u_stride;
 
-                        if (m_id < kv_A(*ri, k).id) {
+                        if (u_id < kv_A(*ri, k).id) {
                             j++;        /* Move on. */
                         } else {
-                            if (m_id == kv_A(*ri, k).id)
-                                p_vec[p_vec_i++] = (int) m_x[j++];
+                            if (u_id == kv_A(*ri, k).id)
+                                p_vec[p_vec_i++] = (int) u_x[j++];
                             else
                                 p_vec[p_vec_i++] = NA_INTEGER;
 
@@ -342,14 +342,14 @@ SimInf_u_sparse2df(
             for (ptrdiff_t t = 0; t < tlen; t++) {
                 ptrdiff_t id = 0;
 
-                for (ptrdiff_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
-                    if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
-                        ptrdiff_t m_id = m_ir[j] / m_stride;
+                for (ptrdiff_t j = u_jc[t]; j < u_jc[t + 1]; j++) {
+                    if ((u_ir[j] % u_stride) == (u_i[i] - 1)) {
+                        ptrdiff_t u_id = u_ir[j] / u_stride;
 
-                        for (; id < m_id; id++)
+                        for (; id < u_id; id++)
                             p_vec[t * n_id + id] = NA_INTEGER;
 
-                        p_vec[t * n_id + id] = (int) m_x[j];
+                        p_vec[t * n_id + id] = (int) u_x[j];
                         id++;
                     }
                 }
@@ -365,20 +365,20 @@ static void
 SimInf_v_sparse2df(
     SEXP dst,
     rowinfo_vec *ri,
-    SEXP m,
-    const int *m_i,
-    const ptrdiff_t m_i_len,
-    const ptrdiff_t m_stride,
+    SEXP v,
+    const int *v_i,
+    const ptrdiff_t v_i_len,
+    const ptrdiff_t v_stride,
     const ptrdiff_t nrow,
     const ptrdiff_t tlen,
     const ptrdiff_t n_id,
     const ptrdiff_t col)
 {
-    const int *m_ir = INTEGER(R_do_slot(m, Rf_install("i")));
-    const int *m_jc = INTEGER(R_do_slot(m, Rf_install("p")));
-    const double *m_x = REAL(R_do_slot(m, Rf_install("x")));
+    const int *v_ir = INTEGER(R_do_slot(v, Rf_install("i")));
+    const int *v_jc = INTEGER(R_do_slot(v, Rf_install("p")));
+    const double *v_x = REAL(R_do_slot(v, Rf_install("x")));
 
-    for (ptrdiff_t i = 0; i < m_i_len; i++) {
+    for (ptrdiff_t i = 0; i < v_i_len; i++) {
         SEXP vec;
         SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(REALSXP, nrow));
         double *p_vec = REAL(vec);
@@ -390,16 +390,16 @@ SimInf_v_sparse2df(
             while (k < kv_size(*ri)) {
                 ptrdiff_t p_time = kv_A(*ri, k).time;
 
-                while (m_jc[p_time] <= j && j < m_jc[p_time + 1]) {
+                while (v_jc[p_time] <= j && j < v_jc[p_time + 1]) {
                     /* Check if data for column. */
-                    if (m_ir[j] % m_stride == (m_i[i] - 1)) {
-                        ptrdiff_t m_id = m_ir[j] / m_stride;
+                    if (v_ir[j] % v_stride == (v_i[i] - 1)) {
+                        ptrdiff_t v_id = v_ir[j] / v_stride;
 
-                        if (m_id < kv_A(*ri, k).id) {
+                        if (v_id < kv_A(*ri, k).id) {
                             j++;        /* Move on. */
                         } else {
-                            if (m_id == kv_A(*ri, k).id)
-                                p_vec[p_vec_i++] = m_x[j++];
+                            if (v_id == kv_A(*ri, k).id)
+                                p_vec[p_vec_i++] = v_x[j++];
                             else
                                 p_vec[p_vec_i++] = NA_REAL;
 
@@ -423,14 +423,14 @@ SimInf_v_sparse2df(
             for (ptrdiff_t t = 0; t < tlen; t++) {
                 ptrdiff_t id = 0;
 
-                for (ptrdiff_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
-                    if ((m_ir[j] % m_stride) == (m_i[i] - 1)) {
-                        ptrdiff_t m_id = m_ir[j] / m_stride;
+                for (ptrdiff_t j = v_jc[t]; j < v_jc[t + 1]; j++) {
+                    if ((v_ir[j] % v_stride) == (v_i[i] - 1)) {
+                        ptrdiff_t v_id = v_ir[j] / v_stride;
 
-                        for (; id < m_id; id++)
+                        for (; id < v_id; id++)
                             p_vec[t * n_id + id] = NA_REAL;
 
-                        p_vec[t * n_id + id] = m_x[j];
+                        p_vec[t * n_id + id] = v_x[j];
                         id++;
                     }
                 }
