@@ -47,7 +47,6 @@ SimInf_insert_id_time(
     rowinfo_vec *ri,
     SEXP m,
     const ptrdiff_t m_stride,
-    const ptrdiff_t tlen,
     const int *p_id,
     const ptrdiff_t id_len)
 {
@@ -59,11 +58,10 @@ SimInf_insert_id_time(
         return SIMINF_ERR_SPARSE_MODEL; /* #nocov */
 
     for (ptrdiff_t col = 0; col < ncol; col++) {
-        const ptrdiff_t t = col % tlen;
         ptrdiff_t id_last = -1;
         ptrdiff_t i = 0;
 
-        for (ptrdiff_t j = m_jc[t]; j < m_jc[t + 1]; j++) {
+        for (ptrdiff_t j = m_jc[col]; j < m_jc[col + 1]; j++) {
             ptrdiff_t id = m_ir[j] / m_stride;
 
             if (id > id_last) {
@@ -76,7 +74,7 @@ SimInf_insert_id_time(
                     i++;
                 }
 
-                rowinfo_t r = { id, t };
+                rowinfo_t r = { id, col };
                 kv_push(rowinfo_t, *ri, r);
             }
         }
@@ -92,7 +90,6 @@ SimInf_insert_id_time2(
     SEXP m2,
     const ptrdiff_t m1_stride,
     const ptrdiff_t m2_stride,
-    const ptrdiff_t tlen,
     const int *p_id,
     const ptrdiff_t id_len)
 {
@@ -107,17 +104,16 @@ SimInf_insert_id_time2(
         return SIMINF_ERR_SPARSE_MODEL; /* #nocov */
 
     for (ptrdiff_t col = 0; col < m1_ncol; col++) {
-        const ptrdiff_t t = col % tlen;
         ptrdiff_t id_last = -1;
         ptrdiff_t i = 0;
-        ptrdiff_t j1 = m1_jc[t];
-        ptrdiff_t j2 = m2_jc[t];
+        ptrdiff_t j1 = m1_jc[col];
+        ptrdiff_t j2 = m2_jc[col];
 
-        while (j1 < m1_jc[t + 1] || j2 < m2_jc[t + 1]) {
+        while (j1 < m1_jc[col + 1] || j2 < m2_jc[col + 1]) {
             ptrdiff_t id;
 
-            if (j1 < m1_jc[t + 1]) {
-                if (j2 < m2_jc[t + 1]) {
+            if (j1 < m1_jc[col + 1]) {
+                if (j2 < m2_jc[col + 1]) {
                     ptrdiff_t id1 = m1_ir[j1] / m1_stride;
                     ptrdiff_t id2 = m2_ir[j2] / m2_stride;
 
@@ -145,7 +141,7 @@ SimInf_insert_id_time2(
                     i++;
                 }
 
-                rowinfo_t r = { id, t };
+                rowinfo_t r = { id, col };
                 kv_push(rowinfo_t, *ri, r);
             }
         }
@@ -165,7 +161,6 @@ SimInf_create_rowinfo(
     const int v_sparse,
     const ptrdiff_t u_stride,
     const ptrdiff_t v_stride,
-    const ptrdiff_t tlen,
     const int *p_id,
     const ptrdiff_t id_len)
 {
@@ -176,20 +171,20 @@ SimInf_create_rowinfo(
                 return SIMINF_ERR_ALLOC_MEMORY_BUFFER;      /* #nocov */
 
             return SimInf_insert_id_time2(*out, u, v, u_stride,
-                                          v_stride, tlen, p_id, id_len);
+                                          v_stride, p_id, id_len);
         }
     } else if (u_i_len > 0 && u_sparse) {
         *out = calloc(1, sizeof(rowinfo_vec));
         if (!*out)
             return SIMINF_ERR_ALLOC_MEMORY_BUFFER;          /* #nocov */
 
-        return SimInf_insert_id_time(*out, u, u_stride, tlen, p_id, id_len);
+        return SimInf_insert_id_time(*out, u, u_stride, p_id, id_len);
     } else if (v_i_len > 0 && v_sparse) {
         *out = calloc(1, sizeof(rowinfo_vec));
         if (!*out)
             return SIMINF_ERR_ALLOC_MEMORY_BUFFER;          /* #nocov */
 
-        return SimInf_insert_id_time(*out, v, v_stride, tlen, p_id, id_len);
+        return SimInf_insert_id_time(*out, v, v_stride, p_id, id_len);
     }
 
     return 0;
@@ -566,8 +561,7 @@ SimInf_trajectory(
      * time information in the sparse matrices. */
     rowinfo_vec *ri = NULL;
     err = SimInf_create_rowinfo(&ri, u, v, u_i_len, v_i_len, u_sparse,
-                                v_sparse, u_stride, v_stride, tlen, p_id,
-                                id_len);
+                                v_sparse, u_stride, v_stride, p_id, id_len);
     if (err)
         goto cleanup;           /* #nocov */
     const R_xlen_t nrow = SimInf_number_of_rows(ri, tlen, id_len, replicates);
