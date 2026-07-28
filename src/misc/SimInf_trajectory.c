@@ -105,36 +105,36 @@ SimInf_insert_id_time(
 static int
 SimInf_insert_id_time2(
     rowinfo_vec *ri,
-    SEXP m1,
-    SEXP m2,
-    const ptrdiff_t m1_stride,
-    const ptrdiff_t m2_stride,
+    SEXP u,
+    SEXP v,
+    const ptrdiff_t u_stride,
+    const ptrdiff_t v_stride,
     const int *p_id,
     const ptrdiff_t id_len)
 {
-    const int *m1_ir = INTEGER(R_do_slot(m1, Rf_install("i")));
-    const int *m2_ir = INTEGER(R_do_slot(m2, Rf_install("i")));
-    const int *m1_jc = INTEGER(R_do_slot(m1, Rf_install("p")));
-    const int *m2_jc = INTEGER(R_do_slot(m2, Rf_install("p")));
-    const ptrdiff_t m1_ncol = INTEGER(R_do_slot(m1, Rf_install("Dim")))[1];
-    const ptrdiff_t m2_ncol = INTEGER(R_do_slot(m2, Rf_install("Dim")))[1];
+    const int *u_ir = INTEGER(R_do_slot(u, Rf_install("i")));
+    const int *u_jc = INTEGER(R_do_slot(u, Rf_install("p")));
+    const ptrdiff_t u_ncol = INTEGER(R_do_slot(u, Rf_install("Dim")))[1];
+    const int *v_ir = INTEGER(R_do_slot(v, Rf_install("i")));
+    const int *v_jc = INTEGER(R_do_slot(v, Rf_install("p")));
+    const ptrdiff_t v_ncol = INTEGER(R_do_slot(v, Rf_install("Dim")))[1];
 
-    if (m1_stride < 1 || m2_stride < 1 || m1_ncol != m2_ncol)
+    if (u_stride < 1 || v_stride < 1 || u_ncol != v_ncol)
         return SIMINF_ERR_SPARSE_MODEL; /* #nocov */
 
-    for (ptrdiff_t col = 0; col < m1_ncol; col++) {
+    for (ptrdiff_t col = 0; col < u_ncol; col++) {
         ptrdiff_t id_last = -1;
         ptrdiff_t i = 0;
-        ptrdiff_t j1 = m1_jc[col];
-        ptrdiff_t j2 = m2_jc[col];
+        ptrdiff_t j1 = u_jc[col];
+        ptrdiff_t j2 = v_jc[col];
 
-        while (j1 < m1_jc[col + 1] || j2 < m2_jc[col + 1]) {
+        while (j1 < u_jc[col + 1] || j2 < v_jc[col + 1]) {
             ptrdiff_t id;
 
-            if (j1 < m1_jc[col + 1]) {
-                if (j2 < m2_jc[col + 1]) {
-                    ptrdiff_t id1 = m1_ir[j1] / m1_stride;
-                    ptrdiff_t id2 = m2_ir[j2] / m2_stride;
+            if (j1 < u_jc[col + 1]) {
+                if (j2 < v_jc[col + 1]) {
+                    ptrdiff_t id1 = u_ir[j1] / u_stride;
+                    ptrdiff_t id2 = v_ir[j2] / v_stride;
 
                     if (id1 < id2) {
                         id = id1;
@@ -144,10 +144,10 @@ SimInf_insert_id_time2(
                         j2++;
                     }
                 } else {
-                    id = m1_ir[j1++] / m1_stride;
+                    id = u_ir[j1++] / u_stride;
                 }
             } else {
-                id = m2_ir[j2++] / m2_stride;
+                id = v_ir[j2++] / v_stride;
             }
 
             if (id > id_last) {
