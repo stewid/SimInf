@@ -445,10 +445,10 @@ SimInf_v_sparse2df(
 static void
 SimInf_u_dense2df(
     SEXP dst,
-    const int *m,
-    const int *m_i,
-    const ptrdiff_t m_i_len,
-    const ptrdiff_t m_stride,
+    const int *u,
+    const int *u_i,
+    const ptrdiff_t u_i_len,
+    const ptrdiff_t u_stride,
     const ptrdiff_t nrow,
     const ptrdiff_t tlen,
     const ptrdiff_t id_len,
@@ -457,8 +457,8 @@ SimInf_u_dense2df(
     const int *p_id,
     const ptrdiff_t replicates)
 {
-    for (ptrdiff_t i = 0; i < m_i_len; i++) {
-        const int *p_m = m + m_i[i] - 1;
+    for (ptrdiff_t i = 0; i < u_i_len; i++) {
+        const int *p_u = u + u_i[i] - 1;
 
         SEXP vec;
         SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(INTSXP, nrow));
@@ -477,7 +477,7 @@ SimInf_u_dense2df(
                     const ptrdiff_t k2 = r * tlen * id_n;
                     for (ptrdiff_t l = 0; l < id_len; l++) {
                         p_vec[j1 + k1 + l] =
-                            p_m[(j2 + k2 + p_id[l] - 1) * m_stride];
+                            p_u[(j2 + k2 + p_id[l] - 1) * u_stride];
                     }
                 }
             }
@@ -490,7 +490,7 @@ SimInf_u_dense2df(
                 for (ptrdiff_t r = 0; r < replicates; r++) {
                     const ptrdiff_t k = r * tlen * id_len;
                     for (ptrdiff_t l = 0; l < id_len; l++) {
-                        p_vec[j + k + l] = p_m[(j + k + l) * m_stride];
+                        p_vec[j + k + l] = p_u[(j + k + l) * u_stride];
                     }
                 }
             }
@@ -501,10 +501,10 @@ SimInf_u_dense2df(
 static void
 SimInf_v_dense2df(
     SEXP dst,
-    const double *m,
-    const int *m_i,
-    const ptrdiff_t m_i_len,
-    const ptrdiff_t m_stride,
+    const double *v,
+    const int *v_i,
+    const ptrdiff_t v_i_len,
+    const ptrdiff_t v_stride,
     const ptrdiff_t nrow,
     const ptrdiff_t tlen,
     const ptrdiff_t id_len,
@@ -513,8 +513,8 @@ SimInf_v_dense2df(
     const int *p_id,
     const ptrdiff_t replicates)
 {
-    for (ptrdiff_t i = 0; i < m_i_len; i++) {
-        const double *p_m = m + m_i[i] - 1;
+    for (ptrdiff_t i = 0; i < v_i_len; i++) {
+        const double *p_v = v + v_i[i] - 1;
 
         SEXP vec;
         SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(REALSXP, nrow));
@@ -533,7 +533,7 @@ SimInf_v_dense2df(
                     const ptrdiff_t k2 = r * tlen * id_n;
                     for (ptrdiff_t l = 0; l < id_len; l++) {
                         p_vec[j1 + k1 + l] =
-                            p_m[(j2 + k2 + p_id[l] - 1) * m_stride];
+                            p_v[(j2 + k2 + p_id[l] - 1) * v_stride];
                     }
                 }
             }
@@ -546,7 +546,7 @@ SimInf_v_dense2df(
                 for (ptrdiff_t r = 0; r < replicates; r++) {
                     const ptrdiff_t k = r * tlen * id_len;
                     for (ptrdiff_t l = 0; l < id_len; l++) {
-                        p_vec[j + k + l] = p_m[(j + k + l) * m_stride];
+                        p_vec[j + k + l] = p_v[(j + k + l) * v_stride];
                     }
                 }
             }
