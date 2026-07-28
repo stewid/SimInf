@@ -196,6 +196,38 @@ SimInf_insert_id_time2(
     return 0;
 }
 
+/**
+ * Create the rowinfo vector for trajectory extraction from sparse matrices.
+ *
+ * Determines which identifiers and columns need to be extracted from
+ * sparse result matrices (U_sparse and/or V_sparse) and populates a
+ * rowinfo_vec accordingly. The function dispatches to:
+ *
+ * - SimInf_insert_id_time2: when both U_sparse and V_sparse are
+ *   available, merging identifiers from both matrices.
+ * - SimInf_insert_id_time: when only one of U_sparse or V_sparse is
+ *   available.
+ *
+ * If neither matrix is sparse or neither has requested compartments
+ * (u_i_len and v_i_len are 0), no rowinfo is created and *out remains
+ * NULL.
+ *
+ * @param out Output pointer to a newly allocated rowinfo_vec. Set to
+ *     NULL if no sparse extraction is needed.
+ * @param u The discrete state result (U or U_sparse).
+ * @param v The continuous state result (V or V_sparse).
+ * @param u_i_len Number of compartments requested from U.
+ * @param v_i_len Number of compartments requested from V.
+ * @param u_sparse Non-zero if u is a dgCMatrix sparse matrix.
+ * @param v_sparse Non-zero if v is a dgCMatrix sparse matrix.
+ * @param u_stride Number of rows per identifier in U_sparse.
+ * @param v_stride Number of rows per identifier in V_sparse.
+ * @param p_id Either NULL to include all identifiers, or a sorted
+ *     one-based integer vector of identifiers to include.
+ * @param id_len Length of p_id. Ignored if p_id is NULL.
+ * @return 0 on success, or SIMINF_ERR_ALLOC_MEMORY_BUFFER if
+ *     allocation fails.
+ */
 static int
 SimInf_create_rowinfo(
     rowinfo_vec **out,
