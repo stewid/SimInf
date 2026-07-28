@@ -157,33 +157,33 @@ SimInf_insert_id_time2(
 static int
 SimInf_create_rowinfo(
     rowinfo_vec **out,
-    SEXP dm,
+    SEXP u,
     SEXP cm,
-    const ptrdiff_t dm_i_len,
+    const ptrdiff_t u_i_len,
     const ptrdiff_t cm_i_len,
-    const int dm_sparse,
+    const int u_sparse,
     const int cm_sparse,
-    const ptrdiff_t dm_stride,
+    const ptrdiff_t u_stride,
     const ptrdiff_t cm_stride,
     const ptrdiff_t tlen,
     const int *p_id,
     const ptrdiff_t id_len)
 {
-    if (dm_i_len > 0 && cm_i_len > 0) {
-        if (dm_sparse && cm_sparse) {
+    if (u_i_len > 0 && cm_i_len > 0) {
+        if (u_sparse && cm_sparse) {
             *out = calloc(1, sizeof(rowinfo_vec));
             if (!*out)
                 return SIMINF_ERR_ALLOC_MEMORY_BUFFER;      /* #nocov */
 
-            return SimInf_insert_id_time2(*out, dm, cm, dm_stride,
+            return SimInf_insert_id_time2(*out, u, cm, u_stride,
                                           cm_stride, tlen, p_id, id_len);
         }
-    } else if (dm_i_len > 0 && dm_sparse) {
+    } else if (u_i_len > 0 && u_sparse) {
         *out = calloc(1, sizeof(rowinfo_vec));
         if (!*out)
             return SIMINF_ERR_ALLOC_MEMORY_BUFFER;          /* #nocov */
 
-        return SimInf_insert_id_time(*out, dm, dm_stride, tlen, p_id, id_len);
+        return SimInf_insert_id_time(*out, u, u_stride, tlen, p_id, id_len);
     } else if (cm_i_len > 0 && cm_sparse) {
         *out = calloc(1, sizeof(rowinfo_vec));
         if (!*out)
@@ -484,32 +484,32 @@ SimInf_dense2df_real(
 /**
  * Extract data from a simulated trajectory as a data.frame.
  *
- * @param dm data for the discrete state matrix to transform
- *        to a data.frame.
- * @param dm_i index (1-based) to compartments in 'dm' to include
- *        in the data.frame.
- * @param dm_lbl state names of the data in 'dm'.
+ * @param u data for the discrete state matrix to transform to a
+ *        data.frame.
+ * @param u_i index (1-based) to compartments in 'u' to include in the
+ *        data.frame.
+ * @param u_lbl state names of the data in 'u'.
  * @param cm data for the continuous state matrix to transform
  *        to a data.frame.
  * @param cm_i index (1-based) to compartments in 'cm' to include
  *        in the data.frame.
  * @param cm_lbl state names of the data in 'cm'.
  * @param tspan a vector of increasing time points for the time
- *        in each column in 'dm' and 'cm'.
+ *        in each column in 'u' and 'cm'.
  * @param id_n number of identifiers in the model.
  * @param id NULL or an integer vector with (1-based) indices of the
  *        identifiers to include in the data.frame.
  * @param id_lbl character vector of length one with the name of the
  *        identifier column.
  * @param n_replicates the number of replicates in the model. This is
- *        only used when dm and/or cm are dense matrices.
+ *        only used when u and/or cm are dense matrices.
  * @return A data.frame.
  */
 attribute_hidden SEXP
 SimInf_trajectory(
-    SEXP dm,
-    SEXP dm_i,
-    SEXP dm_lbl,
+    SEXP u,
+    SEXP u_i,
+    SEXP u_lbl,
     SEXP cm,
     SEXP cm_i,
     SEXP cm_lbl,
@@ -522,10 +522,9 @@ SimInf_trajectory(
     int err = 0;
     int nprotect = 0;
     const int *p_id = Rf_isNull(id) ? NULL : INTEGER(id);
-    const R_xlen_t dm_i_len = XLENGTH(dm_i);
-    const R_xlen_t dm_stride = Rf_isNull(dm_lbl) ? 0 : XLENGTH(dm_lbl);
-    const int dm_sparse = Rf_isS4(dm)
-        && Rf_inherits(dm, "dgCMatrix") ? 1 : 0;
+    const R_xlen_t u_i_len = XLENGTH(u_i);
+    const R_xlen_t u_stride = Rf_isNull(u_lbl) ? 0 : XLENGTH(u_lbl);
+    const int u_sparse = Rf_isS4(u) && Rf_inherits(u, "dgCMatrix") ? 1 : 0;
     const R_xlen_t cm_i_len = XLENGTH(cm_i);
     const R_xlen_t cm_stride = Rf_isNull(cm_lbl) ? 0 : XLENGTH(cm_lbl);
     const int cm_sparse = Rf_isS4(cm)
@@ -539,7 +538,7 @@ SimInf_trajectory(
      * data.frame. The '2' is for the identifier' and 'time'
      * columns. The '(replicates > 1)' is to add a column for the
      * replicate of an identifer and time. */
-    const R_xlen_t ncol = 2 + (replicates > 1) + dm_i_len + cm_i_len;
+    const R_xlen_t ncol = 2 + (replicates > 1) + u_i_len + cm_i_len;
 
     /* Use all available threads in parallel regions. */
     SimInf_set_num_threads(-1);
@@ -552,9 +551,9 @@ SimInf_trajectory(
     SET_STRING_ELT(colnames, col++, Rf_mkChar("time"));
     if (replicates > 1)
         SET_STRING_ELT(colnames, col++, Rf_mkChar("replicate"));
-    for (ptrdiff_t i = 0; i < dm_i_len; i++) {
-        const R_xlen_t j = INTEGER(dm_i)[i] - 1;
-        SET_STRING_ELT(colnames, col++, STRING_ELT(dm_lbl, j));
+    for (ptrdiff_t i = 0; i < u_i_len; i++) {
+        const R_xlen_t j = INTEGER(u_i)[i] - 1;
+        SET_STRING_ELT(colnames, col++, STRING_ELT(u_lbl, j));
     }
     for (ptrdiff_t i = 0; i < cm_i_len; i++) {
         const R_xlen_t j = INTEGER(cm_i)[i] - 1;
@@ -567,8 +566,8 @@ SimInf_trajectory(
      * number of rows depends on unique combinations of identifier and
      * time information in the sparse matrices. */
     rowinfo_vec *ri = NULL;
-    err = SimInf_create_rowinfo(&ri, dm, cm, dm_i_len, cm_i_len, dm_sparse,
-                                cm_sparse, dm_stride, cm_stride, tlen, p_id,
+    err = SimInf_create_rowinfo(&ri, u, cm, u_i_len, cm_i_len, u_sparse,
+                                cm_sparse, u_stride, cm_stride, tlen, p_id,
                                 id_len);
     if (err)
         goto cleanup;           /* #nocov */
@@ -670,17 +669,17 @@ SimInf_trajectory(
     }
 
     /* Copy data from the discrete state matrix. */
-    if (dm_sparse) {
-        SimInf_sparse2df_int(result, ri, dm, INTEGER(dm_i), dm_i_len,
-                             dm_stride, nrow, tlen, id_len, col);
+    if (u_sparse) {
+        SimInf_sparse2df_int(result, ri, u, INTEGER(u_i), u_i_len,
+                             u_stride, nrow, tlen, id_len, col);
     } else {
-        SimInf_dense2df_int(result, INTEGER(dm), INTEGER(dm_i), dm_i_len,
-                            dm_stride, nrow, tlen, id_len, c_id_n, col, p_id,
+        SimInf_dense2df_int(result, INTEGER(u), INTEGER(u_i), u_i_len,
+                            u_stride, nrow, tlen, id_len, c_id_n, col, p_id,
                             replicates);
     }
 
     /* Copy data from the continuous state matrix. */
-    col += dm_i_len;
+    col += u_i_len;
     if (cm_sparse) {
         SimInf_sparse2df_real(result, ri, cm, INTEGER(cm_i), cm_i_len,
                               cm_stride, nrow, tlen, id_len, col);
