@@ -30,11 +30,29 @@
 #  include <omp.h>
 #endif
 
-/* A data structure to keep track of which identifiers and times to
- * extract when data is in sparse matrices. */
+/**
+ * Record of an identifier and column to extract from a sparse matrix.
+ *
+ * During trajectory extraction, SimInf iterates over the columns of a
+ * sparse result matrix (U_sparse or V_sparse) and records each unique
+ * identifier present in each column. Each entry pairs the identifier
+ * index with the column index from which it was found.
+ *
+ * The column index encodes both the time step and the replicate:
+ * downstream code can decompose it as:
+ *
+ *   time      = col % tlen
+ *   replicate = col / tlen
+ *
+ * where tlen is the number of time points in tspan.
+ *
+ * @var id   Zero-based identifier index (node index) within the model.
+ * @var col  Zero-based column index into the sparse matrix, encoding
+ *           both time step and replicate.
+ */
 typedef struct {
     ptrdiff_t id;
-    ptrdiff_t time;
+    ptrdiff_t col;
 } rowinfo_t;
 
 typedef
@@ -307,7 +325,7 @@ SimInf_u_sparse2df(
             ptrdiff_t p_vec_i = 0, j = 0;
 
             while (k < kv_size(*ri)) {
-                ptrdiff_t p_time = kv_A(*ri, k).time;
+                ptrdiff_t p_time = kv_A(*ri, k).col;
 
                 while (u_jc[p_time] <= j && j < u_jc[p_time + 1]) {
                     /* Check if data for column. */
@@ -330,7 +348,7 @@ SimInf_u_sparse2df(
                     }
                 }
 
-                while (k < kv_size(*ri) && kv_A(*ri, k).time <= p_time) {
+                while (k < kv_size(*ri) && kv_A(*ri, k).col <= p_time) {
                     p_vec[p_vec_i++] = NA_INTEGER;
                     k++;
                 }
@@ -388,7 +406,7 @@ SimInf_v_sparse2df(
             ptrdiff_t p_vec_i = 0, j = 0;
 
             while (k < kv_size(*ri)) {
-                ptrdiff_t p_time = kv_A(*ri, k).time;
+                ptrdiff_t p_time = kv_A(*ri, k).col;
 
                 while (v_jc[p_time] <= j && j < v_jc[p_time + 1]) {
                     /* Check if data for column. */
@@ -411,7 +429,7 @@ SimInf_v_sparse2df(
                     }
                 }
 
-                while (k < kv_size(*ri) && kv_A(*ri, k).time <= p_time) {
+                while (k < kv_size(*ri) && kv_A(*ri, k).col <= p_time) {
                     p_vec[p_vec_i++] = NA_REAL;
                     k++;
                 }
@@ -694,7 +712,7 @@ SimInf_trajectory(
         p_vec = INTEGER(vec);
         if (ri) {
             for (size_t i = 0; i < kv_size(*ri); i++)
-                p_vec[i] = (int) p_tspan[kv_A(*ri, i).time];
+                p_vec[i] = (int) p_tspan[kv_A(*ri, i).col];
         } else {
             for (ptrdiff_t t = 0; t < tlen; t++) {
                 const ptrdiff_t j = t * id_len;
@@ -713,7 +731,7 @@ SimInf_trajectory(
         if (ri) {
             for (ptrdiff_t i = 0; i < kv_size(*ri); i++) {
                 SET_STRING_ELT(vec, i,
-                               STRING_ELT(lbl_tspan, kv_A(*ri, i).time));
+                               STRING_ELT(lbl_tspan, kv_A(*ri, i).col));
             }
         } else {
             for (ptrdiff_t t = 0; t < tlen; t++) {
