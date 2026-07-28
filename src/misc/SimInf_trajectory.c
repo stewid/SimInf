@@ -281,7 +281,7 @@ SimInf_number_of_rows(
 }
 
 static void
-SimInf_sparse2df_int(
+SimInf_u_sparse2df(
     SEXP dst,
     rowinfo_vec *ri,
     SEXP m,
@@ -362,7 +362,7 @@ SimInf_sparse2df_int(
 }
 
 static void
-SimInf_sparse2df_real(
+SimInf_v_sparse2df(
     SEXP dst,
     rowinfo_vec *ri,
     SEXP m,
@@ -443,7 +443,7 @@ SimInf_sparse2df_real(
 }
 
 static void
-SimInf_dense2df_int(
+SimInf_u_dense2df(
     SEXP dst,
     const int *m,
     const int *m_i,
@@ -499,7 +499,7 @@ SimInf_dense2df_int(
 }
 
 static void
-SimInf_dense2df_real(
+SimInf_v_dense2df(
     SEXP dst,
     const double *m,
     const int *m_i,
@@ -741,23 +741,23 @@ SimInf_trajectory(
 
     /* Copy data from the discrete state matrix. */
     if (u_sparse) {
-        SimInf_sparse2df_int(result, ri, u, INTEGER(u_i), u_i_len,
-                             u_stride, nrow, tlen, id_len, col);
+        SimInf_u_sparse2df(result, ri, u, INTEGER(u_i), u_i_len,
+                           u_stride, nrow, tlen, id_len, col);
     } else {
-        SimInf_dense2df_int(result, INTEGER(u), INTEGER(u_i), u_i_len,
-                            u_stride, nrow, tlen, id_len, c_id_n, col, p_id,
-                            replicates);
+        SimInf_u_dense2df(result, INTEGER(u), INTEGER(u_i), u_i_len,
+                          u_stride, nrow, tlen, id_len, c_id_n, col, p_id,
+                          replicates);
     }
 
     /* Copy data from the continuous state matrix. */
     col += u_i_len;
     if (v_sparse) {
-        SimInf_sparse2df_real(result, ri, v, INTEGER(v_i), v_i_len,
-                              v_stride, nrow, tlen, id_len, col);
+        SimInf_v_sparse2df(result, ri, v, INTEGER(v_i), v_i_len,
+                           v_stride, nrow, tlen, id_len, col);
     } else {
-        SimInf_dense2df_real(result, REAL(v), INTEGER(v_i), v_i_len,
-                             v_stride, nrow, tlen, id_len, c_id_n, col, p_id,
-                             replicates);
+        SimInf_v_dense2df(result, REAL(v), INTEGER(v_i), v_i_len,
+                          v_stride, nrow, tlen, id_len, c_id_n, col, p_id,
+                          replicates);
     }
 
 cleanup:
