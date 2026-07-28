@@ -102,6 +102,33 @@ SimInf_insert_id_time(
     return 0;
 }
 
+/**
+ * Extract identifiers and column indices from two sparse matrices
+ * (U_sparse and V_sparse).
+ *
+ * Merges identifiers from U_sparse and V_sparse, which share the same
+ * column structure. For each column, identifiers from both matrices
+ * are merged in sorted order, ensuring that each unique identifier
+ * appears only once per column in the output. Each entry records the
+ * identifier and the column index. When a subset of identifiers is
+ * requested (p_id != NULL), only matching identifiers are included.
+ *
+ * The column index encodes both the time step and the replicate,
+ * which downstream code can decompose using col % tlen and col / tlen.
+ *
+ * @param ri Output vector to append rowinfo entries to.
+ * @param u The U_sparse dgCMatrix sparse matrix.
+ * @param v The V_sparse dgCMatrix sparse matrix.
+ * @param u_stride Number of rows per identifier in U_sparse (e.g.,
+ *     Nc).
+ * @param v_stride Number of rows per identifier in V_sparse (e.g.,
+ *     Nd).
+ * @param p_id Either NULL to include all identifiers, or a sorted
+ *     one-based integer vector of identifiers to include.
+ * @param id_len Length of p_id. Ignored if p_id is NULL.
+ * @return 0 on success, or SIMINF_ERR_SPARSE_MODEL if a stride is < 1
+ *     or if U_sparse and V_sparse have different numbers of columns.
+ */
 static int
 SimInf_insert_id_time2(
     rowinfo_vec *ri,
