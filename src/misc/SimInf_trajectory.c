@@ -41,7 +41,26 @@ typedef
 kvec_t(
     rowinfo_t) rowinfo_vec;
 
-/* Extract identifiers and times when data is in a sparse matrix. */
+/**
+ * Extract identifiers and column indices from a single sparse matrix.
+ *
+ * Iterates over all columns in the sparse matrix (m) and records each
+ * unique identifier found per column into the rowinfo vector (ri).
+ * Each entry stores the identifier and the column index. When a
+ * subset of identifiers is requested (p_id != NULL), only matching
+ * identifiers are included. The column index encodes both the time
+ * step and the replicate, which downstream code can decompose using
+ * col % tlen and col / tlen.
+ *
+ * @param ri Output vector to append rowinfo entries to.
+ * @param m A dgCMatrix sparse matrix (either U_sparse or V_sparse).
+ * @param m_stride Number of matrix rows per identifier (e.g., Nc for U
+ *     or Nd for V). Used to compute the identifier from a row index.
+ * @param p_id Either NULL to include all identifiers, or a sorted
+ *     one-based integer vector of identifiers to include.
+ * @param id_len Length of p_id. Ignored if p_id is NULL.
+ * @return 0 on success, or SIMINF_ERR_SPARSE_MODEL if m_stride < 1.
+ */
 static int
 SimInf_insert_id_time(
     rowinfo_vec *ri,
