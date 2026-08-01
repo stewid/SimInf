@@ -286,6 +286,29 @@ SimInf_create_rowinfo(
     return 0;
 }
 
+/**
+ * Calculate the number of rows required for the trajectory output.
+ *
+ * Returns the appropriate row count for constructing the result
+ * data.frame in trajectory extraction. The calculation differs
+ * depending on whether sparse or dense result matrices are used:
+ *
+ * - Sparse: The number of unique identifier-column combinations found
+ *   in the sparse matrix is stored in the rowinfo vector (ri). Return
+ *   the size of ri directly.
+ *
+ * - Dense: The output contains one row per combination of time step,
+ *   identifier, and replicate. Return tlen × id_len × replicates.
+ *
+ * @param ri Pointer to the rowinfo vector populated by
+ *     SimInf_create_rowinfo, or NULL if no sparse extraction is
+ *     needed.
+ * @param tlen Number of time points in tspan.
+ * @param id_len Number of identifiers (nodes) to include in the
+ *     output.
+ * @param replicates Number of model replicates.
+ * @return Number of rows for the trajectory output data.frame.
+ */
 static ptrdiff_t
 SimInf_number_of_rows(
     const rowinfo_vec *ri,
