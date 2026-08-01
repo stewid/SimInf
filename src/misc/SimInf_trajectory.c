@@ -332,7 +332,7 @@ SimInf_u_sparse2df(
     const ptrdiff_t nrow,
     const ptrdiff_t tlen,
     const ptrdiff_t n_id,
-    const ptrdiff_t col)
+    const ptrdiff_t dst_col)
 {
     const int *u_ir = INTEGER(R_do_slot(u, Rf_install("i")));
     const int *u_jc = INTEGER(R_do_slot(u, Rf_install("p")));
@@ -340,7 +340,7 @@ SimInf_u_sparse2df(
 
     for (ptrdiff_t i = 0; i < u_i_len; i++) {
         SEXP vec;
-        SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(INTSXP, nrow));
+        SET_VECTOR_ELT(dst, dst_col + i, vec = Rf_allocVector(INTSXP, nrow));
         int *p_vec = INTEGER(vec);
 
         if (ri) {
@@ -413,7 +413,7 @@ SimInf_v_sparse2df(
     const ptrdiff_t nrow,
     const ptrdiff_t tlen,
     const ptrdiff_t n_id,
-    const ptrdiff_t col)
+    const ptrdiff_t dst_col)
 {
     const int *v_ir = INTEGER(R_do_slot(v, Rf_install("i")));
     const int *v_jc = INTEGER(R_do_slot(v, Rf_install("p")));
@@ -421,7 +421,7 @@ SimInf_v_sparse2df(
 
     for (ptrdiff_t i = 0; i < v_i_len; i++) {
         SEXP vec;
-        SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(REALSXP, nrow));
+        SET_VECTOR_ELT(dst, dst_col + i, vec = Rf_allocVector(REALSXP, nrow));
         double *p_vec = REAL(vec);
 
         if (ri) {
@@ -494,7 +494,7 @@ SimInf_u_dense2df(
     const ptrdiff_t tlen,
     const ptrdiff_t id_len,
     const ptrdiff_t id_n,
-    const ptrdiff_t col,
+    const ptrdiff_t dst_col,
     const int *p_id,
     const ptrdiff_t replicates)
 {
@@ -502,7 +502,7 @@ SimInf_u_dense2df(
         const int *p_u = u + u_i[i] - 1;
 
         SEXP vec;
-        SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(INTSXP, nrow));
+        SET_VECTOR_ELT(dst, dst_col + i, vec = Rf_allocVector(INTSXP, nrow));
         int *p_vec = INTEGER(vec);
 
         if (p_id != NULL) {
@@ -550,7 +550,7 @@ SimInf_v_dense2df(
     const ptrdiff_t tlen,
     const ptrdiff_t id_len,
     const ptrdiff_t id_n,
-    const ptrdiff_t col,
+    const ptrdiff_t dst_col,
     const int *p_id,
     const ptrdiff_t replicates)
 {
@@ -558,7 +558,7 @@ SimInf_v_dense2df(
         const double *p_v = v + v_i[i] - 1;
 
         SEXP vec;
-        SET_VECTOR_ELT(dst, col + i, vec = Rf_allocVector(REALSXP, nrow));
+        SET_VECTOR_ELT(dst, dst_col + i, vec = Rf_allocVector(REALSXP, nrow));
         double *p_vec = REAL(vec);
 
         if (p_id != NULL) {
