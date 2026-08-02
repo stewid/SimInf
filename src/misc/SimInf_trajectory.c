@@ -321,6 +321,34 @@ SimInf_number_of_rows(
     return tlen * id_len * replicates;
 }
 
+/**
+ * Extract discrete state data from a sparse matrix into a data.frame.
+ *
+ * Populates one column per requested compartment in the output
+ * data.frame destination (dst), starting at dst_col. The function
+ * operates in two modes:
+ *
+ * - With rowinfo (ri != NULL): Iterates over the rowinfo entries,
+ *   matching sparse data values to the corresponding identifier and
+ *   column. Entries without data are filled with NA_INTEGER. This
+ *   mode is used when trajectory extraction is filtered to specific
+ *   identifiers.
+ *
+ * - Without rowinfo (ri == NULL): Iterates over all columns in the
+ *   sparse matrix and fills data for all identifiers. Missing entries
+ *   are filled with NA_INTEGER. This mode extracts the full matrix
+ *   content.
+ *
+ * @param dst The output list (data.frame columns) to populate.
+ * @param ri Rowinfo vector, or NULL for full extraction.
+ * @param u The U_sparse dgCMatrix sparse matrix.
+ * @param u_i One-based indices of compartments to extract from U.
+ * @param u_i_len Number of compartments to extract.
+ * @param u_stride Number of rows per identifier in U_sparse (Nc).
+ * @param nrow Number of rows in the output columns.
+ * @param n_id Number of identifiers (nodes) in the output.
+ * @param dst_col Starting column offset in dst for the extracted data.
+ */
 static void
 SimInf_u_sparse2df(
     SEXP dst,
@@ -399,6 +427,34 @@ SimInf_u_sparse2df(
     }
 }
 
+/**
+ * Extract continuous state data from a sparse matrix into a data.frame.
+ *
+ * Populates one column per requested continuous state variable in the
+ * output data.frame destination (dst), starting at dst_col. The
+ * function operates in two modes:
+ *
+ * - With rowinfo (ri != NULL): Iterates over the rowinfo entries,
+ *   matching sparse data values to the corresponding identifier and
+ *   column. Entries without data are filled with NA_REAL. This mode
+ *   is used when trajectory extraction is filtered to specific
+ *   identifiers.
+ *
+ * - Without rowinfo (ri == NULL): Iterates over all columns in the
+ *   sparse matrix and fills data for all identifiers. Missing entries
+ *   are filled with NA_REAL. This mode extracts the full matrix
+ *   content.
+ *
+ * @param dst The output list (data.frame columns) to populate.
+ * @param ri Rowinfo vector, or NULL for full extraction.
+ * @param v The V_sparse dgCMatrix sparse matrix.
+ * @param v_i One-based indices of continuous variables to extract from V.
+ * @param v_i_len Number of continuous variables to extract.
+ * @param v_stride Number of rows per identifier in V_sparse (Nd).
+ * @param nrow Number of rows in the output columns.
+ * @param n_id Number of identifiers (nodes) in the output.
+ * @param dst_col Starting column offset in dst for the extracted data.
+ */
 static void
 SimInf_v_sparse2df(
     SEXP dst,
