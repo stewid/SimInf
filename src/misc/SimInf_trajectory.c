@@ -735,7 +735,7 @@ SimInf_trajectory(
         p_vec = INTEGER(vec);
         if (ri) {
             for (size_t i = 0; i < kv_size(*ri); i++)
-                p_vec[i] = (int) p_tspan[kv_A(*ri, i).col];
+                p_vec[i] = (int) p_tspan[kv_A(*ri, i).col % tlen];
         } else {
             for (ptrdiff_t t = 0; t < tlen; t++) {
                 const ptrdiff_t j = t * id_len;
@@ -754,7 +754,7 @@ SimInf_trajectory(
         if (ri) {
             for (ptrdiff_t i = 0; i < kv_size(*ri); i++) {
                 SET_STRING_ELT(vec, i,
-                               STRING_ELT(lbl_tspan, kv_A(*ri, i).col));
+                               STRING_ELT(lbl_tspan, kv_A(*ri, i).col % tlen));
             }
         } else {
             for (ptrdiff_t t = 0; t < tlen; t++) {
