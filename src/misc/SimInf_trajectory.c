@@ -533,6 +533,36 @@ SimInf_v_sparse2df(
     }
 }
 
+/**
+ * Extract discrete state data from a dense matrix into a data.frame.
+ *
+ * Populates one column per requested compartment in the output
+ * data.frame destination (dst), starting at dst_col. The function
+ * operates in two modes:
+ *
+ * - With identifier selection (p_id != NULL): Extracts data only for
+ *   the requested identifiers (nodes), using their one-based indices
+ *   from p_id. The output is ordered by time, then replicate, then
+ *   selected identifier.
+ *
+ * - Without identifier selection (p_id == NULL): Extracts data for all
+ *   identifiers in order. The output is ordered by time, then replicate,
+ *   then identifier.
+ *
+ * @param dst The output list (data.frame columns) to populate.
+ * @param u Pointer to the dense U matrix data (integer).
+ * @param u_i One-based indices of compartments to extract from U.
+ * @param u_i_len Number of compartments to extract.
+ * @param u_stride Number of rows per identifier in U (Nc).
+ * @param nrow Number of rows in the output columns.
+ * @param tlen Number of time points in tspan.
+ * @param id_len Number of identifiers (nodes) in the output.
+ * @param id_n Total number of identifiers (nodes) in the model.
+ * @param dst_col Starting column offset in dst for the extracted data.
+ * @param p_id Either NULL to extract all identifiers, or a sorted
+ *     one-based integer vector of identifiers to include.
+ * @param replicates Number of model replicates.
+ */
 static void
 SimInf_u_dense2df(
     SEXP dst,
@@ -589,6 +619,36 @@ SimInf_u_dense2df(
     }
 }
 
+/**
+ * Extract continuous state data from a dense matrix into a data.frame.
+ *
+ * Populates one column per requested continuous state variable in the
+ * output data.frame destination (dst), starting at dst_col. The
+ * function operates in two modes:
+ *
+ * - With identifier selection (p_id != NULL): Extracts data only for
+ *   the requested identifiers (nodes), using their one-based indices
+ *   from p_id. The output is ordered by time, then replicate, then
+ *   selected identifier.
+ *
+ * - Without identifier selection (p_id == NULL): Extracts data for all
+ *   identifiers in order. The output is ordered by time, then replicate,
+ *   then identifier.
+ *
+ * @param dst The output list (data.frame columns) to populate.
+ * @param v Pointer to the dense V matrix data (double).
+ * @param v_i One-based indices of continuous variables to extract from V.
+ * @param v_i_len Number of continuous variables to extract.
+ * @param v_stride Number of rows per identifier in V (Nd).
+ * @param nrow Number of rows in the output columns.
+ * @param tlen Number of time points in tspan.
+ * @param id_len Number of identifiers (nodes) in the output.
+ * @param id_n Total number of identifiers (nodes) in the model.
+ * @param dst_col Starting column offset in dst for the extracted data.
+ * @param p_id Either NULL to extract all identifiers, or a sorted
+ *     one-based integer vector of identifiers to include.
+ * @param replicates Number of model replicates.
+ */
 static void
 SimInf_v_dense2df(
     SEXP dst,
