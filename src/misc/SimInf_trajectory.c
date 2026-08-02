@@ -769,14 +769,17 @@ SimInf_trajectory(
     if (replicates > 1) {
         SET_VECTOR_ELT(result, col++, vec = Rf_allocVector(INTSXP, nrow));
         p_vec = INTEGER(vec);
-#ifdef _OPENMP
-#  pragma omp parallel for num_threads(SimInf_num_threads())
-#endif
-        for (ptrdiff_t r = 0; r < replicates; r++) {
-            const ptrdiff_t n = tlen * id_len;
-            const ptrdiff_t j = r * n;
-            for (ptrdiff_t i = 0; i < n; i++)
-                p_vec[j + i] = (int) (r + 1);
+
+        if (ri) {
+            for (size_t i = 0; i < kv_size(*ri); i++)
+                p_vec[i] = (int) kv_A(*ri, i).col / tlen + 1;
+        } else {
+            for (ptrdiff_t r = 0; r < replicates; r++) {
+                const ptrdiff_t n = tlen * id_len;
+                const ptrdiff_t j = r * n;
+                for (ptrdiff_t i = 0; i < n; i++)
+                    p_vec[j + i] = (int) (r + 1);
+            }
         }
     }
 
