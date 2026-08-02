@@ -348,9 +348,9 @@ SimInf_u_sparse2df(
             ptrdiff_t p_vec_i = 0, j = 0;
 
             while (k < kv_size(*ri)) {
-                ptrdiff_t p_time = kv_A(*ri, k).col;
+                const ptrdiff_t col = kv_A(*ri, k).col;
 
-                while (u_jc[p_time] <= j && j < u_jc[p_time + 1]) {
+                while (u_jc[col] <= j && j < u_jc[col + 1]) {
                     /* Check if data for column. */
                     if (u_ir[j] % u_stride == (u_i[i] - 1)) {
                         ptrdiff_t u_id = u_ir[j] / u_stride;
@@ -371,7 +371,7 @@ SimInf_u_sparse2df(
                     }
                 }
 
-                while (k < kv_size(*ri) && kv_A(*ri, k).col <= p_time) {
+                while (k < kv_size(*ri) && kv_A(*ri, k).col <= col) {
                     p_vec[p_vec_i++] = NA_INTEGER;
                     k++;
                 }
@@ -429,9 +429,9 @@ SimInf_v_sparse2df(
             ptrdiff_t p_vec_i = 0, j = 0;
 
             while (k < kv_size(*ri)) {
-                ptrdiff_t p_time = kv_A(*ri, k).col;
+                const ptrdiff_t col = kv_A(*ri, k).col;
 
-                while (v_jc[p_time] <= j && j < v_jc[p_time + 1]) {
+                while (v_jc[col] <= j && j < v_jc[col + 1]) {
                     /* Check if data for column. */
                     if (v_ir[j] % v_stride == (v_i[i] - 1)) {
                         ptrdiff_t v_id = v_ir[j] / v_stride;
@@ -452,7 +452,7 @@ SimInf_v_sparse2df(
                     }
                 }
 
-                while (k < kv_size(*ri) && kv_A(*ri, k).col <= p_time) {
+                while (k < kv_size(*ri) && kv_A(*ri, k).col <= col) {
                     p_vec[p_vec_i++] = NA_REAL;
                     k++;
                 }
