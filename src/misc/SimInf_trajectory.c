@@ -330,13 +330,13 @@ SimInf_u_sparse2df(
     const ptrdiff_t u_i_len,
     const ptrdiff_t u_stride,
     const ptrdiff_t nrow,
-    const ptrdiff_t tlen,
     const ptrdiff_t n_id,
     const ptrdiff_t dst_col)
 {
     const int *u_ir = INTEGER(R_do_slot(u, Rf_install("i")));
     const int *u_jc = INTEGER(R_do_slot(u, Rf_install("p")));
     const double *u_x = REAL(R_do_slot(u, Rf_install("x")));
+    const ptrdiff_t ncol = INTEGER(R_do_slot(u, Rf_install("Dim")))[1];
 
     for (ptrdiff_t i = 0; i < u_i_len; i++) {
         SEXP vec;
@@ -377,26 +377,23 @@ SimInf_u_sparse2df(
                 }
             }
         } else {
-#ifdef _OPENMP
-#  pragma omp parallel for num_threads(SimInf_num_threads())
-#endif
-            for (ptrdiff_t t = 0; t < tlen; t++) {
+            for (ptrdiff_t col = 0; col < ncol; col++) {
                 ptrdiff_t id = 0;
 
-                for (ptrdiff_t j = u_jc[t]; j < u_jc[t + 1]; j++) {
+                for (ptrdiff_t j = u_jc[col]; j < u_jc[col + 1]; j++) {
                     if ((u_ir[j] % u_stride) == (u_i[i] - 1)) {
                         ptrdiff_t u_id = u_ir[j] / u_stride;
 
                         for (; id < u_id; id++)
-                            p_vec[t * n_id + id] = NA_INTEGER;
+                            p_vec[col * n_id + id] = NA_INTEGER;
 
-                        p_vec[t * n_id + id] = (int) u_x[j];
+                        p_vec[col * n_id + id] = (int) u_x[j];
                         id++;
                     }
                 }
 
                 for (; id < n_id; id++)
-                    p_vec[t * n_id + id] = NA_INTEGER;
+                    p_vec[col * n_id + id] = NA_INTEGER;
             }
         }
     }
@@ -411,13 +408,13 @@ SimInf_v_sparse2df(
     const ptrdiff_t v_i_len,
     const ptrdiff_t v_stride,
     const ptrdiff_t nrow,
-    const ptrdiff_t tlen,
     const ptrdiff_t n_id,
     const ptrdiff_t dst_col)
 {
     const int *v_ir = INTEGER(R_do_slot(v, Rf_install("i")));
     const int *v_jc = INTEGER(R_do_slot(v, Rf_install("p")));
     const double *v_x = REAL(R_do_slot(v, Rf_install("x")));
+    const ptrdiff_t ncol = INTEGER(R_do_slot(v, Rf_install("Dim")))[1];
 
     for (ptrdiff_t i = 0; i < v_i_len; i++) {
         SEXP vec;
@@ -458,26 +455,23 @@ SimInf_v_sparse2df(
                 }
             }
         } else {
-#ifdef _OPENMP
-#  pragma omp parallel for num_threads(SimInf_num_threads())
-#endif
-            for (ptrdiff_t t = 0; t < tlen; t++) {
+            for (ptrdiff_t col = 0; col < ncol; col++) {
                 ptrdiff_t id = 0;
 
-                for (ptrdiff_t j = v_jc[t]; j < v_jc[t + 1]; j++) {
+                for (ptrdiff_t j = v_jc[col]; j < v_jc[col + 1]; j++) {
                     if ((v_ir[j] % v_stride) == (v_i[i] - 1)) {
                         ptrdiff_t v_id = v_ir[j] / v_stride;
 
                         for (; id < v_id; id++)
-                            p_vec[t * n_id + id] = NA_REAL;
+                            p_vec[col * n_id + id] = NA_REAL;
 
-                        p_vec[t * n_id + id] = v_x[j];
+                        p_vec[col * n_id + id] = v_x[j];
                         id++;
                     }
                 }
 
                 for (; id < n_id; id++)
-                    p_vec[t * n_id + id] = NA_REAL;
+                    p_vec[col * n_id + id] = NA_REAL;
             }
         }
     }
@@ -786,7 +780,7 @@ SimInf_trajectory(
     /* Copy data from the discrete state matrix. */
     if (u_sparse) {
         SimInf_u_sparse2df(result, ri, u, INTEGER(u_i), u_i_len,
-                           u_stride, nrow, tlen, id_len, col);
+                           u_stride, nrow, id_len, col);
     } else {
         SimInf_u_dense2df(result, INTEGER(u), INTEGER(u_i), u_i_len,
                           u_stride, nrow, tlen, id_len, c_id_n, col, p_id,
@@ -797,7 +791,7 @@ SimInf_trajectory(
     col += u_i_len;
     if (v_sparse) {
         SimInf_v_sparse2df(result, ri, v, INTEGER(v_i), v_i_len,
-                           v_stride, nrow, tlen, id_len, col);
+                           v_stride, nrow, id_len, col);
     } else {
         SimInf_v_dense2df(result, REAL(v), INTEGER(v_i), v_i_len,
                           v_stride, nrow, tlen, id_len, c_id_n, col, p_id,
