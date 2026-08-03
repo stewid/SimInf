@@ -862,7 +862,7 @@ SimInf_trajectory(
 
         SET_VECTOR_ELT(result, col++, vec = Rf_allocVector(STRSXP, nrow));
         if (ri) {
-            for (ptrdiff_t i = 0; i < kv_size(*ri); i++) {
+            for (size_t i = 0; i < kv_size(*ri); i++) {
                 SET_STRING_ELT(vec, i,
                                STRING_ELT(lbl_tspan, kv_A(*ri, i).col % tlen));
             }
