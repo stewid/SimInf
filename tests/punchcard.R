@@ -408,4 +408,40 @@ if (SimInf:::have_openmp() && max_threads > 1) {
                                             0.1, 0.3, 0.1, 0.3, 0.4, 0.6,
                                             0.4, 0.6, 0.4, 0.6, 0.4, 0.6,
                                             0.4, 0.6)) < tol))
+
+    tr_exp <- data.frame(
+        node = c(1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L,
+                 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L,
+                 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L),
+        time = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L, 5L, 5L, 6L, 6L, 7L, 7L,
+                 8L, 8L, 9L, 9L, 10L, 10L, 1L, 1L, 2L, 2L, 3L, 3L, 4L,
+                 4L, 5L, 5L, 6L, 6L, 7L, 7L, 8L, 8L, 9L, 9L, 10L, 10L),
+        replicate = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L,
+                      1L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L,
+                      2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L),
+        S = c(101L, NA, NA, 103L, 101L, NA, NA, 103L, 101L, NA, NA, 103L,
+              101L, NA, NA, 103L, 101L, NA, NA, 103L, 104L, NA, NA, 106L,
+              104L, NA, NA, 106L, 104L, NA, NA, 106L, 104L, NA, NA, 106L,
+              104L, NA, NA, 106L),
+        I = c(NA, 3L, 1L, NA, NA, 3L, 1L, NA, NA, 3L, 1L, NA, NA, 3L, 1L,
+              NA, NA, 3L, 1L, NA, NA, 6L, 4L, NA, NA, 6L, 4L, NA, NA, 6L,
+              4L, NA, NA, 6L, 4L, NA, NA, 6L, 4L, NA),
+        phi = c(0.1, NA, NA, 0.3, 0.1, NA, NA, 0.3, 0.1, NA, NA, 0.3, 0.1,
+                NA, NA, 0.3, 0.1, NA, NA, 0.3, 0.4, NA, NA, 0.6, 0.4, NA,
+                NA, 0.6, 0.4, NA, NA, 0.6, 0.4, NA, NA, 0.6, 0.4, NA, NA,
+                0.6))
+
+    tr_obs <- trajectory(result)
+
+    stopifnot(identical(tr_exp$node, tr_obs$node))
+    stopifnot(identical(tr_exp$time, tr_obs$time))
+    stopifnot(identical(tr_exp$replicate, tr_obs$replicate))
+    stopifnot(identical(tr_exp$S, tr_obs$S))
+    stopifnot(identical(tr_exp$I, tr_obs$I))
+    stopifnot(all(is.na(tr_obs$phi[c(2L, 3L, 6L, 7L, 10L, 11L, 14L, 15L, 18L,
+                                     19L, 22L, 23L, 26L, 27L, 30L, 31L, 34L,
+                                     35L, 38L, 39L)])))
+    i <- c(1L, 4L, 5L, 8L, 9L, 12L, 13L, 16L, 17L, 20L, 21L, 24L, 25L,
+           28L, 29L, 32L, 33L, 36L, 37L, 40L)
+    stopifnot(all(abs(tr_obs$phi[i] - tr_exp$phi[i]) < tol))
 }
