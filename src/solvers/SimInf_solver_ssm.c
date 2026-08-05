@@ -61,6 +61,9 @@
  * Steps 3 and 6b are executed serially due to inter-thread
  * dependencies.
  *
+ * This solver uses a single random number stream per thread, shared
+ * across all nodes assigned to that thread.
+ *
  * @param model Array of compartment model structures, one per
  *     thread, holding the node state, transition rates, and solution
  *     buffers.
