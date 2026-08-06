@@ -167,34 +167,22 @@ mparse(
 
 - replicates:
 
-  Number of parallel model replicates to simulate (default `1L`). When
-  `replicates > 1L`, each replicate is simulated independently using its
-  own initial state (from `u0`), but shares the same parameters
-  (`gdata`, `ldata`), scheduled events, and structure (transitions,
-  compartments).
+  Number of model replicates to simulate (default `NULL`, treated as
+  `1L`). When `replicates > 1L`, each replicate is simulated
+  independently using its own initial state (from `u0`), but shares the
+  same parameters (`gdata`, `ldata`), scheduled events, and structure
+  (transitions, compartments).
 
-  The `u0` argument must specify initial states for `replicates * N`
-  nodes, where `N` is the number of nodes in `ldata`. Each block of `N`
-  nodes specifies the initial state for one replicate. This allows
-  different starting conditions per replicate if desired.
+  The `u0` argument must contain initial states for all replicates. Each
+  replicate requires *n* nodes, where *n* is the number of nodes in the
+  model. Thus, `u0` must have `replicates * n` nodes total. Nodes are
+  grouped by replicate: the first *n* nodes belong to replicate 1, the
+  next *n* to replicate 2, and so on. This allows different starting
+  conditions per replicate if desired.
 
-  Supported formats for `u0`:
-
-  - `data.frame`: one row per node, with `replicates * N` rows total.
-
-  - `matrix`: columns are nodes, with `replicates * N` columns total
-    (row names identify parameters).
-
-  - `named vector`: for single-node models with replicates (repeated
-    pattern).
-
-  For `ldata`, the format remains unchanged: `N` nodes (one row per node
-  for data.frame, `N` columns for matrix, or single vector for one
-  node).
-
-  Scheduled events are shared across all replicates—the same event
-  schedule applies to each replicate. If you need replicate-specific
-  events, define separate models.
+  `ldata` remains unchanged: its data per node is shared across all
+  replicates. Scheduled events are also shared—the same event schedule
+  applies to each replicate.
 
   Use this when you need multiple independent stochastic trajectories
   from the same model in a single simulation run. For identical starting

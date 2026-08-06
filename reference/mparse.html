@@ -213,30 +213,22 @@ no additional code is inserted.</p></dd>
 
 
 <dt id="arg-replicates">replicates<a class="anchor" aria-label="anchor" href="#arg-replicates"></a></dt>
-<dd><p>Number of parallel model replicates to simulate
-    (default <code>1L</code>). When <code>replicates &gt; 1L</code>, each replicate
-    is simulated independently using its own initial state (from
-    <code>u0</code>), but shares the same parameters (<code>gdata</code>,
-    <code>ldata</code>), scheduled events, and structure (transitions,
-    compartments).</p>
-<p>The <code>u0</code> argument must specify initial states for
-    <code>replicates * N</code> nodes, where <code>N</code> is the number of
-    nodes in <code>ldata</code>. Each block of <code>N</code> nodes specifies
-    the initial state for one replicate. This allows different
-    starting conditions per replicate if desired.</p>
-<p>Supported formats for <code>u0</code>:</p><ul><li><p><code>data.frame</code>: one row per node, with
-        <code>replicates * N</code> rows total.</p></li>
-<li><p><code>matrix</code>: columns are nodes, with
-        <code>replicates * N</code> columns total (row names identify
-        parameters).</p></li>
-<li><p><code>named vector</code>: for single-node models with
-        replicates (repeated pattern).</p></li>
-</ul><p>For <code>ldata</code>, the format remains unchanged: <code>N</code> nodes
-    (one row per node for data.frame, <code>N</code> columns for matrix,
-    or single vector for one node).</p>
-<p>Scheduled events are shared across all replicates—the same event
-    schedule applies to each replicate. If you need replicate-specific
-    events, define separate models.</p>
+<dd><p>Number of model replicates to simulate (default
+    <code>NULL</code>, treated as <code>1L</code>). When <code>replicates &gt;
+    1L</code>, each replicate is simulated independently using its own
+    initial state (from <code>u0</code>), but shares the same parameters
+    (<code>gdata</code>, <code>ldata</code>), scheduled events, and structure
+    (transitions, compartments).</p>
+<p>The <code>u0</code> argument must contain initial states for all
+    replicates. Each replicate requires <em>n</em> nodes, where
+    <em>n</em> is the number of nodes in the model. Thus, <code>u0</code>
+    must have <code>replicates * n</code> nodes total. Nodes are grouped
+    by replicate: the first <em>n</em> nodes belong to replicate 1,
+    the next <em>n</em> to replicate 2, and so on. This allows
+    different starting conditions per replicate if desired.</p>
+<p><code>ldata</code> remains unchanged: its data per node is shared
+    across all replicates. Scheduled events are also shared—the
+    same event schedule applies to each replicate.</p>
 <p>Use this when you need multiple independent stochastic
     trajectories from the same model in a single simulation run.
     For identical starting conditions across replicates, simply
