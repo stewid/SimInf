@@ -34,8 +34,48 @@
 #include <string.h>
 
 /**
- * SimInf multi-model solver
+ * SimInf split-step method (ssm) solver for multiple replicates per
+ * thread (mssm).
  *
+ * Advances the simulation by running multiple model replicates in
+ * sequence within each thread. Each replicate is a complete
+ * independent simulation of the epidemiological model, using its own
+ * initial state from u0 but sharing the same model structure
+ * (transitions, compartments), parameters (gdata, ldata), and
+ * scheduled events.
+ *
+ * The algorithm follows the same split-step method as
+ * SimInf_solver_ssm but iterates over replicates within each thread:
+ *
+ * 1. For each replicate, integrate the internal epidemiological model
+ *    as a continuous-time Markov chain using direct SSA (Gillespie's
+ *    algorithm). Within each node, transition times are sampled from an
+ *    exponential distribution and the firing transition is selected
+ *    proportionally to its rate.
+ * 2. Incorporate all scheduled E1 events (internal events, such as
+ *    individuals moving between compartments within a node).
+ * 3. Incorporate all scheduled E2 events (external events, such as
+ *    individuals transferring between nodes).
+ * 4. Call the post time step function to perform model-specific actions
+ *    after each unit of time (e.g., update the infectious pressure).
+ *    Transition rates are recalculated in nodes flagged for update.
+ * 5. Advance the global time to the next unit of time.
+ * 6. Store the solution if the current time has reached or passed the
+ *    next time point in tspan. The solution is stored in a dense matrix
+ *    or, optionally, in a sparse matrix.
+ *
+ * Unlike SimInf_solver_ssm, which distributes nodes across threads,
+ * the mssm solver runs multiple full model replicates per
+ * thread. Steps 1-6 are executed per thread in parallel for each
+ * replicate.  This solver uses a single random number stream per
+ * thread, shared across all nodes assigned to that thread.
+ *
+ * @param model Array of compartment model structures, one per
+ *     thread, holding the node state, transition rates, and solution
+ *     buffers.
+ * @param events Array of scheduled event structures, one per thread,
+ *     holding the event queues and RNG state.
+ * @param Nthread Number of threads.
  * @return 0 if Ok, else error code.
  */
 static int
