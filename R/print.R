@@ -167,21 +167,44 @@ summary_transitions <- function(object) {
     cat(paste0(" ", rownames(object@G), collapse = "\n"), sep = "\n")
 }
 
-##' Brief summary of \code{SimInf_model}
+##' Brief summary of a \code{SimInf_model} object
 ##'
-##' @param object The SimInf_model \code{object}
-##' @return None (invisible 'NULL').
+##' Display key characteristics of a \code{\linkS4class{SimInf_model}}
+##' object, including the model name, number of nodes, number of
+##' replicates (if greater than one), number of transitions, scheduled
+##' events, global data, local data, continuous state variables, and
+##' compartments.
+##'
+##' The output differs depending on whether the model has been run:
+##' before running, the result matrices (\code{U} and \code{V}) are
+##' empty; after calling \code{\link{run}}, they contain the simulated
+##' trajectory data and the summary reflects the computed results.
+##'
+##' @param object The \code{\linkS4class{SimInf_model}} object to
+##'     display.
+##' @return The \code{object}, returned invisibly.
+##' @seealso \code{\link{SimInf_model}} for creating model objects,
+##'     \code{\link{run}} for simulating a trajectory from a model,
+##'     \code{\linkS4class{SimInf_model}} for the class definition.
 ##' @include SimInf_model.R
 ##' @export
 ##' @examples
+##' ## For reproducibility, set the seed and number of threads.
+##' set.seed(123)
+##' set_num_threads(1)
+##'
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it to run over 100 days.
-##' model <- SIR(u0 = data.frame(S = rep(99, 10),
-##'                              I = rep(1, 10),
-##'                              R = rep(0, 10)),
-##'              tspan = 1:100,
-##'              beta = 0.16,
-##'              gamma = 0.077)
+##' model <- SIR(
+##'   u0 = data.frame(
+##'     S = rep(99, 10),
+##'     I = rep(1, 10),
+##'     R = rep(0, 10)
+##'   ),
+##'   tspan = 1:100,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
 ##'
 ##' ## Brief summary of the model
 ##' model

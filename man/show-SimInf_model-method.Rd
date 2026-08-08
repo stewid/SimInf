@@ -2,28 +2,47 @@
 % Please edit documentation in R/print.R
 \name{show,SimInf_model-method}
 \alias{show,SimInf_model-method}
-\title{Brief summary of \code{SimInf_model}}
+\title{Brief summary of a \code{SimInf_model} object}
 \usage{
 \S4method{show}{SimInf_model}(object)
 }
 \arguments{
-\item{object}{The SimInf_model \code{object}}
+\item{object}{The \code{\linkS4class{SimInf_model}} object to
+display.}
 }
 \value{
-None (invisible 'NULL').
+The \code{object}, returned invisibly.
 }
 \description{
-Brief summary of \code{SimInf_model}
+Display key characteristics of a \code{\linkS4class{SimInf_model}}
+object, including the model name, number of nodes, number of
+replicates (if greater than one), number of transitions, scheduled
+events, global data, local data, continuous state variables, and
+compartments.
+}
+\details{
+The output differs depending on whether the model has been run:
+before running, the result matrices (\code{U} and \code{V}) are
+empty; after calling \code{\link{run}}, they contain the simulated
+trajectory data and the summary reflects the computed results.
 }
 \examples{
+## For reproducibility, set the seed and number of threads.
+set.seed(123)
+set_num_threads(1)
+
 ## Create an 'SIR' model with 10 nodes and initialise
 ## it to run over 100 days.
-model <- SIR(u0 = data.frame(S = rep(99, 10),
-                             I = rep(1, 10),
-                             R = rep(0, 10)),
-             tspan = 1:100,
-             beta = 0.16,
-             gamma = 0.077)
+model <- SIR(
+  u0 = data.frame(
+    S = rep(99, 10),
+    I = rep(1, 10),
+    R = rep(0, 10)
+  ),
+  tspan = 1:100,
+  beta = 0.16,
+  gamma = 0.077
+)
 
 ## Brief summary of the model
 model
@@ -34,4 +53,9 @@ result <- run(model)
 ## Brief summary of the result. Note that 'U' and 'V' are
 ## non-empty after running the model.
 result
+}
+\seealso{
+\code{\link{SimInf_model}} for creating model objects,
+    \code{\link{run}} for simulating a trajectory from a model,
+    \code{\linkS4class{SimInf_model}} for the class definition.
 }
