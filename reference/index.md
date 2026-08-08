@@ -288,7 +288,7 @@
 - [`show(`*`<SimInf_events>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_events-method.md)
   :
 
-  Brief summary of `SimInf_events`
+  Brief summary of a `SimInf_events` object
 
 - [`show(`*`<SimInf_individual_events>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_individual_events-method.md)
   :
