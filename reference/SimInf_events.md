@@ -117,28 +117,36 @@ S4 class `SimInf_events`
 ## individuals from one node to another.  Use the built-in SIR
 ## model and start with 2 nodes where all individuals are in the
 ## first node (100 per compartment).
-u0 <- data.frame(S = c(100, 0), I = c(100, 0), R = c(100, 0))
+u0 <- data.frame(
+  S = c(100, 0),
+  I = c(100, 0),
+  R = c(100, 0)
+)
 
 ## Then create 300 movement events to transfer all individuals,
 ## one per day, from the first node to the second node. Use the
 ## fourth column in the select matrix where all compartments
 ## can be sampled with equal weight.
-events <- data.frame(event      = rep("extTrans", 300),
-                     time       = 1:300,
-                     node       = 1,
-                     dest       = 2,
-                     n          = 1,
-                     proportion = 0,
-                     select     = 4,
-                     shift      = 0)
+events <- data.frame(
+  event      = rep("extTrans", 300),
+  time       = 1:300,
+  node       = 1,
+  dest       = 2,
+  n          = 1,
+  proportion = 0,
+  select     = 4,
+  shift      = 0
+)
 
 ## Create an SIR model without disease transmission to
 ## demonstrate the events.
-model <- SIR(u0      = u0,
-             tspan  = 1:300,
-             events = events,
-             beta   = 0,
-             gamma  = 0)
+model <- SIR(
+  u0      = u0,
+  tspan  = 1:300,
+  events = events,
+  beta   = 0,
+  gamma  = 0
+)
 
 ## Run the model and plot the number of individuals in
 ## the second node.  As can be seen in the figure, all
