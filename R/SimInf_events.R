@@ -612,12 +612,51 @@ setMethod(
 
 ##' Detailed summary of a \code{SimInf_events} object
 ##'
-##' Shows the number of scheduled events and the number of scheduled
-##' events per event type.
-##' @param object The \code{SimInf_events} object
+##' Display a summary of the scheduled events in a
+##' \code{\linkS4class{SimInf_events}} object. The output includes the
+##' total number of events and summary statistics (count, minimum,
+##' maximum, and average number of individuals affected by each
+##' event).
+##'
+##' Four event types are reported:
+##' \itemize{
+##'   \item \strong{Exit}: Events where individuals are removed from a
+##'   node (e.g., deaths).
+##'   \item \strong{Enter}: Events where individuals are added to a
+##'   node (e.g., births).
+##'   \item \strong{Internal transfer}: Events moving individuals
+##'   between compartments within a node (e.g., vaccination, ageing).
+##'   \item \strong{External transfer}: Events moving individuals
+##'   between different nodes (e.g., livestock movements).
+##' }
+##'
+##' @param object The \code{\linkS4class{SimInf_events}} object to
+##'     summarize.
 ##' @param ... Additional arguments affecting the summary produced.
-##' @return None (invisible 'NULL').
+##'     Currently ignored.
+##' @return None (invisible \code{NULL}).
+##' @seealso \code{\link{SimInf_events}} for creating event objects,
+##'     \code{\linkS4class{SimInf_events}} for the class definition,
+##'     \code{\linkS4class{SimInf_model}} for how events are attached
+##'     to a model, \code{\link{events}} for extracting events from a
+##'     model.
 ##' @export
+##' @examples
+##' ## Create an 'SIR' model with 1600 cattle herds (nodes) and
+##' ## scheduled events for the population of nodes with births,
+##' ## deaths and between-node movements of individuals. Define
+##' ## 'tspan' to record the state of the system at daily time
+##' ## points over 4*365 days.
+##' model <- SIR(
+##'   u0     = u0_SIR(),
+##'   tspan  = 1:(4 * 365),
+##'   events = events_SIR(),
+##'   beta   = 0.16,
+##'   gamma  = 0.077
+##' )
+##'
+##' ## Detailed summary of the events
+##' summary(events(model))
 setMethod(
     "summary",
     signature(object = "SimInf_events"),
@@ -643,6 +682,8 @@ setMethod(
                 cat("0\n")
             }
         }
+
+        invisible(NULL)
     }
 )
 
