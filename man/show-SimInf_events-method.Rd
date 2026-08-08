@@ -2,16 +2,43 @@
 % Please edit documentation in R/SimInf_events.R
 \name{show,SimInf_events-method}
 \alias{show,SimInf_events-method}
-\title{Brief summary of \code{SimInf_events}}
+\title{Brief summary of a \code{SimInf_events} object}
 \usage{
 \S4method{show}{SimInf_events}(object)
 }
 \arguments{
-\item{object}{The SimInf_events \code{object}}
+\item{object}{The \code{\linkS4class{SimInf_events}} object to
+display.}
 }
 \value{
-None (invisible 'NULL').
+The \code{object}, returned invisibly.
 }
 \description{
-Shows the number of scheduled events.
+Display the number of scheduled events in a
+\code{\linkS4class{SimInf_events}} object. The count reflects the
+total number of event entries in the event schedule, including
+both internal (E1) and external (E2) events.
+}
+\examples{
+## Create an 'SIR' model with 1600 cattle herds (nodes) and
+## scheduled events for the population of nodes with births,
+## deaths and between-node movements of individuals. Define
+## 'tspan' to record the state of the system at daily time
+## points over 4*365 days.
+model <- SIR(
+  u0     = u0_SIR(),
+  tspan  = 1:(4 * 365),
+  events = events_SIR(),
+  beta   = 0.16,
+  gamma  = 0.077
+)
+
+## Brief summary of the events
+events(model)
+}
+\seealso{
+\code{\link{SimInf_events}} for creating event objects,
+    \code{\linkS4class{SimInf_events}} for the class definition,
+    \code{\linkS4class{SimInf_model}} for how events are attached
+    to a model.
 }
