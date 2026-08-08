@@ -1,6 +1,10 @@
-# Brief summary of `SimInf_model`
+# Brief summary of a `SimInf_model` object
 
-Brief summary of `SimInf_model`
+Display key characteristics of a
+[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+object, including the model name, number of nodes, number of replicates
+(if greater than one), number of transitions, scheduled events, global
+data, local data, continuous state variables, and compartments.
 
 ## Usage
 
@@ -13,23 +17,50 @@ show(object)
 
 - object:
 
-  The SimInf_model `object`
+  The
+  [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+  object to display.
 
 ## Value
 
-None (invisible 'NULL').
+The `object`, returned invisibly.
+
+## Details
+
+The output differs depending on whether the model has been run: before
+running, the result matrices (`U` and `V`) are empty; after calling
+[`run`](http://stewid.github.io/SimInf/reference/run.md), they contain
+the simulated trajectory data and the summary reflects the computed
+results.
+
+## See also
+
+[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model.md)
+for creating model objects,
+[`run`](http://stewid.github.io/SimInf/reference/run.md) for simulating
+a trajectory from a model,
+[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+for the class definition.
 
 ## Examples
 
 ``` r
+## For reproducibility, set the seed and number of threads.
+set.seed(123)
+set_num_threads(1)
+
 ## Create an 'SIR' model with 10 nodes and initialise
 ## it to run over 100 days.
-model <- SIR(u0 = data.frame(S = rep(99, 10),
-                             I = rep(1, 10),
-                             R = rep(0, 10)),
-             tspan = 1:100,
-             beta = 0.16,
-             gamma = 0.077)
+model <- SIR(
+  u0 = data.frame(
+    S = rep(99, 10),
+    I = rep(1, 10),
+    R = rep(0, 10)
+  ),
+  tspan = 1:100,
+  beta = 0.16,
+  gamma = 0.077
+)
 
 ## Brief summary of the model
 model
@@ -68,7 +99,7 @@ result
 #> Compartments
 #> ------------
 #>     Min. 1st Qu. Median  Mean 3rd Qu.  Max.
-#>  S 18.00   68.00  99.00 81.09   99.00 99.00
-#>  I  0.00    0.00   0.00  3.97    6.00 26.00
-#>  R  0.00    1.00   1.00 14.94   18.00 78.00
+#>  S  8.00   30.00  81.50 66.17   99.00 99.00
+#>  I  0.00    0.00   4.50  7.67   15.00 33.00
+#>  R  0.00    1.00   8.00 26.17   57.00 87.00
 ```

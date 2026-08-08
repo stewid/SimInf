@@ -298,7 +298,7 @@
 - [`show(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_model-method.md)
   :
 
-  Brief summary of `SimInf_model`
+  Brief summary of a `SimInf_model` object
 
 - [`show(`*`<SimInf_pfilter>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_pfilter-method.md)
   :
