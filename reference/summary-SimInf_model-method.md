@@ -5,8 +5,9 @@ Display a summary of a
 object, including the model name, number of nodes, number of replicates
 (if greater than one), transitions, global data, local data, scheduled
 events, continuous state variables, and compartments. Compared to
-`show,SimInf_model-method`, the summary additionally displays transition
-details, global and local data summaries, and scheduled events overview.
+[`show`](http://stewid.github.io/SimInf/reference/show-SimInf_model-method.md),
+the summary additionally displays transition details, global and local
+data summaries, and scheduled events overview.
 
 ## Usage
 
@@ -47,8 +48,9 @@ for creating model objects,
 [`run`](http://stewid.github.io/SimInf/reference/run.md) for simulating
 a trajectory from a model,
 [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
-for the class definition, `show,SimInf_model-method` for a brief
-summary.
+for the class definition,
+[`show`](http://stewid.github.io/SimInf/reference/show-SimInf_model-method.md)
+for a brief summary.
 
 ## Examples
 

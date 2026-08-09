@@ -283,7 +283,7 @@
 - [`show(`*`<SimInf_abc>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_abc-method.md)
   :
 
-  Print summary of a `SimInf_abc` object
+  Brief summary of a `SimInf_abc` object
 
 - [`show(`*`<SimInf_events>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_events-method.md)
   :
