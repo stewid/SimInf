@@ -235,9 +235,27 @@ setMethod(
 
 ##' Detailed summary of a \code{SimInf_abc} object
 ##'
-##' @param object The \code{SimInf_abc} object
+##' Display a detailed summary of an approximate Bayesian computation
+##' (ABC) analysis, including the number of particles per generation,
+##' the number of generations, and—for each generation—the acceptance
+##' rate, effective sample size (ESS), and summary statistics
+##' (minimum, first quartile, median, mean, third quartile, and
+##' maximum) for each parameter in the posterior distribution.
+##'
+##' Compared to \code{\link[=show,SimInf_abc-method]{show}}, the
+##' summary additionally displays posterior statistics for all
+##' generations, not just the final one.
+##'
+##' @param object The \code{\linkS4class{SimInf_abc}} object to
+##'     summarize.
 ##' @param ... Additional arguments affecting the summary produced.
-##' @return None (invisible 'NULL').
+##'     Currently ignored.
+##' @return \code{NULL}, returned invisibly.
+##' @seealso \code{\link{abc}} for running an ABC analysis,
+##'     \code{\link{continue_abc}} for continuing an existing ABC
+##'     chain, \code{\linkS4class{SimInf_abc}} for the class
+##'     definition, \code{\link[=show,SimInf_abc-method[{show}} for a
+##'     brief summary.
 ##' @include SimInf_model.R
 ##' @export
 setMethod(
