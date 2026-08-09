@@ -33,6 +33,6 @@ generations, not just the final one.
 \code{\link{abc}} for running an ABC analysis,
     \code{\link{continue_abc}} for continuing an existing ABC
     chain, \code{\linkS4class{SimInf_abc}} for the class
-    definition, \code{\link[=show,SimInf_abc-method[{show}} for a
+    definition, \code{\link[=show,SimInf_abc-method]{show}} for a
     brief summary.
 }
