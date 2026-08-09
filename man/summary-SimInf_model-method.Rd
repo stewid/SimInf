@@ -7,13 +7,63 @@
 \S4method{summary}{SimInf_model}(object, ...)
 }
 \arguments{
-\item{object}{The \code{SimInf_model} object}
+\item{object}{The \code{\linkS4class{SimInf_model}} object to
+summarize.}
 
-\item{...}{Additional arguments affecting the summary produced.}
+\item{...}{Additional arguments affecting the summary
+produced. Currently ignored.}
 }
 \value{
-None (invisible 'NULL').
+\code{NULL}, returned invisibly.
 }
 \description{
-Detailed summary of a \code{SimInf_model} object
+Display a summary of a \code{\linkS4class{SimInf_model}} object,
+including the model name, number of nodes, number of replicates
+(if greater than one), transitions, global data, local data,
+scheduled events, continuous state variables, and
+compartments. Compared to
+\code{\link[methods]{show,SimInf_model-method}}, the summary
+additionally displays transition details, global and local data
+summaries, and scheduled events overview.
+}
+\details{
+As with the \code{show} method, the output differs depending on
+whether the model has been run: before running, the result
+matrices (\code{U} and \code{V}) are empty; after calling
+\code{\link{run}}, they contain the simulated trajectory data.
+}
+\examples{
+## For reproducibility, set the seed and number of threads.
+set.seed(123)
+set_num_threads(1)
+
+## Create an 'SIR' model with 10 nodes and initialise
+## it to run over 100 days.
+model <- SIR(
+  u0 = data.frame(
+    S = rep(99, 10),
+    I = rep(1, 10),
+    R = rep(0, 10)
+  ),
+  tspan = 1:100,
+  beta = 0.16,
+  gamma = 0.077
+)
+
+## Detailed summary of the model
+model
+
+## Run the model and save the result
+result <- run(model)
+
+## Detailed summary of the result. Note that 'U' and 'V' are
+## non-empty after running the model.
+result
+}
+\seealso{
+\code{\link{SimInf_model}} for creating model objects,
+    \code{\link{run}} for simulating a trajectory from a model,
+    \code{\linkS4class{SimInf_model}} for the class definition,
+    \code{\link[methods]{show,SimInf_model-method}} for a brief
+    summary.
 }
