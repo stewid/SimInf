@@ -247,7 +247,7 @@ setMethod(
 ##' (if greater than one), transitions, global data, local data,
 ##' scheduled events, continuous state variables, and
 ##' compartments. Compared to
-##' \code{\link[methods]{show,SimInf_model-method}}, the summary
+##' \code{\link[=show,SimInf_model-method]{show}}, the summary
 ##' additionally displays transition details, global and local data
 ##' summaries, and scheduled events overview.
 ##'
@@ -264,7 +264,7 @@ setMethod(
 ##' @seealso \code{\link{SimInf_model}} for creating model objects,
 ##'     \code{\link{run}} for simulating a trajectory from a model,
 ##'     \code{\linkS4class{SimInf_model}} for the class definition,
-##'     \code{\link[methods]{show,SimInf_model-method}} for a brief
+##'     \code{\link[=show,SimInf_model-method]{show}} for a brief
 ##'     summary.
 ##' @include SimInf_model.R
 ##' @export
