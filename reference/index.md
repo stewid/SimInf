@@ -293,7 +293,7 @@
 - [`show(`*`<SimInf_individual_events>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_individual_events-method.md)
   :
 
-  Print summary of a `SimInf_individual_events` object
+  Brief summary of a `SimInf_individual_events` object
 
 - [`show(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/show-SimInf_model-method.md)
   :
