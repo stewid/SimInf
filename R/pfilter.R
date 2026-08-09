@@ -63,9 +63,27 @@ setMethod(
 
 ##' Detailed summary of a \code{SimInf_pfilter} object
 ##'
-##' @param object The \code{SimInf_pfilter} object.
-##' @param ... Unused additional arguments.
-##' @return \code{invisible(NULL)}.
+##' Display a detailed summary of a bootstrap particle filter
+##' analysis, including the number of particles, log-likelihood
+##' estimate, and model characteristics (model name, number of nodes,
+##' scheduled events, transitions, global data, local data, continuous
+##' state variables, and compartments).
+##'
+##' Compared to \code{\link[=show,SimInf_pfilter-method]{show}}, the
+##' summary additionally displays full model characteristics from the
+##' underlying \code{\linkS4class{SimInf_model}} object.
+##'
+##' @param object The \code{\linkS4class{SimInf_pfilter}} object to
+##'     summarize.
+##' @param ... Additional arguments affecting the summary
+##'     produced. Currently ignored.
+##' @return \code{NULL}, returned invisibly.
+##' @seealso \code{\link{pfilter}} for running a particle filter,
+##'     \code{\link{logLik}} for extracting the log-likelihood,
+##'     \code{\linkS4class{SimInf_pfilter}} for the class definition,
+##'     \code{\linkS4class{SimInf_model}} for the model class embedded
+##'     in the filter, \code{\link[=show,SimInf_pfilter-method]{show}}
+##'     for a brief summary.
 ##' @export
 setMethod(
     "summary",
