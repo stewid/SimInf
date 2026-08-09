@@ -28,7 +28,7 @@ summary(object, ...)
 
 ## Value
 
-None (invisible `NULL`).
+`NULL`, returned invisibly.
 
 ## Details
 
