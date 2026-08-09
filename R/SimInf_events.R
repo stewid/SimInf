@@ -634,7 +634,7 @@ setMethod(
 ##'     summarize.
 ##' @param ... Additional arguments affecting the summary produced.
 ##'     Currently ignored.
-##' @return None (invisible \code{NULL}).
+##' @return \code{NULL}, returned invisibly.
 ##' @seealso \code{\link{SimInf_events}} for creating event objects,
 ##'     \code{\linkS4class{SimInf_events}} for the class definition,
 ##'     \code{\linkS4class{SimInf_model}} for how events are attached

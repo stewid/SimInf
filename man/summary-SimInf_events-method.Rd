@@ -14,7 +14,7 @@ summarize.}
 Currently ignored.}
 }
 \value{
-None (invisible \code{NULL}).
+\code{NULL}, returned invisibly.
 }
 \description{
 Display a summary of the scheduled events in a
