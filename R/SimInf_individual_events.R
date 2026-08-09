@@ -150,10 +150,22 @@ as.data.frame.SimInf_individual_events <- function(x, ...) {
     methods::as(x, "data.frame")
 }
 
-##' Print summary of a \code{SimInf_individual_events} object
+##' Brief summary of a \code{SimInf_individual_events} object
 ##'
-##' @param object The \code{SimInf_individual_events} object.
-##' @return \code{invisible(object)}.
+##' Display the number of unique individuals and the total number of
+##' event records in a \code{\linkS4class{SimInf_individual_events}}
+##' object. The individual count reflects the distinct \code{id}
+##' values, while the event count represents all recorded events
+##' (exit, enter, internal transfer, and external transfer).
+##'
+##' @param object The \code{\linkS4class{SimInf_individual_events}}
+##'     object to display.
+##' @return The \code{object}, returned invisibly.
+##' @seealso \code{\link{individual_events}} for creating
+##'     \code{SimInf_individual_events} objects,
+##'     \code{\linkS4class{SimInf_individual_events}} for the class
+##'     definition, \code{\linkS4class{SimInf_events}} for the
+##'     node-level event class.
 ##' @export
 setMethod(
     "show",
