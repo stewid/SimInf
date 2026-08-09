@@ -251,9 +251,11 @@ setMethod(
 ##' additionally displays transition details, global and local data
 ##' summaries, and scheduled events overview.
 ##'
-##' As with the \code{show} method, the output differs depending on
-##' whether the model has been run: before running, the result
-##' matrices (\code{U} and \code{V}) are empty; after calling
+##' As with the \code{\link[=show,SimInf_model-method]{show}} method,
+##' the output differs depending on whether the model has been run:
+##' before running, the result matrices
+##' (\code{\link[=SimInf_model-class]{U}} and
+##' \code{\link[=SimInf_model-class]{V}}) are empty; after calling
 ##' \code{\link{run}}, they contain the simulated trajectory data.
 ##'
 ##' @param object The \code{\linkS4class{SimInf_model}} object to
