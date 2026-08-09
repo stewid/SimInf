@@ -168,9 +168,27 @@ setMethod(
 
 ##' Detailed summary of a \code{SimInf_pmcmc} object
 ##'
-##' @param object The \code{SimInf_pmcmc} object
-##' @param ... Not used.
-##' @return None (invisible 'NULL').
+##' Display a detailed summary of a particle Markov chain Monte Carlo
+##' (PMCMC) analysis, including the number of iterations, number of
+##' particles, acceptance ratio, model characteristics (name, number
+##' of nodes, transitions), and posterior quantiles (2.5%, 25%, 50%,
+##' 75%, 97.5%), mean, and standard deviation for each estimated
+##' parameter.
+##'
+##' Compared to \code{\link[=show,SimInf_pmcmc-method]{show}}, the
+##' summary additionally displays model characteristics such as the
+##' model name, number of nodes, and transition details.
+##'
+##' @param object The \code{\linkS4class{SimInf_pmcmc}} object to
+##'     summarize.
+##' @param ... Additional arguments affecting the summary
+##'     produced. Currently ignored.
+##' @return \code{NULL}, returned invisibly.
+##' @seealso \code{\link{pmcmc}} for running a PMCMC analysis,
+##'     \code{\link{continue_pmcmc}} for continuing an existing PMCMC
+##'     chain, \code{\linkS4class{SimInf_pmcmc}} for the class
+##'     definition, \code{\link[=show,SimInf_pmcmc-method]{show}} for
+##'     a brief summary.
 ##' @export
 setMethod(
     "summary",

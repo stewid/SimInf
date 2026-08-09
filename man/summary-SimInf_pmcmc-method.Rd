@@ -7,13 +7,32 @@
 \S4method{summary}{SimInf_pmcmc}(object, ...)
 }
 \arguments{
-\item{object}{The \code{SimInf_pmcmc} object}
+\item{object}{The \code{\linkS4class{SimInf_pmcmc}} object to
+summarize.}
 
-\item{...}{Not used.}
+\item{...}{Additional arguments affecting the summary
+produced. Currently ignored.}
 }
 \value{
-None (invisible 'NULL').
+\code{NULL}, returned invisibly.
 }
 \description{
-Detailed summary of a \code{SimInf_pmcmc} object
+Display a detailed summary of a particle Markov chain Monte Carlo
+(PMCMC) analysis, including the number of iterations, number of
+particles, acceptance ratio, model characteristics (name, number
+of nodes, transitions), and posterior quantiles (2.5%, 25%, 50%,
+75%, 97.5%), mean, and standard deviation for each estimated
+parameter.
+}
+\details{
+Compared to \code{\link[=show,SimInf_pmcmc-method]{show}}, the
+summary additionally displays model characteristics such as the
+model name, number of nodes, and transition details.
+}
+\seealso{
+\code{\link{pmcmc}} for running a PMCMC analysis,
+    \code{\link{continue_pmcmc}} for continuing an existing PMCMC
+    chain, \code{\linkS4class{SimInf_pmcmc}} for the class
+    definition, \code{\link[=show,SimInf_pmcmc-method]{show}} for
+    a brief summary.
 }
