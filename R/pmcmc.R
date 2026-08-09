@@ -129,8 +129,19 @@ acceptance_ratio <- function(object) {
 
 ##' Brief summary of a \code{SimInf_pmcmc} object
 ##'
-##' @param object The \code{SimInf_pmcmc} object.
-##' @return \code{invisible(object)}.
+##' Display a summary of a particle Markov chain Monte Carlo (PMCMC)
+##' analysis, including the number of iterations, number of particles,
+##' mixing proportion for the adaptive proposal, acceptance ratio, and
+##' posterior quantiles (2.5%, 25%, 50%, 75%, 97.5%), mean, and
+##' standard deviation for each estimated parameter.
+##'
+##' @param object The \code{\linkS4class{SimInf_pmcmc}} object to
+##'     display.
+##' @return The \code{object}, returned invisibly.
+##' @seealso \code{\link{pmcmc}} for running a PMCMC analysis,
+##'     \code{\link{continue_pmcmc}} for continuing an existing PMCMC
+##'     chain, \code{\linkS4class{SimInf_pmcmc}} for the class
+##'     definition.
 ##' @export
 setMethod(
     "show",
