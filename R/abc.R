@@ -200,10 +200,22 @@ summary_particles <- function(object, i) {
     summary_matrix(t(abc_particles(object, i)))
 }
 
-##' Print summary of a \code{SimInf_abc} object
+##' Brief summary of a \code{SimInf_abc} object
 ##'
-##' @param object The \code{SimInf_abc} object.
-##' @return \code{invisible(object)}.
+##' Display a summary of an approximate Bayesian computation (ABC)
+##' analysis, including the number of particles per generation, the
+##' number of generations, and—for the final generation—the acceptance
+##' rate, effective sample size (ESS), and summary statistics
+##' (minimum, first quartile, median, mean, third quartile, and
+##' maximum) for each parameter in the posterior distribution.
+##'
+##' @param object The \code{\linkS4class{SimInf_abc}} object to
+##'     display.
+##' @return The \code{object}, returned invisibly.
+##' @seealso \code{\link{abc}} for running an ABC analysis,
+##'     \code{\link{continue_abc}} for continuing an existing ABC
+##'     chain, \code{\linkS4class{SimInf_abc}} for the class
+##'     definition.
 ##' @export
 setMethod(
     "show",
