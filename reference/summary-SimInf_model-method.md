@@ -35,8 +35,13 @@ summary(object, ...)
 
 ## Details
 
-As with the `show` method, the output differs depending on whether the
-model has been run: before running, the result matrices (`U` and `V`)
+As with the
+[`show`](http://stewid.github.io/SimInf/reference/show-SimInf_model-method.md)
+method, the output differs depending on whether the model has been run:
+before running, the result matrices
+([`U`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+and
+[`V`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md))
 are empty; after calling
 [`run`](http://stewid.github.io/SimInf/reference/run.md), they contain
 the simulated trajectory data.
