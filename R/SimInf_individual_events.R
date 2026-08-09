@@ -184,9 +184,24 @@ setMethod(
 
 ##' Detailed summary of a \code{SimInf_individual_events} object
 ##'
-##' @param object The \code{SimInf_individual_events} object
+##' Display a summary of a
+##' \code{\linkS4class{SimInf_individual_events}} object, including
+##' the number of unique individuals, the total number of event
+##' records, and the number of events by event type (exit, enter,
+##' internal transfer, and external transfer).
+##'
+##' @param object The \code{\linkS4class{SimInf_individual_events}}
+##'     object to summarize.
 ##' @param ... Additional arguments affecting the summary produced.
-##' @return None (invisible 'NULL').
+##'     Currently ignored.
+##' @return \code{NULL}, returned invisibly.
+##' @seealso \code{\link{individual_events}} for creating
+##'     \code{SimInf_individual_events} objects,
+##'     \code{\linkS4class{SimInf_individual_events}} for the class
+##'     definition, \code{\linkS4class{SimInf_events}} for the
+##'     node-level event class,
+##'     \code{\link[=show,SimInf_individual_events-method]{show}} for
+##'     a brief summary.
 ##' @export
 setMethod(
     "summary",
