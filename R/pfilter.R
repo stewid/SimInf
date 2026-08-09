@@ -39,8 +39,16 @@ setClass(
 
 ##' Brief summary of a \code{SimInf_pfilter} object
 ##'
-##' @param object The \code{SimInf_pfilter} object.
-##' @return \code{invisible(object)}.
+##' Display a brief summary of a bootstrap particle filter analysis,
+##' including the number of particles used and the estimated
+##' log-likelihood.
+##'
+##' @param object The \code{\linkS4class{SimInf_pfilter}} object to
+##'     display.
+##' @return The \code{object}, returned invisibly.
+##' @seealso \code{\link{pfilter}} for running a particle filter,
+##'     \code{\link{logLik}} for extracting the log-likelihood,
+##'     \code{\linkS4class{SimInf_pfilter}} for the class definition.
 ##' @export
 setMethod(
     "show",

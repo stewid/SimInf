@@ -7,11 +7,19 @@
 \S4method{show}{SimInf_pfilter}(object)
 }
 \arguments{
-\item{object}{The \code{SimInf_pfilter} object.}
+\item{object}{The \code{\linkS4class{SimInf_pfilter}} object to
+display.}
 }
 \value{
-\code{invisible(object)}.
+The \code{object}, returned invisibly.
 }
 \description{
-Brief summary of a \code{SimInf_pfilter} object
+Display a brief summary of a bootstrap particle filter analysis,
+including the number of particles used and the estimated
+log-likelihood.
+}
+\seealso{
+\code{\link{pfilter}} for running a particle filter,
+    \code{\link{logLik}} for extracting the log-likelihood,
+    \code{\linkS4class{SimInf_pfilter}} for the class definition.
 }
