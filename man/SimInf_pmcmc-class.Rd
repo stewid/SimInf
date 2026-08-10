@@ -70,5 +70,5 @@ update of the proposal distribution (iteration number).}
 \seealso{
 \code{\link{pmcmc}} for the main PMCMC function,
     \code{\link{continue_pmcmc}} for continuing an existing PMCMC
-    run, and \code{\link{abc}} for ABC-SMC parameter estimation.
+    run.
 }
