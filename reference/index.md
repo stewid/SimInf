@@ -86,7 +86,7 @@
 - [`SimInf_pfilter-class`](http://stewid.github.io/SimInf/reference/SimInf_pfilter-class.md)
   :
 
-  Class `"SimInf_pfilter"`
+  Class `SimInf_pfilter`
 
 - [`SimInf_pmcmc-class`](http://stewid.github.io/SimInf/reference/SimInf_pmcmc-class.md)
   :
