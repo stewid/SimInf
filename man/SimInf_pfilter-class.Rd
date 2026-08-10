@@ -3,25 +3,44 @@
 \docType{class}
 \name{SimInf_pfilter-class}
 \alias{SimInf_pfilter-class}
-\title{Class \code{"SimInf_pfilter"}}
+\title{Class \code{SimInf_pfilter}}
 \description{
-Class \code{"SimInf_pfilter"}
+Storage class for the result of a bootstrap particle filter
+analysis. The class holds the model with a sampled trajectory
+attached, the number of particles used, the estimated
+log-likelihood, and the effective sample size (ESS) at each
+time-point.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{model}}{A \code{SimInf_model} object with one filtered
-trajectory attached.}
+\item{\code{model}}{A \code{\linkS4class{SimInf_model}} object with one
+complete sampled trajectory attached. At the end of the
+filtering, a single particle is drawn from the ensemble at the
+final time-point, and its full state evolution across all
+time-points is reconstructed.}
 
 \item{\code{n_particles}}{An integer with the number of particles that was
-used at each timestep.}
+used at each time-step.}
 
-\item{\code{loglik}}{The estimated log likelihood.}
+\item{\code{loglik}}{The estimated log-likelihood.}
 
-\item{\code{ess}}{A numeric vector with the effective sample size (ESS).
-The effective sample size is computed as
+\item{\code{ess}}{A numeric vector with the effective sample size (ESS) at
+each time-point.  The effective sample size is computed as
 \deqn{\left(\sum_{i=1}^N\!(w_{t}^{i})^2\right)^{-1},}{1 /
 (sum(w_it^2)),} where \eqn{w_{t}^{i}}{w_it} is the normalized
 weight of particle \eqn{i} at time \eqn{t}.}
 }}
 
+\seealso{
+\code{\link{pfilter}} for running a bootstrap particle
+    filter and creating objects of this class,
+    \code{\link[=logLik,SimInf_pfilter-method]{logLik}} for
+    extracting the log-likelihood,
+    \code{\link[=trajectory,SimInf_pfilter-method]{trajectory}}
+    for extracting the filtered trajectory,
+    \code{\link[=prevalence,SimInf_pfilter-method]{prevalence}}
+    for computing prevalence from the filtered trajectory,
+    \code{\linkS4class{SimInf_model}} for the underlying model
+    class.
+}
