@@ -180,7 +180,7 @@
   : Length of the MCMC chain
 
 - [`logLik(`*`<SimInf_pfilter>`*`)`](http://stewid.github.io/SimInf/reference/logLik-SimInf_pfilter-method.md)
-  : Log likelihood
+  : Extract Log-Likelihood
 
 - [`mparse()`](http://stewid.github.io/SimInf/reference/mparse.md) :
 
