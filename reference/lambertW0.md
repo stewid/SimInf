@@ -1,8 +1,9 @@
 # Lambert W0 function
 
-W0(x) is the principal branch of the solution of the function defined by
-\\We^W = x\\ for \\x \>= -1/e\\. The value is calculated using GNU
-Scientific Library (GSL).
+The principal branch of the Lambert W function, which solves \\W e^W =
+x\\. Defined for \\x \>= -1/e\\, with output in the range \\\[-1,
+\infty)\\. The value is calculated using the GNU Scientific Library
+(GSL).
 
 ## Usage
 
@@ -14,7 +15,12 @@ lambertW0(x)
 
 - x:
 
-  numeric vector of values.
+  A numeric vector of values.
+
+## Value
+
+A numeric vector of the same length as `x` containing the principal
+branch of the Lambert W function evaluated at each element.
 
 ## References
 
