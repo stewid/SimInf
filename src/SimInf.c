@@ -84,6 +84,8 @@ SimInf_raise_error(
     case SIMINF_ERR_INVALID_OPTIONS:
         Rf_error("Invalid options.");
         break;
+    case SIMINF_ERR_INVALID_SEED:
+        Rf_error("Invalid 'seed' value.");
     default:                   /* #nocov */
         Rf_error("Unknown error code: %i.", err);       /* #nocov */
         break;
@@ -170,9 +172,32 @@ SimInf_run(
     }
 
     /* seed */
-    GetRNGstate();
-    args.seed = (unsigned long int) (unif_rand() * UINT_MAX);
-    PutRNGstate();
+    SEXP seed = getListElement(options, "seed");
+    if (Rf_isNull(seed)) {
+        GetRNGstate();
+        args.seed = (unsigned long int) (unif_rand() * UINT_MAX);
+        PutRNGstate();
+    } else {
+        switch (TYPEOF(seed)) {
+        case INTSXP:
+            if (Rf_length(seed) != 1 || INTEGER(seed)[0] == NA_INTEGER) {
+                err = SIMINF_ERR_INVALID_SEED;
+                goto cleanup;
+            }
+            args.seed = (unsigned long int)INTEGER(seed)[0];
+            break;
+        case REALSXP:
+            if (Rf_length(seed) != 1 || !R_finite(REAL(seed)[0])) {
+                err = SIMINF_ERR_INVALID_SEED;
+                goto cleanup;
+            }
+            args.seed = (unsigned long int)REAL(seed)[0];
+            break;
+        default:
+            err = SIMINF_ERR_INVALID_SEED;
+            goto cleanup;
+        }
+    }
 
     /* Duplicate model. */
     PROTECT(result = Rf_duplicate(model));

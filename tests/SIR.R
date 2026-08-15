@@ -517,6 +517,37 @@ res <- assertError(.Call(SimInf:::SIR_run,
                          list(solver = 5)))
 check_error(res, "Invalid 'solver' value.")
 
+## Check that an invalid seed argument raises an error.
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:100,
+             beta = 0.16,
+             gamma = 0.077)
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(seed = c(1L, 2L))))
+check_error(res, "Invalid 'seed' value.")
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(seed = NA_integer_)))
+check_error(res, "Invalid 'seed' value.")
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(seed = c(1, 2))))
+check_error(res, "Invalid 'seed' value.")
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(seed = NA_real_)))
+check_error(res, "Invalid 'seed' value.")
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(seed = "1")))
+check_error(res, "Invalid 'seed' value.")
+
 ## Trigger a negative state error
 model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              tspan = 1:100,
