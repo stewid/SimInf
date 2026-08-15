@@ -8,28 +8,28 @@ Run the SimInf stochastic simulation algorithm
 run(model, ...)
 
 # S4 method for class 'SimInf_model'
-run(model, solver = c("ssm", "aem"), ...)
+run(model, ...)
 
 # S4 method for class 'SEIR'
-run(model, solver = c("ssm", "aem"), ...)
+run(model, ...)
 
 # S4 method for class 'SIR'
-run(model, solver = c("ssm", "aem"), ...)
+run(model, ...)
 
 # S4 method for class 'SIS'
-run(model, solver = c("ssm", "aem"), ...)
+run(model, ...)
 
 # S4 method for class 'SISe'
-run(model, solver = c("ssm", "aem"), ...)
+run(model, ...)
 
 # S4 method for class 'SISe3'
-run(model, solver = c("ssm", "aem"), ...)
+run(model, ...)
 
 # S4 method for class 'SISe3_sp'
-run(model, solver = c("ssm", "aem"), ...)
+run(model, ...)
 
 # S4 method for class 'SISe_sp'
-run(model, solver = c("ssm", "aem"), ...)
+run(model, ...)
 
 # S4 method for class 'SimInf_abc'
 run(model, ...)
@@ -44,10 +44,6 @@ run(model, ...)
 - ...:
 
   Additional arguments.
-
-- solver:
-
-  Which numerical solver to utilize. Default is 'ssm'.
 
 ## Value
 

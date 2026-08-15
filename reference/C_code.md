@@ -154,10 +154,10 @@ writeLines(C_code(model))
 #>  * Run a trajectory of the model.
 #>  *
 #>  * @param model The model.
-#>  * @param solver The name of the numerical solver.
+#>  * @param options Options for running the numerical solver.
 #>  * @return A model with a trajectory attached to it.
 #>  */
-#> static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP solver)
+#> static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP options)
 #> {
 #>     static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;
 #>     TRFun tr_fun[] = {&trFun1, &trFun2};
@@ -171,7 +171,7 @@ writeLines(C_code(model))
 #>         }
 #>     }
 #> 
-#>     return SimInf_run(model, solver, tr_fun, &ptsFun);
+#>     return SimInf_run(model, options, tr_fun, &ptsFun);
 #> }
 #> 
 #> /**

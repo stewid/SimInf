@@ -207,10 +207,10 @@ from.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  * Run a trajectory of the model.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  *</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  * @param model The model.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  * @param solver The name of the numerical solver.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  * @param options Options for running the numerical solver.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  * @return A model with a trajectory attached to it.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  */</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP solver)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP options)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     TRFun tr_fun[] = {&amp;trFun1, &amp;trFun2};</span>
@@ -224,7 +224,7 @@ from.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     return SimInf_run(model, solver, tr_fun, &amp;ptsFun);</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     return SimInf_run(model, options, tr_fun, &amp;ptsFun);</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> /**</span>
