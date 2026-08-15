@@ -315,12 +315,14 @@ SimInf_run(
     args.tr_fun = tr_fun;
     args.pts_fun = pts_fun;
 
-    /* Specify the number of threads to use. Make sure to not use more
-     * threads than the number of nodes in the model. */
-    if (args.Nrep > 1)
+    /* Specify the number of threads to use. */
+    if (args.Nrep > 1) {
+        /* Limit threads to the number of replicates in the model. */
         args.Nthread = SimInf_set_num_threads(args.Nrep);
-    else
+    } else {
+        /* Limit threads to the number of nodes in the model. */
         args.Nthread = SimInf_set_num_threads(args.Nn);
+    }
 
     /* Run the simulation solver. */
     if (Rf_isNull(solver)
