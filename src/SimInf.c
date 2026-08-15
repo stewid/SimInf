@@ -88,6 +88,30 @@ SimInf_raise_error(
 }
 
 /**
+ * Get the list element named str (ASCII), or return NULL.
+ *
+ * From the 'Writing R Extensions' manual.
+ */
+static SEXP
+getListElement(
+    SEXP list,
+    const char *str)
+{
+    SEXP elmt = R_NilValue;
+    SEXP names = Rf_getAttrib(list, R_NamesSymbol);
+
+    for (int i = 0; i < Rf_length(list); i++) {
+        if(strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
+            /* ASCII only */
+            elmt = VECTOR_ELT(list, i);
+            break;
+        }
+    }
+
+    return elmt;
+}
+
+/**
  * Initiate and run the simulation
  *
  * @param model The SimInf_model
