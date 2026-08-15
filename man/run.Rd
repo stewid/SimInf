@@ -15,21 +15,21 @@
 \usage{
 run(model, ...)
 
-\S4method{run}{SimInf_model}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SimInf_model}(model, ...)
 
-\S4method{run}{SEIR}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SEIR}(model, ...)
 
-\S4method{run}{SIR}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SIR}(model, ...)
 
-\S4method{run}{SIS}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SIS}(model, ...)
 
-\S4method{run}{SISe}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SISe}(model, ...)
 
-\S4method{run}{SISe3}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SISe3}(model, ...)
 
-\S4method{run}{SISe3_sp}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SISe3_sp}(model, ...)
 
-\S4method{run}{SISe_sp}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SISe_sp}(model, ...)
 
 \S4method{run}{SimInf_abc}(model, ...)
 }
@@ -37,8 +37,6 @@ run(model, ...)
 \item{model}{The SimInf model to run.}
 
 \item{...}{Additional arguments.}
-
-\item{solver}{Which numerical solver to utilize. Default is 'ssm'.}
 }
 \value{
 \code{\link{SimInf_model}} object with result from

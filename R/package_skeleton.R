@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2023 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -312,7 +312,6 @@ create_model_run_fn <- function(name) {
       "##'",
       "##' @rdname run-methods",
       "##' @param model The model to run.",
-      "##' @param solver Which numerical solver to utilize. Default is 'ssm'.",
       "##' @param ... Additional arguments.",
       paste0("##' @return A model with a single stochastic ",
              "solution trajectory attached to it."),
@@ -321,12 +320,12 @@ create_model_run_fn <- function(name) {
       paste0("##' @useDynLib ", name, ", .registration=TRUE"),
       "setMethod(\"run\",",
       paste0("    signature(model = \"", name, "\"),"),
-      "    function(model, solver = c(\"ssm\", \"aem\"), ...) {",
-      "        solver <- match.arg(solver)",
+      "    function(model, ...) {",
+      "        options <- list(...)",
       "        validObject(model)",
       paste0("       .Call(",
              create_valid_C_entry_point(name),
-             "_run, model, solver)"),
+             "_run, model, options)"),
       "    })")
 }
 
@@ -442,13 +441,10 @@ create_model_run_man_file <- function(path, name) {
         "\\title{Run the model}",
         "\\usage{",
         paste0("\\S4method{run}{", name,
-               "}(model, solver = c(\"ssm\", \"aem\"), ...)"),
+               "}(model, ...)"),
         "}",
         "\\arguments{",
         "\\item{model}{The model to run.}",
-        "",
-        paste0("\\item{solver}{Which numerical solver to utilize. ",
-               "Default is 'ssm'.}"),
         "",
         "\\item{...}{Additional arguments.}",
         "}",

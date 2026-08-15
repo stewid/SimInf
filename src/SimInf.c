@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2025 Stefan Widgren
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +81,9 @@ SimInf_raise_error(
     case SIMINF_ERR_SPARSE_MODEL:
         Rf_error("Invalid sparse matrix in model.");
         break;
+    case SIMINF_ERR_INVALID_OPTIONS:
+        Rf_error("Invalid options.");
+        break;
     default:                   /* #nocov */
         Rf_error("Unknown error code: %i.", err);       /* #nocov */
         break;
@@ -115,13 +118,17 @@ getListElement(
  * Initiate and run the simulation
  *
  * @param model The SimInf_model
- * @param solver The numerical solver.
+ * @param options Options for running the numerical solver.
  * @param tr_fun Vector of function pointers to transition rate functions.
  * @param pts_fun Function pointer to callback after each time step
  *        e.g. update infectious pressure.
  */
-attribute_hidden
-    SEXP SimInf_run(SEXP model, SEXP solver, TRFun *tr_fun, PTSFun pts_fun)
+attribute_hidden SEXP
+SimInf_run(
+    SEXP model,
+    SEXP options,
+    TRFun *tr_fun,
+    PTSFun pts_fun)
 {
     int err = 0, nprotect = 0;
     SEXP result = R_NilValue;
@@ -143,7 +150,13 @@ attribute_hidden
         goto cleanup;
     }
 
+    if (!Rf_isNewList(options)) {
+        err = SIMINF_ERR_INVALID_OPTIONS;
+        goto cleanup;
+    }
+
     /* Check solver argument */
+    SEXP solver = getListElement(options, "solver");
     if (!Rf_isNull(solver)) {
         if (!Rf_isString(solver)) {
             err = SIMINF_ERR_UNKNOWN_SOLVER;

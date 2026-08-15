@@ -308,10 +308,10 @@ C_run <- function(transitions) {
       " * Run a trajectory of the model.",
       " *",
       " * @param model The model.",
-      " * @param solver The name of the numerical solver.",
+      " * @param options Options for running the numerical solver.",
       " * @return A model with a trajectory attached to it.",
       " */",
-      "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP solver)",
+      "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP options)",
       "{",
       "    static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;",
       sprintf("    TRFun tr_fun[] = {%s};",
@@ -326,7 +326,7 @@ C_run <- function(transitions) {
       "        }",
       "    }",
       "",
-      "    return SimInf_run(model, solver, tr_fun, &ptsFun);",
+      "    return SimInf_run(model, options, tr_fun, &ptsFun);",
       "}",
       "")
 }

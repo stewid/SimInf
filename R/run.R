@@ -24,7 +24,7 @@
 .dll <- new.env(parent = emptyenv())
 
 ## Expression to be evaluated to run a compiled model.
-.SimInf_model_run <- paste0(".Call(.dll[[key]]$run_fn, model, solver,",
+.SimInf_model_run <- paste0(".Call(.dll[[key]]$run_fn, model, options,",
                             " PACKAGE = .dll[[key]]$name)")
 
 ##' Compile the model C code
@@ -101,7 +101,6 @@ model_dll_key <- function(model) {
 ##'
 ##' @param model The SimInf model to run.
 ##' @param ... Additional arguments.
-##' @param solver Which numerical solver to utilize. Default is 'ssm'.
 ##' @return \code{\link{SimInf_model}} object with result from
 ##'     simulation.
 ##' @references
@@ -144,14 +143,13 @@ setGeneric(
 ## nolint end
 
 ##' @rdname run
-##' @param solver Which numerical solver to utilize. Default is 'ssm'.
 ##' @include SimInf_model.R
 ##' @export
 setMethod(
     "run",
     signature(model = "SimInf_model"),
-    function(model, solver = c("ssm", "aem"), ...) {
-        solver <- match.arg(solver)
+    function(model, ...) {
+        options <- list(...)
         methods::validObject(model)
         key <- model_dll_key(model)
         eval(parse(text = .SimInf_model_run))
@@ -163,10 +161,10 @@ setMethod(
 setMethod(
     "run",
     signature(model = "SEIR"),
-    function(model, solver = c("ssm", "aem"), ...) {
-        solver <- match.arg(solver)
+    function(model, ...) {
+        options <- list(...)
         methods::validObject(model)
-        .Call(SEIR_run, model, solver)
+        .Call(SEIR_run, model, options)
     }
 )
 
@@ -175,10 +173,10 @@ setMethod(
 setMethod(
     "run",
     signature(model = "SIR"),
-    function(model, solver = c("ssm", "aem"), ...) {
-        solver <- match.arg(solver)
+    function(model, ...) {
+        options <- list(...)
         methods::validObject(model)
-        .Call(SIR_run, model, solver)
+        .Call(SIR_run, model, options)
     }
 )
 
@@ -187,10 +185,10 @@ setMethod(
 setMethod(
     "run",
     signature(model = "SIS"),
-    function(model, solver = c("ssm", "aem"), ...) {
-        solver <- match.arg(solver)
+    function(model, ...) {
+        options <- list(...)
         methods::validObject(model)
-        .Call(SIS_run, model, solver)
+        .Call(SIS_run, model, options)
     }
 )
 
@@ -199,10 +197,10 @@ setMethod(
 setMethod(
     "run",
     signature(model = "SISe"),
-    function(model, solver = c("ssm", "aem"), ...) {
-        solver <- match.arg(solver)
+    function(model, ...) {
+        options <- list(...)
         methods::validObject(model)
-        .Call(SISe_run, model, solver)
+        .Call(SISe_run, model, options)
     }
 )
 
@@ -211,10 +209,10 @@ setMethod(
 setMethod(
     "run",
     signature(model = "SISe3"),
-    function(model, solver = c("ssm", "aem"), ...) {
-        solver <- match.arg(solver)
+    function(model, ...) {
+        options <- list(...)
         methods::validObject(model)
-        .Call(SISe3_run, model, solver)
+        .Call(SISe3_run, model, options)
     }
 )
 
@@ -223,10 +221,10 @@ setMethod(
 setMethod(
     "run",
     signature(model = "SISe3_sp"),
-    function(model, solver = c("ssm", "aem"), ...) {
-        solver <- match.arg(solver)
+    function(model, ...) {
+        options <- list(...)
         methods::validObject(model)
-        .Call(SISe3_sp_run, model, solver)
+        .Call(SISe3_sp_run, model, options)
     }
 )
 
@@ -235,9 +233,9 @@ setMethod(
 setMethod(
     "run",
     signature(model = "SISe_sp"),
-    function(model, solver = c("ssm", "aem"), ...) {
-        solver <- match.arg(solver)
+    function(model, ...) {
+        options <- list(...)
         methods::validObject(model)
-        .Call(SISe_sp_run, model, solver)
+        .Call(SISe_sp_run, model, options)
     }
 )
