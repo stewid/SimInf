@@ -97,6 +97,6 @@ result <- run(model_multi, seed = 22)
 plot(result)
 }
 \seealso{
-\code{\link{v0<-}} for updating the initial continuous
-    state.
+\code{\link[=v0<-,SimInf_model-method]{v0<-}} for
+    updating the initial continuous state.
 }

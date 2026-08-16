@@ -85,6 +85,6 @@ plot(result)
 ## v0(model) <- data.frame(phi = c(1.0, 0.5, 0.0))
 }
 \seealso{
-\code{\link{u0<-}} for updating the initial discrete
-    compartment state.
+\code{\link[=u0<-,SimInf_model-method]{u0<-}} for
+    updating the initial discrete compartment state.
 }

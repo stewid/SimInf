@@ -51,8 +51,8 @@
 ##'     \code{named numeric vector}.  Non-data.frame inputs will be
 ##'     coerced to a \code{data.frame}.
 ##' @return The modified \code{SimInf_model} object.
-##' @seealso \code{\link{u0<-}} for updating the initial discrete
-##'     compartment state.
+##' @seealso \code{\link[=u0<-,SimInf_model-method]{u0<-}} for
+##'     updating the initial discrete compartment state.
 ##' @export
 ##' @examples
 ##' ## Create an 'SISe' model with no infected individuals and no

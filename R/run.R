@@ -105,8 +105,8 @@ model_dll_key <- function(model) {
 ##' continuous time from the first to the last time point in
 ##' \code{tspan}. The state of the system is recorded at each time
 ##' point specified in \code{tspan}. Sparse output can be requested
-##' with \code{\link{punchcard<-}} to store only selected time points
-##' or compartments.
+##' with \code{\link[=punchcard<-,SimInf_model-method]{punchcard<-}}
+##' to store only selected time points or compartments.
 ##'
 ##' @param model The SimInf model to run.
 ##' @param ... Optional arguments that affect the simulation:

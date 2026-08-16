@@ -112,8 +112,8 @@ setMethod(
 ##'     vector}.  Non-data.frame inputs will be coerced to a
 ##'     \code{data.frame}.
 ##' @return The modified \code{SimInf_model} object.
-##' @seealso \code{\link{v0<-}} for updating the initial continuous
-##'     state.
+##' @seealso \code{\link[=v0<-,SimInf_model-method]{v0<-}} for
+##'     updating the initial continuous state.
 ##' @export
 ##' @examples
 ##' ## Create a single-node SIR model.
