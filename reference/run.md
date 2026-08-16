@@ -6,7 +6,8 @@ from a SimInf model. The function compiles and loads model-specific C
 code (if not already compiled), initializes the solver, and advances the
 simulation in continuous time from the first to the last time point in
 `tspan`. The state of the system is recorded at each time point
-specified in `tspan`. Sparse output can be requested with `punchcard<-`
+specified in `tspan`. Sparse output can be requested with
+[`punchcard<-`](http://stewid.github.io/SimInf/reference/punchcard-set.md)
 to store only selected time points or compartments.
 
 ## Usage

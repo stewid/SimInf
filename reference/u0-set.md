@@ -53,7 +53,8 @@ with the model structure before updating.
 
 ## See also
 
-`v0<-` for updating the initial continuous state.
+[`v0<-`](http://stewid.github.io/SimInf/reference/v0-set.md) for
+updating the initial continuous state.
 
 ## Examples
 

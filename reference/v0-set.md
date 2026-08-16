@@ -54,7 +54,8 @@ with the model structure before updating.
 
 ## See also
 
-`u0<-` for updating the initial discrete compartment state.
+[`u0<-`](http://stewid.github.io/SimInf/reference/u0-set.md) for
+updating the initial discrete compartment state.
 
 ## Examples
 
