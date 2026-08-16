@@ -253,10 +253,7 @@ no additional code is inserted.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## For reproducibility, set the seed.</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">22</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Create an SIR model with a defined population size variable.</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Create an SIR model with a defined population size variable.</span></span></span>
 <span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">mparse</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  transitions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="st">"S -&gt; beta * S * I / N -&gt; I"</span>,</span></span>
@@ -269,8 +266,11 @@ no additional code is inserted.</p></dd>
 <span class="r-in"><span>  tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Run and plot the result.</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Run the model with a fixed seed for reproducibility.</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">22</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plot the distribution of susceptible, infected and recovered</span></span></span>
+<span class="r-in"><span><span class="co">## individuals.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="mparse-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>

@@ -212,9 +212,6 @@ for creating an installable R package from a `mparse` model.
 ## Examples
 
 ``` r
-## For reproducibility, set the seed.
-set.seed(22)
-
 ## Create an SIR model with a defined population size variable.
 model <- mparse(
   transitions = c(
@@ -228,7 +225,10 @@ model <- mparse(
   tspan = 1:100
 )
 
-## Run and plot the result.
-result <- run(model)
+## Run the model with a fixed seed for reproducibility.
+result <- run(model, seed = 22)
+
+## Plot the distribution of susceptible, infected and recovered
+## individuals.
 plot(result)
 ```

@@ -108,8 +108,7 @@ before running, the result matrices
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## For reproducibility, set the seed and number of threads.</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## For reproducibility, specify the number of threads.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Create an 'SIR' model with 10 nodes and initialise</span></span></span>
@@ -142,10 +141,10 @@ before running, the result matrices
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Empty, please run the model first</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Run the model and save the result</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Run the model with a fixed seed for reproducibility.</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">22</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Detailed summary of the result. Note that 'U' and 'V' are</span></span></span>
+<span class="r-in"><span><span class="co">## Detailed summary of the result. Note that the trajectory is</span></span></span>
 <span class="r-in"><span><span class="co">## non-empty after running the model.</span></span></span>
 <span class="r-in"><span><span class="va">result</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Model: SIR</span>
@@ -161,10 +160,10 @@ before running, the result matrices
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Compartments</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Min. 1st Qu. Median  Mean 3rd Qu.  Max.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  S  8.00   30.00  81.50 66.17   99.00 99.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  I  0.00    0.00   4.50  7.67   15.00 33.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  R  0.00    1.00   8.00 26.17   57.00 87.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Min. 1st Qu. Median Mean 3rd Qu. Max.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  S 11.0    32.0   66.0 62.7    98.0 99.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  I  0.0     1.0    6.0  7.8    12.0 36.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  R  0.0     2.0   16.5 29.5    58.2 88.0</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

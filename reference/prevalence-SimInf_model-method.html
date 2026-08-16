@@ -149,8 +149,7 @@ result as a matrix.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## For reproducibility, set the seed and number of threads.</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## For reproducibility, specify the number of threads.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Create an 'SIR' model with 6 nodes.</span></span></span>
@@ -167,52 +166,52 @@ result as a matrix.</p></dd>
 <span class="r-in"><span>  gamma <span class="op">=</span> <span class="fl">0.077</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Run the model.</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Run the model with a fixed seed for reproducibility.</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 1. Population Prevalence (level = 1, default)</span></span></span>
 <span class="r-in"><span><span class="co">## Proportion of infected individuals in the total population.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="prevalence.html">prevalence</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    time  prevalence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1 0.009661836</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1 0.011272142</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2     2 0.009661836</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     3 0.008051530</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     4 0.006441224</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     5 0.004830918</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     6 0.004830918</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7     7 0.003220612</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8     8 0.003220612</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9     9 0.004830918</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10   10 0.004830918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     3 0.014492754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     4 0.014492754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     5 0.014492754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     6 0.014492754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7     7 0.014492754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8     8 0.012882448</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     9 0.016103060</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   10 0.009661836</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Shorthand: '.' represents all compartments in the model (S + I + R).</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="prevalence.html">prevalence</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    time  prevalence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1 0.009661836</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1 0.011272142</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2     2 0.009661836</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     3 0.008051530</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     4 0.006441224</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     5 0.004830918</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     6 0.004830918</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7     7 0.003220612</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8     8 0.003220612</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9     9 0.004830918</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10   10 0.004830918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     3 0.014492754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     4 0.014492754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     5 0.014492754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     6 0.014492754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7     7 0.014492754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8     8 0.012882448</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     9 0.016103060</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   10 0.009661836</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 2. Node Prevalence (level = 2)</span></span></span>
 <span class="r-in"><span><span class="co">## Proportion of nodes with at least one infected individual.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="prevalence.html">prevalence</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span>, level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    time prevalence</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1     1  0.5000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     2  0.5000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     3  0.5000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     4  0.5000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     5  0.5000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     6  0.5000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     2  0.3333333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     3  0.3333333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     4  0.3333333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     5  0.3333333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     6  0.3333333</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7     7  0.3333333</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8     8  0.3333333</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9     9  0.3333333</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10   10  0.3333333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   10  0.1666667</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 3. Within-Node Prevalence (level = 3)</span></span></span>
 <span class="r-in"><span><span class="co">## Prevalence calculated separately for each node.</span></span></span>
@@ -223,61 +222,61 @@ result as a matrix.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3     3    1 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4     4    1 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5     5    1 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     6    1 0.027777778</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     6    1 0.037037037</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7     1    2 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8     2    2 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8     2    2 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9     3    2 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10    4    2 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11    5    2 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12    6    2 0.027777778</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    6    2 0.037037037</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 13    1    3 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14    2    3 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14    2    3 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15    3    3 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16    4    3 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17    5    3 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18    6    3 0.018518519</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18    6    3 0.064814815</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 19    1    4 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20    2    4 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20    2    4 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 21    3    4 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 22    4    4 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 23    5    4 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24    6    4 0.009259259</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24    6    4 0.064814815</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 25    1    5 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26    2    5 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26    2    5 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27    3    5 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28    4    5 0.009523810</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28    4    5 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29    5    5 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30    6    5 0.009259259</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30    6    5 0.064814815</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 31    1    6 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32    2    6 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32    2    6 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 33    3    6 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34    4    6 0.009523810</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34    4    6 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 35    5    6 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36    6    6 0.009259259</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36    6    6 0.064814815</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 37    1    7 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38    2    7 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38    2    7 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 39    3    7 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40    4    7 0.009523810</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40    4    7 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 41    5    7 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42    6    7 0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42    6    7 0.064814815</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 43    1    8 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44    2    8 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44    2    8 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 45    3    8 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 46    4    8 0.009523810</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 47    5    8 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48    6    8 0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48    6    8 0.064814815</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 49    1    9 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50    2    9 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50    2    9 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 51    3    9 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52    4    9 0.019047619</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52    4    9 0.009523810</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 53    5    9 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54    6    9 0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54    6    9 0.083333333</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 55    1   10 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56    2   10 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56    2   10 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 57    3   10 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58    4   10 0.019047619</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58    4   10 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59    5   10 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60    6   10 0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60    6   10 0.055555556</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 4. Conditional Prevalence</span></span></span>
 <span class="r-in"><span><span class="co">## Calculate prevalence only in nodes where the number of</span></span></span>
@@ -289,57 +288,57 @@ result as a matrix.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3     3    1 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4     4    1 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5     5    1 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     6    1 0.027777778</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     6    1 0.037037037</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7     1    2 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8     2    2 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8     2    2         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9     3    2 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10    4    2 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11    5    2 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12    6    2         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    6    2 0.037037037</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 13    1    3 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14    2    3 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14    2    3         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15    3    3 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16    4    3 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17    5    3 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18    6    3         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18    6    3 0.064814815</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 19    1    4 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20    2    4 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20    2    4         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 21    3    4 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22    4    4         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22    4    4 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 23    5    4 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 24    6    4         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 25    1    5 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26    2    5 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26    2    5         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27    3    5 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28    4    5         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28    4    5 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29    5    5 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 30    6    5         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 31    1    6 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32    2    6 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32    2    6         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 33    3    6 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34    4    6         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34    4    6 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 35    5    6 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 36    6    6         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 37    1    7 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38    2    7 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38    2    7         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 39    3    7 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40    4    7         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40    4    7 0.019047619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 41    5    7 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 42    6    7         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 43    1    8 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44    2    8 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44    2    8         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 45    3    8 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 46    4    8         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 47    5    8 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 48    6    8         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 49    1    9 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50    2    9 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50    2    9         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 51    3    9 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 52    4    9         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 53    5    9 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 54    6    9         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 55    1   10 0.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56    2   10 0.009803922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56    2   10         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 57    3   10 0.000000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 58    4   10         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 59    5   10 0.000000000</span>

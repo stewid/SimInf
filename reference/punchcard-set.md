@@ -53,8 +53,7 @@ object; it does not affect how the solver simulates the trajectory.
 ## Examples
 
 ``` r
-## For reproducibility, set the seed and number of threads.
-set.seed(123)
+## For reproducibility, specify the number of threads.
 set_num_threads(1)
 
 ## Create an 'SIR' model with 6 nodes
@@ -70,14 +69,15 @@ model <- SIR(
   gamma = 0.077
 )
 
-## Run the model with default recording (all data)
-result_full <- run(model)
+## Run the model with default recording (all data).
+## For reproducibility, specify the seed.
+result_full <- run(model, seed = 22)
 head(trajectory(result_full))
 #>   node time   S I R
-#> 1    1    1 100 1 0
+#> 1    1    1  99 2 0
 #> 2    2    1 101 2 0
 #> 3    3    1 102 3 0
-#> 4    4    1 102 5 0
+#> 4    4    1 103 4 0
 #> 5    5    1 103 6 0
 #> 6    6    1 105 6 0
 
@@ -90,13 +90,13 @@ df <- data.frame(
 )
 punchcard(model) <- df
 
-result_sparse <- run(model)
+result_sparse <- run(model, seed = 22)
 trajectory(result_sparse)
 #>   node time   S I R
-#> 1    2    3 100 3 0
-#> 2    4    3 102 5 0
-#> 3    2    5 100 3 0
-#> 4    4    5 100 6 1
+#> 1    2    3 101 2 0
+#> 2    4    3 101 6 0
+#> 3    2    5 100 2 1
+#> 4    4    5 101 3 3
 
 ## Record only specific compartments (e.g., S and R, but not I)
 df <- data.frame(
@@ -105,13 +105,13 @@ df <- data.frame(
   S = TRUE, I = FALSE, R = TRUE
 )
 punchcard(model) <- df
-result_partial <- run(model)
+result_partial <- run(model, seed = 22)
 trajectory(result_partial)
-#>   node time  S  I R
-#> 1    2    3 99 NA 0
-#> 2    4    3 99 NA 1
-#> 3    2    5 98 NA 1
-#> 4    4    5 99 NA 3
+#>   node time   S  I R
+#> 1    2    3 101 NA 0
+#> 2    4    3 101 NA 0
+#> 3    2    5 100 NA 1
+#> 4    4    5 101 NA 3
 
 ## Shortcut: If only 'time' and 'node' are specified, all
 ## compartments are recorded.
@@ -123,12 +123,12 @@ punchcard(model) <- df
 
 ## Reset to record all data (equivalent to no template)
 punchcard(model) <- NULL
-result_reset <- run(model)
+result_reset <- run(model, seed = 22)
 head(trajectory(result_reset))
 #>   node time   S I R
-#> 1    1    1 100 1 0
-#> 2    2    1 100 3 0
-#> 3    3    1 102 2 1
+#> 1    1    1  99 2 0
+#> 2    2    1 101 2 0
+#> 3    3    1 102 3 0
 #> 4    4    1 103 4 0
 #> 5    5    1 103 6 0
 #> 6    6    1 105 6 0

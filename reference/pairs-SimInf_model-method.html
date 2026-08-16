@@ -96,8 +96,7 @@ throughout the simulation.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## For reproducibility, set the seed and number of threads.</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## For reproducibility, specify the number of threads.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Create an 'SIR' model with 10 nodes.</span></span></span>
@@ -112,8 +111,8 @@ throughout the simulation.</p>
 <span class="r-in"><span>  gamma <span class="op">=</span> <span class="fl">0.077</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Run the model.</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Run the model with a fixed seed for reproducibility.</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">22</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Create a scatterplot matrix for all compartments across all</span></span></span>
 <span class="r-in"><span><span class="co">## nodes.</span></span></span>

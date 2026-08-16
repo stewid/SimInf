@@ -59,9 +59,6 @@ with the model structure before updating.
 ## Examples
 
 ``` r
-## For reproducibility, set the seed.
-set.seed(22)
-
 ## Create an 'SISe' model with no infected individuals and no
 ## infectious pressure (phi = 0).
 model <- SISe(
@@ -89,9 +86,9 @@ plot(result)
 
 ## Update the infectious pressure 'phi' in 'v0' using a named
 ## vector.  (Automatically coerced to one row for the single
-## node).
+## node). Run the model with a fixed seed for reproducibility.
 v0(model) <- c(phi = 1)
-result <- run(model)
+result <- run(model, seed = 22)
 plot(result)
 
 

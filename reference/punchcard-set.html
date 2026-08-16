@@ -100,8 +100,7 @@ trajectory.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## For reproducibility, set the seed and number of threads.</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## For reproducibility, specify the number of threads.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Create an 'SIR' model with 6 nodes</span></span></span>
@@ -117,14 +116,15 @@ trajectory.</p>
 <span class="r-in"><span>  gamma <span class="op">=</span> <span class="fl">0.077</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Run the model with default recording (all data)</span></span></span>
-<span class="r-in"><span><span class="va">result_full</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Run the model with default recording (all data).</span></span></span>
+<span class="r-in"><span><span class="co">## For reproducibility, specify the seed.</span></span></span>
+<span class="r-in"><span><span class="va">result_full</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">22</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="trajectory.html">trajectory</a></span><span class="op">(</span><span class="va">result_full</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   node time   S I R</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1    1 100 1 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1    1  99 2 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2    2    1 101 2 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3    3    1 102 3 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    4    1 102 5 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    4    1 103 4 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5    5    1 103 6 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6    6    1 105 6 0</span>
 <span class="r-in"><span></span></span>
@@ -137,13 +137,13 @@ trajectory.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">punchcard</span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">df</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">result_sparse</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">result_sparse</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">22</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="trajectory.html">trajectory</a></span><span class="op">(</span><span class="va">result_sparse</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   node time   S I R</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    2    3 100 3 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    4    3 102 5 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    2    5 100 3 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    4    5 100 6 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    2    3 101 2 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    4    3 101 6 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    2    5 100 2 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    4    5 101 3 3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Record only specific compartments (e.g., S and R, but not I)</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
@@ -152,13 +152,13 @@ trajectory.</p>
 <span class="r-in"><span>  S <span class="op">=</span> <span class="cn">TRUE</span>, I <span class="op">=</span> <span class="cn">FALSE</span>, R <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">punchcard</span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">df</span></span></span>
-<span class="r-in"><span><span class="va">result_partial</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">result_partial</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">22</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="trajectory.html">trajectory</a></span><span class="op">(</span><span class="va">result_partial</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   node time  S  I R</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    2    3 99 NA 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    4    3 99 NA 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    2    5 98 NA 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    4    5 99 NA 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   node time   S  I R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    2    3 101 NA 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    4    3 101 NA 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    2    5 100 NA 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    4    5 101 NA 3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Shortcut: If only 'time' and 'node' are specified, all</span></span></span>
 <span class="r-in"><span><span class="co">## compartments are recorded.</span></span></span>
@@ -170,12 +170,12 @@ trajectory.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Reset to record all data (equivalent to no template)</span></span></span>
 <span class="r-in"><span><span class="fu">punchcard</span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></span>
-<span class="r-in"><span><span class="va">result_reset</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">result_reset</span> <span class="op">&lt;-</span> <span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">22</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="trajectory.html">trajectory</a></span><span class="op">(</span><span class="va">result_reset</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   node time   S I R</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1    1 100 1 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    2    1 100 3 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    3    1 102 2 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1    1  99 2 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    2    1 101 2 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    3    1 102 3 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4    4    1 103 4 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5    5    1 103 6 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6    6    1 105 6 0</span>

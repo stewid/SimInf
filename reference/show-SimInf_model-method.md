@@ -49,8 +49,7 @@ for the class definition.
 ## Examples
 
 ``` r
-## For reproducibility, set the seed and number of threads.
-set.seed(123)
+## For reproducibility, specify the number of threads.
 set_num_threads(1)
 
 ## Create an 'SIR' model with 10 nodes and initialise
@@ -83,10 +82,10 @@ model
 #> ------------
 #>  - Empty, please run the model first
 
-## Run the model and save the result
-result <- run(model)
+## Run the model with a fixed seed for reproducibility.
+result <- run(model, seed = 22)
 
-## Brief summary of the result. Note that 'U' and 'V' are
+## Brief summary of the result. Note that the trajectory is
 ## non-empty after running the model.
 result
 #> Model: SIR
@@ -102,8 +101,8 @@ result
 #> 
 #> Compartments
 #> ------------
-#>     Min. 1st Qu. Median  Mean 3rd Qu.  Max.
-#>  S  8.00   30.00  81.50 66.17   99.00 99.00
-#>  I  0.00    0.00   4.50  7.67   15.00 33.00
-#>  R  0.00    1.00   8.00 26.17   57.00 87.00
+#>    Min. 1st Qu. Median Mean 3rd Qu. Max.
+#>  S 11.0    32.0   66.0 62.7    98.0 99.0
+#>  I  0.0     1.0    6.0  7.8    12.0 36.0
+#>  R  0.0     2.0   16.5 29.5    58.2 88.0
 ```

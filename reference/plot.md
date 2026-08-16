@@ -104,8 +104,7 @@ examples, see the
 ## Examples
 
 ``` r
-## For reproducibility, set the seed and number of threads.
-set.seed(123)
+## For reproducibility, specify the number of threads.
 set_num_threads(1)
 
 ## Create an 'SIR' model with 100 nodes.
@@ -116,8 +115,8 @@ model <- SIR(u0 = data.frame(S = rep(990, 100),
              beta = 0.16,
              gamma = 0.077)
 
-## Run the model.
-result <- run(model)
+## Run the model with a fixed seed for reproducibility.
+result <- run(model, seed = 22)
 
 ## Plot counts (median and IQR)
 plot(result)
