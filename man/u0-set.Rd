@@ -50,9 +50,6 @@ The function validates the input and ensures the new state is
 consistent with the model structure before updating.
 }
 \examples{
-## For reproducibility, set the seed.
-set.seed(22)
-
 ## Create a single-node SIR model.
 model <- SIR(
   u0 = data.frame(
@@ -73,7 +70,8 @@ u0(model) <- c(
   R = 0
 )
 
-result <- run(model)
+## Run the model with a fixed seed for reproducibility.
+result <- run(model, seed = 22)
 plot(result)
 
 ## Create a multi-node model (2 nodes).
@@ -95,7 +93,7 @@ u0(model_multi) <- data.frame(
   R = c(0, 0)
 )
 
-result <- run(model_multi)
+result <- run(model_multi, seed = 22)
 plot(result)
 }
 \seealso{

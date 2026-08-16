@@ -147,9 +147,7 @@
 ##'    }
 ##' @keywords dataset
 ##' @examples
-##' ## For reproducibility, set the seed and limit threads to 1.
-##' ## To use all available threads, remove the set_num_threads() call.
-##' set.seed(123)
+##' ## For reproducibility, specify the number of threads.
 ##' set_num_threads(1)
 ##'
 ##' ## Create an 'SIR' model with 1600 nodes and initialize
@@ -168,7 +166,8 @@
 ##' )
 ##'
 ##' ## Run the model to generate a single stochastic trajectory.
-##' result <- run(model)
+##' ## For reproducibility, specify the seed.
+##' result <- run(model, seed = 22)
 ##'
 ##' ## Determine nodes with one or more infected individuals in the
 ##' ## trajectory. Extract the 'I' compartment and check for any

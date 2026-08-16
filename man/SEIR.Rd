@@ -86,9 +86,6 @@ each node with the following columns:
 }
 }
 \examples{
-## For reproducibility, set the seed.
-set.seed(3)
-
 ## Create an SEIR model object.
 model <- SEIR(
   u0 = data.frame(S = 99, E = 0, I = 1, R = 0),
@@ -98,8 +95,11 @@ model <- SEIR(
   gamma = 0.077
 )
 
-## Run the SEIR model and plot the result.
-result <- run(model)
+## Run the SEIR model with a fixed seed for reproducibility.
+result <- run(model, seed = 22)
+
+## Plot the distribution of susceptible, exposed, infected and
+## recovered individuals.
 plot(result)
 }
 \seealso{

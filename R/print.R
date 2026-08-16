@@ -191,8 +191,7 @@ summary_transitions <- function(object) {
 ##' @include SimInf_model.R
 ##' @export
 ##' @examples
-##' ## For reproducibility, set the seed and number of threads.
-##' set.seed(123)
+##' ## For reproducibility, specify the number of threads.
 ##' set_num_threads(1)
 ##'
 ##' ## Create an 'SIR' model with 10 nodes and initialise
@@ -211,10 +210,10 @@ summary_transitions <- function(object) {
 ##' ## Brief summary of the model
 ##' model
 ##'
-##' ## Run the model and save the result
-##' result <- run(model)
+##' ## Run the model with a fixed seed for reproducibility.
+##' result <- run(model, seed = 22)
 ##'
-##' ## Brief summary of the result. Note that 'U' and 'V' are
+##' ## Brief summary of the result. Note that the trajectory is
 ##' ## non-empty after running the model.
 ##' result
 setMethod(
@@ -273,8 +272,7 @@ setMethod(
 ##' @include SimInf_model.R
 ##' @export
 ##' @examples
-##' ## For reproducibility, set the seed and number of threads.
-##' set.seed(123)
+##' ## For reproducibility, specify the number of threads.
 ##' set_num_threads(1)
 ##'
 ##' ## Create an 'SIR' model with 10 nodes and initialise
@@ -293,10 +291,10 @@ setMethod(
 ##' ## Detailed summary of the model
 ##' model
 ##'
-##' ## Run the model and save the result
-##' result <- run(model)
+##' ## Run the model with a fixed seed for reproducibility.
+##' result <- run(model, seed = 22)
 ##'
-##' ## Detailed summary of the result. Note that 'U' and 'V' are
+##' ## Detailed summary of the result. Note that the trajectory is
 ##' ## non-empty after running the model.
 ##' result
 setMethod(

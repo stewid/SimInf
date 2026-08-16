@@ -89,9 +89,6 @@ select_matrix_SIS <- function() {
 ##' @include check_arguments.R
 ##' @export
 ##' @examples
-##' ## For reproducibility, set the seed.
-##' set.seed(22)
-##'
 ##' ## Create an SIS model object.
 ##' model <- SIS(
 ##'   u0 = data.frame(S = 99, I = 1),
@@ -100,8 +97,10 @@ select_matrix_SIS <- function() {
 ##'   gamma = 0.077
 ##' )
 ##'
-##' ## Run the SIS model and plot the result.
-##' result <- run(model)
+##' ## Run the SIS model with a fixed seed for reproducibility.
+##' result <- run(model, seed = 22)
+##'
+##' ## Plot the distribution of susceptible and infected individuals.
 ##' plot(result)
 SIS <- function(u0,
                 tspan,

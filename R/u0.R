@@ -116,9 +116,6 @@ setMethod(
 ##'     state.
 ##' @export
 ##' @examples
-##' ## For reproducibility, set the seed.
-##' set.seed(22)
-##'
 ##' ## Create a single-node SIR model.
 ##' model <- SIR(
 ##'   u0 = data.frame(
@@ -139,7 +136,8 @@ setMethod(
 ##'   R = 0
 ##' )
 ##'
-##' result <- run(model)
+##' ## Run the model with a fixed seed for reproducibility.
+##' result <- run(model, seed = 22)
 ##' plot(result)
 ##'
 ##' ## Create a multi-node model (2 nodes).
@@ -161,7 +159,7 @@ setMethod(
 ##'   R = c(0, 0)
 ##' )
 ##'
-##' result <- run(model_multi)
+##' result <- run(model_multi, seed = 22)
 ##' plot(result)
 ## nolint start: brace_linter
 setGeneric(

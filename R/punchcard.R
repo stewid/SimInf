@@ -58,8 +58,7 @@
 ##' @include SimInf_model.R
 ##' @export
 ##' @examples
-##' ## For reproducibility, set the seed and number of threads.
-##' set.seed(123)
+##' ## For reproducibility, specify the number of threads.
 ##' set_num_threads(1)
 ##'
 ##' ## Create an 'SIR' model with 6 nodes
@@ -75,8 +74,9 @@
 ##'   gamma = 0.077
 ##' )
 ##'
-##' ## Run the model with default recording (all data)
-##' result_full <- run(model)
+##' ## Run the model with default recording (all data).
+##' ## For reproducibility, specify the seed.
+##' result_full <- run(model, seed = 22)
 ##' head(trajectory(result_full))
 ##'
 ##' ## Define a template to record only nodes 2 and 4 at times 3 and 5
@@ -88,7 +88,7 @@
 ##' )
 ##' punchcard(model) <- df
 ##'
-##' result_sparse <- run(model)
+##' result_sparse <- run(model, seed = 22)
 ##' trajectory(result_sparse)
 ##'
 ##' ## Record only specific compartments (e.g., S and R, but not I)
@@ -98,7 +98,7 @@
 ##'   S = TRUE, I = FALSE, R = TRUE
 ##' )
 ##' punchcard(model) <- df
-##' result_partial <- run(model)
+##' result_partial <- run(model, seed = 22)
 ##' trajectory(result_partial)
 ##'
 ##' ## Shortcut: If only 'time' and 'node' are specified, all
@@ -111,7 +111,7 @@
 ##'
 ##' ## Reset to record all data (equivalent to no template)
 ##' punchcard(model) <- NULL
-##' result_reset <- run(model)
+##' result_reset <- run(model, seed = 22)
 ##' head(trajectory(result_reset))
 ## nolint start: brace_linter
 setGeneric(
