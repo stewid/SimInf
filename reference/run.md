@@ -1,6 +1,13 @@
-# Run the SimInf stochastic simulation algorithm
+# Run a SimInf model simulation
 
-Run the SimInf stochastic simulation algorithm
+Simulate a
+[`trajectory`](http://stewid.github.io/SimInf/reference/trajectory.md)
+from a SimInf model. The function compiles and loads model-specific C
+code (if not already compiled), initializes the solver, and advances the
+simulation in continuous time from the first to the last time point in
+`tspan`. The state of the system is recorded at each time point
+specified in `tspan`. Sparse output can be requested with `punchcard<-`
+to store only selected time points or compartments.
 
 ## Usage
 
@@ -43,12 +50,17 @@ run(model, ...)
 
 - ...:
 
-  Additional arguments.
+  Optional arguments that affect the simulation:
+
+  seed
+
+  :   Numeric or integer specifying the random seed for the simulation.
+      If not provided, a seed is randomly sampled from the current R RNG
+      state.
 
 ## Value
 
-[`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model.md)
-object with result from simulation.
+The model object with a single stochastic trajectory attached.
 
 ## References
 
@@ -74,25 +86,25 @@ Springer, Cham, 2015.
 ## Examples
 
 ``` r
-## For reproducibility, call the set.seed() function and specify
-## the number of threads to use. To use all available threads,
-## remove the set_num_threads() call.
-set.seed(123)
+## For reproducibility, specify the number of threads to use.
 set_num_threads(1)
 
-## Create an 'SIR' model with 10 nodes and initialise
-## it to run over 100 days.
-model <- SIR(u0 = data.frame(S = rep(99, 10),
-                             I = rep(1, 10),
-                             R = rep(0, 10)),
-             tspan = 1:100,
-             beta = 0.16,
-             gamma = 0.077)
+## Create an 'SIR' model with 10 nodes.
+model <- SIR(
+  u0 = data.frame(
+    S = rep(99, 10),
+    I = rep(1, 10),
+    R = rep(0, 10)
+  ),
+  tspan = 1:100,
+  beta = 0.16,
+  gamma = 0.077
+)
 
-## Run the model and save the result.
-result <- run(model)
+## Run the model. For reproducibility, specify the seed.
+result <- run(model, seed = 22)
 
-## Plot the proportion of susceptible, infected and recovered
+## Plot the distribution of susceptible, infected and recovered
 ## individuals.
 plot(result)
 ```

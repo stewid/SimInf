@@ -61,6 +61,13 @@ examples.
 - Fixed error messages in internal `E_from_data_frame()` function to
   provide clearer feedback for non-data.frame inputs.
 
+- Refactored how options are passed from the
+  [`run()`](http://stewid.github.io/SimInf/reference/run.md) function to
+  the solvers. Options such as `solver` and `seed` are now passed via
+  the `...` argument. See the
+  [`run()`](http://stewid.github.io/SimInf/reference/run.md)
+  documentation.
+
 ## SimInf 10.1.0 (2025-11-16)
 
 CRAN release: 2025-11-17

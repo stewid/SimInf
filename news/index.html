@@ -54,6 +54,7 @@
 <li><p>Assigned unique names to OpenMP critical sections to prevent potential conflicts in parallel execution.</p></li>
 <li><p>Refactored loop structures in C code for improved readability (replacing <code>for(;;)</code> with <code>while(true)</code>).</p></li>
 <li><p>Fixed error messages in internal <code>E_from_data_frame()</code> function to provide clearer feedback for non-data.frame inputs.</p></li>
+<li><p>Refactored how options are passed from the <code><a href="../reference/run.html">run()</a></code> function to the solvers. Options such as <code>solver</code> and <code>seed</code> are now passed via the <code>...</code> argument. See the <code><a href="../reference/run.html">run()</a></code> documentation.</p></li>
 </ul></div>
 </div>
     <div class="section level2">

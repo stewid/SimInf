@@ -516,8 +516,8 @@ The `SimInf` package is licensed under the
 - [`` `punchcard<-`() ``](http://stewid.github.io/SimInf/reference/punchcard-set.md)
   : Set a sparse recording template for simulation results
 
-- [`run()`](http://stewid.github.io/SimInf/reference/run.md) : Run the
-  SimInf stochastic simulation algorithm
+- [`run()`](http://stewid.github.io/SimInf/reference/run.md) : Run a
+  SimInf model simulation
 
 - [`` `select_matrix<-`() ``](http://stewid.github.io/SimInf/reference/select_matrix-set.md)
   :
