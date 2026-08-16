@@ -97,12 +97,26 @@ model_dll_key <- function(model) {
     key
 }
 
-##' Run the SimInf stochastic simulation algorithm
+##' Run a SimInf model simulation
+##'
+##' Simulate a \code{\link{trajectory}} from a SimInf model. The
+##' function compiles and loads model-specific C code (if not already
+##' compiled), initializes the solver, and advances the simulation in
+##' continuous time from the first to the last time point in
+##' \code{tspan}. The state of the system is recorded at each time
+##' point specified in \code{tspan}. Sparse output can be requested
+##' with \code{\link{punchcard<-}} to store only selected time points
+##' or compartments.
 ##'
 ##' @param model The SimInf model to run.
-##' @param ... Additional arguments.
-##' @return \code{\link{SimInf_model}} object with result from
-##'     simulation.
+##' @param ... Optional arguments that affect the simulation:
+##'     \describe{
+##'       \item{seed}{Numeric or integer specifying the random seed
+##'       for the simulation. If not provided, a seed is randomly
+##'       sampled from the current R RNG state.}
+##'     }
+##' @return The model object with a single stochastic trajectory
+##'     attached.
 ##' @references
 ##'
 ##' \Widgren2019
@@ -111,25 +125,25 @@ model_dll_key <- function(model) {
 ##'
 ##' \Bauer2015
 ##' @examples
-##' ## For reproducibility, call the set.seed() function and specify
-##' ## the number of threads to use. To use all available threads,
-##' ## remove the set_num_threads() call.
-##' set.seed(123)
+##' ## For reproducibility, specify the number of threads to use.
 ##' set_num_threads(1)
 ##'
-##' ## Create an 'SIR' model with 10 nodes and initialise
-##' ## it to run over 100 days.
-##' model <- SIR(u0 = data.frame(S = rep(99, 10),
-##'                              I = rep(1, 10),
-##'                              R = rep(0, 10)),
-##'              tspan = 1:100,
-##'              beta = 0.16,
-##'              gamma = 0.077)
+##' ## Create an 'SIR' model with 10 nodes.
+##' model <- SIR(
+##'   u0 = data.frame(
+##'     S = rep(99, 10),
+##'     I = rep(1, 10),
+##'     R = rep(0, 10)
+##'   ),
+##'   tspan = 1:100,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
 ##'
-##' ## Run the model and save the result.
-##' result <- run(model)
+##' ## Run the model. For reproducibility, specify the seed.
+##' result <- run(model, seed = 22)
 ##'
-##' ## Plot the proportion of susceptible, infected and recovered
+##' ## Plot the distribution of susceptible, infected and recovered
 ##' ## individuals.
 ##' plot(result)
 ## nolint start: brace_linter
