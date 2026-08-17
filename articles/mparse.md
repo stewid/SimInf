@@ -104,15 +104,13 @@ when [`run()`](http://stewid.github.io/SimInf/reference/run.md) is first
 called, and the compiled code is cached for efficiency. Subsequent calls
 to [`run()`](http://stewid.github.io/SimInf/reference/run.md) detect the
 compiled code and skip the compilation step. Once created, we can run
-the simulation and plot the results. For reproducibility, we first call
-the [`set.seed()`](https://rdrr.io/r/base/Random.html) function since
-there is random sampling involved when picking individuals from the
-compartments.
+the simulation and plot the results. For reproducibility, we specify the
+`seed` since there is random sampling involved when picking individuals
+from the compartments.
 
 ``` r
 
-set.seed(22)
-plot(run(model))
+plot(run(model, seed = 22))
 ```
 
 ![\*\*Figure 1.\*\* Classic SIR epidemic curve generated with
@@ -196,8 +194,7 @@ that we use the same seed value as before.
 
 ``` r
 
-set.seed(22)
-plot(run(model))
+plot(run(model, seed = 22))
 ```
 
 ![\*\*Figure 2.\*\* SIR epidemic curve using a defined variable for
@@ -257,8 +254,7 @@ model <- mparse(
   tspan = 1:100
 )
 
-set.seed(22)
-plot(run(model))
+plot(run(model, seed = 22))
 ```
 
 ![\*\*Figure 3.\*\* SIR model using a ternary operator to prevent
@@ -370,8 +366,7 @@ bands.
 
 ``` r
 
-set.seed(22)
-result <- run(model)
+result <- run(model, seed = 22)
 plot(result, range = FALSE)
 ```
 
@@ -525,8 +520,7 @@ while in others, the populations oscillate around a stable limit cycle.
 
 ``` r
 
-set.seed(3)
-result <- run(model)
+result <- run(model, seed = 60)
 plot(result)
 ```
 
@@ -639,8 +633,7 @@ recover.
 
 ``` r
 
-set.seed(3)
-result <- run(model)
+result <- run(model, seed = 22)
 plot(result)
 ```
 
