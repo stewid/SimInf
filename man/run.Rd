@@ -73,7 +73,7 @@ model <- SIR(
   gamma = 0.077
 )
 
-## Run the model. For reproducibility, specify the seed.
+## Run the model with a fixed seed for reproducibility.
 result <- run(model, seed = 22)
 
 ## Plot the distribution of susceptible, infected and recovered
