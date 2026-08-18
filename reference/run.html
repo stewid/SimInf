@@ -105,7 +105,12 @@ to store only selected time points or compartments.</p>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Optional arguments that affect the simulation:</p><dl><dt>seed</dt>
+<dd><p>Optional arguments that affect the simulation:</p><dl><dt>solver</dt>
+<dd><p>Character string specifying the numerical
+  solver. Either <code>"ssm"</code> (default) or <code>"aem"</code>. If
+  not provided, the <code>"ssm"</code> solver is used. See details.</p></dd>
+
+  <dt>seed</dt>
 <dd><p>Numeric or integer specifying the random seed
   for the simulation. If not provided, a seed is randomly
   sampled from the current R RNG state.</p></dd>
@@ -126,7 +131,16 @@ first integrates the continuous-time Markov chain within each node
 using direct SSA (Gillespie's algorithm), then processes scheduled
 events (exit, enter, internal transfer, and external transfer),
 and finally calls the post time step function to update continuous
-state variables.</p>
+state variables; see Widgren and others (2019) for details.</p>
+<p>Two numerical solvers are available. The default solver is
+<code>"ssm"</code> (split-step method), which becomes <code>"mssm"</code>
+(multi-model split-step method) automatically when the model
+contains multiple replicates (<code>replicates &gt; 1</code>). The
+alternative solver is <code>"aem"</code> (all events method), which
+assigns each reaction channel its own random number stream for
+consistent operational times across simulations; see Bauer and
+Engblom (2015).  The <code>"aem"</code> solver cannot be used with
+replicated models.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

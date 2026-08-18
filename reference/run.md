@@ -53,6 +53,12 @@ run(model, ...)
 
   Optional arguments that affect the simulation:
 
+  solver
+
+  :   Character string specifying the numerical solver. Either `"ssm"`
+      (default) or `"aem"`. If not provided, the `"ssm"` solver is used.
+      See details.
+
   seed
 
   :   Numeric or integer specifying the random seed for the simulation.
@@ -69,7 +75,17 @@ The solver uses a split-step method: for each unit of time, it first
 integrates the continuous-time Markov chain within each node using
 direct SSA (Gillespie's algorithm), then processes scheduled events
 (exit, enter, internal transfer, and external transfer), and finally
-calls the post time step function to update continuous state variables.
+calls the post time step function to update continuous state variables;
+see Widgren and others (2019) for details.
+
+Two numerical solvers are available. The default solver is `"ssm"`
+(split-step method), which becomes `"mssm"` (multi-model split-step
+method) automatically when the model contains multiple replicates
+(`replicates > 1`). The alternative solver is `"aem"` (all events
+method), which assigns each reaction channel its own random number
+stream for consistent operational times across simulations; see Bauer
+and Engblom (2015). The `"aem"` solver cannot be used with replicated
+models.
 
 ## References
 
