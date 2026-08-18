@@ -57,6 +57,14 @@ point specified in \code{tspan}. Sparse output can be requested
 with \code{\link[=punchcard<-,SimInf_model-method]{punchcard<-}}
 to store only selected time points or compartments.
 }
+\details{
+The solver uses a split-step method: for each unit of time, it
+first integrates the continuous-time Markov chain within each node
+using direct SSA (Gillespie's algorithm), then processes scheduled
+events (exit, enter, internal transfer, and external transfer),
+and finally calls the post time step function to update continuous
+state variables.
+}
 \examples{
 ## For reproducibility, specify the number of threads to use.
 set_num_threads(1)
