@@ -38,6 +38,9 @@ run(model, ...)
 
 \item{...}{Optional arguments that affect the simulation:
 \describe{
+  \item{solver}{Character string specifying the numerical
+  solver. Either \code{"ssm"} (default) or \code{"aem"}. If
+  not provided, the \code{"ssm"} solver is used. See details.}
   \item{seed}{Numeric or integer specifying the random seed
   for the simulation. If not provided, a seed is randomly
   sampled from the current R RNG state.}
@@ -63,7 +66,17 @@ first integrates the continuous-time Markov chain within each node
 using direct SSA (Gillespie's algorithm), then processes scheduled
 events (exit, enter, internal transfer, and external transfer),
 and finally calls the post time step function to update continuous
-state variables.
+state variables; see Widgren and others (2019) for details.
+
+Two numerical solvers are available. The default solver is
+\code{"ssm"} (split-step method), which becomes \code{"mssm"}
+(multi-model split-step method) automatically when the model
+contains multiple replicates (\code{replicates > 1}). The
+alternative solver is \code{"aem"} (all events method), which
+assigns each reaction channel its own random number stream for
+consistent operational times across simulations; see Bauer and
+Engblom (2015).  The \code{"aem"} solver cannot be used with
+replicated models.
 }
 \examples{
 ## For reproducibility, specify the number of threads to use.
