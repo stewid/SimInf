@@ -63,6 +63,14 @@ run(model, ...)
 
 The model object with a single stochastic trajectory attached.
 
+## Details
+
+The solver uses a split-step method: for each unit of time, it first
+integrates the continuous-time Markov chain within each node using
+direct SSA (Gillespie's algorithm), then processes scheduled events
+(exit, enter, internal transfer, and external transfer), and finally
+calls the post time step function to update continuous state variables.
+
 ## References
 
 S. Widgren, P. Bauer, R. Eriksson and S. Engblom. SimInf: An R Package

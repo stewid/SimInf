@@ -120,6 +120,15 @@ to store only selected time points or compartments.</p>
     attached.</p>
     </div>
     <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The solver uses a split-step method: for each unit of time, it
+first integrates the continuous-time Markov chain within each node
+using direct SSA (Gillespie's algorithm), then processes scheduled
+events (exit, enter, internal transfer, and external transfer),
+and finally calls the post time step function to update continuous
+state variables.</p>
+    </div>
+    <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>S. Widgren, P. Bauer, R. Eriksson and S. Engblom. <span class="pkg">SimInf</span>: An R Package for Data-Driven Stochastic Disease Spread Simulations. <em>Journal of Statistical Software</em>, <strong>91</strong>(12), 1–42, 2019. <a href="https://doi.org/10.18637/jss.v091.i12" class="external-link">doi:10.18637/jss.v091.i12</a>
 . An updated version of this paper is available as a vignette in the package.</p>
