@@ -386,6 +386,7 @@ SimInf_run_solver_ssm(
     gsl_rng *rng = NULL;
     SimInf_scheduled_events *events = NULL;
     SimInf_compartment_model *model = NULL;
+    const gsl_rng_type *rng_type = SimInf_rng_type(args->rng_type);
 
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
@@ -398,7 +399,7 @@ SimInf_run_solver_ssm(
     if (err)
         goto cleanup;           /* #nocov */
 
-    err = SimInf_scheduled_events_create(&events, args, rng);
+    err = SimInf_scheduled_events_create(&events, args, rng, rng_type);
     if (err)
         goto cleanup;           /* #nocov */
 

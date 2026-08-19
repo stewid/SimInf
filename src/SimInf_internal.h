@@ -419,7 +419,8 @@ int
 SimInf_scheduled_events_create(
     SimInf_scheduled_events **out,
     const SimInf_solver_args *args,
-    gsl_rng *rng);
+    gsl_rng *rng,
+    const gsl_rng_type *rng_type);
 
 void
 SimInf_scheduled_events_free(

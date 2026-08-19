@@ -444,7 +444,8 @@ attribute_hidden int
 SimInf_scheduled_events_create(
     SimInf_scheduled_events **out,
     const SimInf_solver_args *args,
-    gsl_rng *rng)
+    gsl_rng *rng,
+    const gsl_rng_type *rng_type)
 {
     SimInf_scheduled_events *events = NULL;
 
@@ -470,7 +471,7 @@ SimInf_scheduled_events_create(
             goto on_error;      /* #nocov */
 
         /* Random number generator */
-        events[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
+        events[i].rng = gsl_rng_alloc(rng_type);
         if (!events[i].rng)
             goto on_error;      /* #nocov */
         gsl_rng_set(events[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
