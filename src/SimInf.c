@@ -86,6 +86,10 @@ SimInf_raise_error(
         break;
     case SIMINF_ERR_INVALID_SEED:
         Rf_error("Invalid 'seed' value.");
+    case SIMINF_ERR_INVALID_CRN:
+        Rf_error("Invalid 'crn' value.");
+    case SIMINF_ERR_INVALID_RNG_TYPE:
+        Rf_error("Invalid 'rng_type' value.");
     default:                   /* #nocov */
         Rf_error("Unknown error code: %i.", err);       /* #nocov */
         break;
@@ -114,6 +118,98 @@ getListElement(
     }
 
     return elmt;
+}
+
+/**
+ * Parse solver options from an R list.
+ *
+ * Extracts solver, crn, rng_type, and seed from the options list and
+ * populates the corresponding fields in args. Fields that are not
+ * present in the options list retain their zero-initialized default
+ * values.  The seed field is parsed last to preserve R's RNG state if
+ * any other option validation fails.
+ *
+ * @param options R list with solver options.
+ * @param args Solver arguments structure to populate.
+ * @return 0 if OK, else error code.
+ */
+static int
+SimInf_parse_options(
+    SEXP options,
+    SimInf_solver_args *args)
+{
+    if (!Rf_isNewList(options))
+        return SIMINF_ERR_INVALID_OPTIONS;
+
+    /* Solver */
+    SEXP solver = getListElement(options, "solver");
+    if (!Rf_isNull(solver)) {
+        if (!Rf_isString(solver) ||
+            Rf_length(solver) != 1 ||
+            STRING_ELT(solver, 0) == NA_STRING)
+            return SIMINF_ERR_UNKNOWN_SOLVER;
+
+        const char *s = CHAR(STRING_ELT(solver, 0));
+        if (strcmp(s, "ssm") == 0)
+            args->solver = 0;
+        else if (strcmp(s, "aem") == 0)
+            args->solver = 1;
+        else
+            return SIMINF_ERR_UNKNOWN_SOLVER;
+    }
+
+    /* Common random numbers */
+    SEXP crn = getListElement(options, "crn");
+    if (!Rf_isNull(crn)) {
+        if (!Rf_isLogical(crn) || Rf_length(crn) != 1 ||
+            LOGICAL(crn)[0] == NA_LOGICAL)
+            return SIMINF_ERR_INVALID_CRN;
+        args->crn = LOGICAL(crn)[0];
+    }
+
+    /* RNG type */
+    SEXP rng_type = getListElement(options, "rng_type");
+    if (!Rf_isNull(rng_type)) {
+        if (!Rf_isString(rng_type) ||
+            Rf_length(rng_type) != 1 ||
+            STRING_ELT(rng_type, 0) == NA_STRING)
+            return SIMINF_ERR_INVALID_RNG_TYPE;
+
+        const char *r = CHAR(STRING_ELT(rng_type, 0));
+        if (strcmp(r, "mt19937") == 0)
+            args->rng_type = 0;
+        else if (strcmp(r, "taus2") == 0)
+            args->rng_type = 1;
+        else
+            return SIMINF_ERR_INVALID_RNG_TYPE;
+    }
+
+    /* Seed - parsed last to preserve R's RNG state */
+    SEXP seed = getListElement(options, "seed");
+    if (Rf_isNull(seed)) {
+        GetRNGstate();
+        args->seed = (unsigned long int)(unif_rand() * UINT_MAX);
+        PutRNGstate();
+    } else {
+        switch (TYPEOF(seed)) {
+        case INTSXP:
+            if (Rf_length(seed) != 1 ||
+                INTEGER(seed)[0] == NA_INTEGER)
+                return SIMINF_ERR_INVALID_SEED;
+            args->seed = (unsigned long int)INTEGER(seed)[0];
+            break;
+        case REALSXP:
+            if (Rf_length(seed) != 1 ||
+                !R_finite(REAL(seed)[0]))
+                return SIMINF_ERR_INVALID_SEED;
+            args->seed = (unsigned long int)REAL(seed)[0];
+            break;
+        default:
+            return SIMINF_ERR_INVALID_SEED;
+        }
+    }
+
+    return 0;
 }
 
 /**

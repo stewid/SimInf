@@ -83,7 +83,9 @@ typedef enum {
     SIMINF_ERR_AEM_REPLICATED_MODEL = -19,
     SIMINF_ERR_SPARSE_MODEL         = -20,
     SIMINF_ERR_INVALID_OPTIONS      = -21,
-    SIMINF_ERR_INVALID_SEED         = -22
+    SIMINF_ERR_INVALID_SEED         = -22,
+    SIMINF_ERR_INVALID_CRN          = -23,
+    SIMINF_ERR_INVALID_RNG_TYPE     = -24
 } SimInf_error_code;
 
 /* Forward declaration of the transition rate function. */

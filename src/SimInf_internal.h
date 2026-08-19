@@ -185,8 +185,11 @@ typedef struct SimInf_solver_args {
     /* Number of threads to use during simulation. */
     int Nthread;
 
-    /* Random number seed. */
-    unsigned long int seed;
+    /* Solver options parsed from the options list. */
+    int solver;                 /**< 0 = ssm, 1 = aem */
+    int crn;                    /**< 0 = FALSE, 1 = TRUE */
+    int rng_type;               /**< 0 = mt19937, 1 = taus2 */
+    unsigned long int seed;     /**< Random number seed. */
 
     /* Vector of function pointers to transition rate functions. */
     TRFun *tr_fun;
