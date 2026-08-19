@@ -1246,3 +1246,18 @@ SimInf_print_status(
         R_FlushConsole();
     }
 }
+
+/**
+ * Map an integer rng_type code to a GSL RNG type.
+ *
+ * @param rng_type 0 for mt19937, 1 for taus2.
+ * @return Pointer to the corresponding gsl_rng_type.
+ */
+attribute_hidden const gsl_rng_type *
+SimInf_rng_type(
+    int rng_type)
+{
+    if (rng_type == 1)
+        return gsl_rng_taus2;
+    return gsl_rng_mt19937;
+}

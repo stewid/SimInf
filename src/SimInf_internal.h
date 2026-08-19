@@ -453,3 +453,7 @@ update(
     int *INDEX,
     int *INDEX2,
     int N);
+
+const gsl_rng_type *
+SimInf_rng_type(
+    int rng_type);
