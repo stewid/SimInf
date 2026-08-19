@@ -134,6 +134,9 @@ model_dll_key <- function(model) {
 ##'       \item{seed}{Numeric or integer specifying the random seed
 ##'       for the simulation. If not provided, a seed is randomly
 ##'       sampled from the current R RNG state.}
+##'       \item{rng_type}{Character string specifying the random
+##'       number generator algorithm. Either \code{"mt19937"} or
+##'       \code{"taus2"}. If not provided, \code{"mt19937"} is used.}
 ##'     }
 ##' @return The model object with a single stochastic trajectory
 ##'     attached.
