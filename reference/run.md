@@ -65,6 +65,12 @@ run(model, ...)
       If not provided, a seed is randomly sampled from the current R RNG
       state.
 
+  rng_type
+
+  :   Character string specifying the random number generator algorithm.
+      Either `"mt19937"` or `"taus2"`. If not provided, `"mt19937"` is
+      used.
+
 ## Value
 
 The model object with a single stochastic trajectory attached.
