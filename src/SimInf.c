@@ -243,56 +243,15 @@ SimInf_run(
      * functions. */
     const double ldata_tmp[1] = { INFINITY };
 
+    /* Parse solver options. */
+    err = SimInf_parse_options(options, &args);
+    if (err)
+        goto cleanup;
+
+    /* Check model validity. */
     if (SimInf_arg_check_model(model)) {
         err = SIMINF_ERR_INVALID_MODEL;
         goto cleanup;
-    }
-
-    if (!Rf_isNewList(options)) {
-        err = SIMINF_ERR_INVALID_OPTIONS;
-        goto cleanup;
-    }
-
-    /* Check solver argument */
-    SEXP solver = getListElement(options, "solver");
-    if (!Rf_isNull(solver)) {
-        if (!Rf_isString(solver)) {
-            err = SIMINF_ERR_UNKNOWN_SOLVER;
-            goto cleanup;
-        }
-
-        if (Rf_length(solver) != 1 || STRING_ELT(solver, 0) == NA_STRING) {
-            err = SIMINF_ERR_UNKNOWN_SOLVER;
-            goto cleanup;
-        }
-    }
-
-    /* seed */
-    SEXP seed = getListElement(options, "seed");
-    if (Rf_isNull(seed)) {
-        GetRNGstate();
-        args.seed = (unsigned long int) (unif_rand() * UINT_MAX);
-        PutRNGstate();
-    } else {
-        switch (TYPEOF(seed)) {
-        case INTSXP:
-            if (Rf_length(seed) != 1 || INTEGER(seed)[0] == NA_INTEGER) {
-                err = SIMINF_ERR_INVALID_SEED;
-                goto cleanup;
-            }
-            args.seed = (unsigned long int)INTEGER(seed)[0];
-            break;
-        case REALSXP:
-            if (Rf_length(seed) != 1 || !R_finite(REAL(seed)[0])) {
-                err = SIMINF_ERR_INVALID_SEED;
-                goto cleanup;
-            }
-            args.seed = (unsigned long int)REAL(seed)[0];
-            break;
-        default:
-            err = SIMINF_ERR_INVALID_SEED;
-            goto cleanup;
-        }
     }
 
     /* Duplicate model. */
@@ -421,19 +380,18 @@ SimInf_run(
     }
 
     /* Run the simulation solver. */
-    if (Rf_isNull(solver)
-        || (strcmp(CHAR(STRING_ELT(solver, 0)), "ssm") == 0)) {
+    if (args.solver == 0) {
+        /* ssm */
         if (args.Nrep > 1)
             err = SimInf_run_solver_mssm(&args);
         else
             err = SimInf_run_solver_ssm(&args);
-    } else if (strcmp(CHAR(STRING_ELT(solver, 0)), "aem") == 0) {
+    } else {
+        /* aem */
         if (args.Nrep > 1)
             err = SIMINF_ERR_AEM_REPLICATED_MODEL;
         else
             err = SimInf_run_solver_aem(&args);
-    } else {
-        err = SIMINF_ERR_UNKNOWN_SOLVER;
     }
 
 cleanup:
