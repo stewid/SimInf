@@ -115,6 +115,13 @@ to store only selected time points or compartments.</p>
   for the simulation. If not provided, a seed is randomly
   sampled from the current R RNG state.</p></dd>
 
+  <dt>crn</dt>
+<dd><p>Logical. If <code>TRUE</code>, use common random
+  numbers for the <code>"mssm"</code> solver by assigning each node
+  and replicate a separate random number stream, enabling
+  variance reduction across simulation runs. If not provided,
+  <code>crn</code> is <code>FALSE</code>.</p></dd>
+
   <dt>rng_type</dt>
 <dd><p>Character string specifying the random
   number generator algorithm. Either <code>"mt19937"</code> or

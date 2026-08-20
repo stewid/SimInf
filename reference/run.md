@@ -65,6 +65,13 @@ run(model, ...)
       If not provided, a seed is randomly sampled from the current R RNG
       state.
 
+  crn
+
+  :   Logical. If `TRUE`, use common random numbers for the `"mssm"`
+      solver by assigning each node and replicate a separate random
+      number stream, enabling variance reduction across simulation runs.
+      If not provided, `crn` is `FALSE`.
+
   rng_type
 
   :   Character string specifying the random number generator algorithm.
