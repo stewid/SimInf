@@ -1,0 +1,538 @@
+/*
+ * This file is part of SimInf, a framework for stochastic
+ * disease spread simulations.
+ *
+ * Copyright (C) 2015 Pavol Bauer
+ * Copyright (C) 2017 -- 2019 Robin Eriksson
+ * Copyright (C) 2015 -- 2019 Stefan Engblom
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
+ *
+ * SimInf is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SimInf is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#include "SimInf.h"
+#include "SimInf_internal.h"
+#include <R_ext/Visibility.h>
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_rng.h>
+#include <math.h>
+#ifdef _OPENMP
+#  include <omp.h>
+#endif
+#include <stdbool.h>
+#include <string.h>
+
+/**
+ * Structure to hold mssm crn solver specific data/arguments for
+ * simulation.
+ */
+typedef struct SimInf_mssm_crn_arguments {
+    gsl_rng **rng_vec;   /**< The random number generator. One stream
+                          *   per node and replicate. */
+} SimInf_mssm_crn_arguments;
+
+/**
+ * SimInf split-step method (ssm) solver for multiple replicates per
+ * thread with common random numbers (mssm CRN).
+ *
+ * Advances the simulation by running multiple model replicates in
+ * sequence within each thread. Each replicate is a complete
+ * independent simulation of the epidemiological model, using its own
+ * initial state from u0 but sharing the same model structure
+ * (transitions, compartments), parameters (gdata, ldata), and
+ * scheduled events.
+ *
+ * The algorithm follows the same split-step method as
+ * SimInf_solver_ssm but iterates over replicates within each thread:
+ *
+ * 1. For each replicate, integrate the internal epidemiological model
+ *    as a continuous-time Markov chain using direct SSA (Gillespie's
+ *    algorithm). Within each node, transition times are sampled from an
+ *    exponential distribution and the firing transition is selected
+ *    proportionally to its rate.
+ * 2. Incorporate all scheduled E1 events (internal events, such as
+ *    individuals moving between compartments within a node).
+ * 3. Incorporate all scheduled E2 events (external events, such as
+ *    individuals transferring between nodes).
+ * 4. Call the post time step function to perform model-specific actions
+ *    after each unit of time (e.g., update the infectious pressure).
+ *    Transition rates are recalculated in nodes flagged for update.
+ * 5. Advance the global time to the next unit of time.
+ * 6. Store the solution if the current time has reached or passed the
+ *    next time point in tspan. The solution is stored in a dense matrix
+ *    or, optionally, in a sparse matrix.
+ *
+ * Unlike SimInf_solver_ssm, which distributes nodes across threads,
+ * the mssm solver runs multiple full model replicates per
+ * thread. Steps 1-6 are executed per thread in parallel for each
+ * replicate.  This solver uses a single random number stream per node
+ * and replicate.
+ *
+ * @param model Array of compartment model structures, one per
+ *     thread, holding the node state, transition rates, and solution
+ *     buffers.
+ * @param method Array of CRN argument structures, one per thread,
+ *     holding the per-node-per-replicate random number generators.
+ * @param events Array of scheduled event structures, one per thread,
+ *     holding the event queues and RNG state.
+ * @param Nthread Number of threads.
+ * @return 0 if Ok, else error code.
+ */
+static int
+SimInf_solver_mssm_crn(
+    SimInf_compartment_model *model,
+    SimInf_mssm_crn_arguments *method,
+    SimInf_scheduled_events *events,
+    int Nthread)
+{
+#ifdef _OPENMP
+#  pragma omp parallel num_threads(SimInf_num_threads())
+#endif
+    {
+#ifdef _OPENMP
+#  pragma omp for schedule(static)
+#endif
+        for (int i = 0; i < Nthread; i++) {
+            SimInf_scheduled_events e = *&events[i];
+            SimInf_compartment_model m = *&model[i];
+            SimInf_mssm_crn_arguments ma = *&method[i];
+
+            /* Store original pointers to the model state. */
+            int * const u = m.u;
+            int * const U = m.U;
+            double * const v = m.v;
+            double * const v_new = m.v_new;
+            double * const V = m.V;
+
+            for (ptrdiff_t replicate = 0; replicate < m.Nrep && !m.error;
+                 replicate++) {
+                /* Clear processed events. */
+                e.events_index = 0;
+
+                /* Move to the initial state of the model
+                 * replicate. */
+                m.u = &u[replicate * m.Nn * m.Nc];
+                if (U)
+                    m.U = &U[replicate * m.tlen * m.Nn * m.Nc];
+                m.v = &v[replicate * m.Nn * m.Nd];
+                m.v_new = &v_new[replicate * m.Nn * m.Nd];
+                if (V)
+                    m.V = &V[replicate * m.tlen * m.Nn * m.Nd];
+
+                /* Initialize global time. */
+                m.tt = m.tspan[0];
+                m.next_unit_of_time = floor(m.tt) + 1.0;
+                m.U_it = 0;
+                m.V_it = 0;
+
+                /* Initialize the transition rate for every transition
+                 * and every node. Store the sum of the transition
+                 * rates in each node in sum_t_rate. Moreover,
+                 * initialize time in each node. */
+                for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
+                    m.sum_t_rate[node] = 0.0;
+                    for (int j = 0; j < m.Nt; j++) {
+                        const double rate = (*m.tr_fun[j]) (&m.u[node * m.Nc],
+                                                            &m.v[node * m.Nd],
+                                                            &m.ldata[node *
+                                                                     m.Nld],
+                                                            m.gdata,
+                                                            m.tt);
+
+                        m.t_rate[node * m.Nt + j] = rate;
+                        m.sum_t_rate[node] += rate;
+                        if (!R_FINITE(rate) || rate < 0.0) {
+                            SimInf_print_status(m.Nc,
+                                                &m.u[node * m.Nc],
+                                                m.Nd,
+                                                &m.v[node * m.Nd],
+                                                m.Nld,
+                                                &m.ldata[node * m.Nld],
+                                                (int) node, m.tt, rate, j);
+                            m.error = SIMINF_ERR_INVALID_RATE;
+                        }
+                    }
+
+                    m.t_time[node] = m.tt;
+                }
+
+                /* Main loop. */
+                while (!m.error) {
+                    /* (1) Handle internal epidemiological model,
+                     * continuous-time Markov chain. */
+                    for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
+                        while (true) {
+                            double cum, rand, tau, delta = 0.0;
+                            int tr;
+
+                            /* 1a) Compute time to next event for this
+                             * node. */
+                            if (m.sum_t_rate[node] <= 0.0) {
+                                m.t_time[node] = m.next_unit_of_time;
+                                break;
+                            }
+                            tau = -log(gsl_rng_uniform_pos(ma.rng_vec[replicate * m.Nn + node])) /
+                                m.sum_t_rate[node];
+                            if ((tau + m.t_time[node]) >= m.next_unit_of_time) {
+                                m.t_time[node] = m.next_unit_of_time;
+                                break;
+                            }
+                            m.t_time[node] += tau;
+
+                            /* 1b) Determine the transition that did
+                             * occur (direct SSA). */
+                            rand =
+                                gsl_rng_uniform_pos(ma.rng_vec[replicate * m.Nn + node]) *
+                                m.sum_t_rate[node];
+                            for (tr = 0, cum = m.t_rate[node * m.Nt];
+                                 tr < m.Nt && rand > cum;
+                                 tr++, cum += m.t_rate[node * m.Nt + tr]);
+
+                            /* Elaborate floating point fix: */
+                            if (tr >= m.Nt)
+                                tr = m.Nt - 1;
+                            if (m.t_rate[node * m.Nt + tr] == 0.0) {
+                                /* Go backwards and try to find first
+                                 * nonzero transition rate */
+                                for (;
+                                     tr > 0
+                                     && m.t_rate[node * m.Nt + tr] == 0.0;
+                                     tr--);
+
+                                /* No nonzero rate found, but a
+                                 * transition was sampled. This can
+                                 * happen due to floating point errors
+                                 * in the iterated recalculated
+                                 * rates. */
+                                if (m.t_rate[node * m.Nt + tr] == 0.0) {
+                                    /* nil event: zero out and move on */
+                                    m.sum_t_rate[node] = 0.0;
+                                    break;
+                                }
+                            }
+
+                            /* 1c) Update the state of the node */
+                            for (int j = m.jcS[tr]; j < m.jcS[tr + 1]; j++) {
+                                m.u[node * m.Nc + m.irS[j]] += m.prS[j];
+                                if (m.u[node * m.Nc + m.irS[j]] < 0) {
+                                    SimInf_print_status(m.Nc,
+                                                        &m.u[node * m.Nc],
+                                                        m.Nd,
+                                                        &m.v[node * m.Nd],
+                                                        m.Nld,
+                                                        &m.ldata[node *
+                                                                 m.Nld],
+                                                        (int) node,
+                                                        m.t_time[node], 0, tr);
+                                    m.error = SIMINF_ERR_NEGATIVE_STATE;
+                                }
+                            }
+
+                            /* 1d) Recalculate sum_t_rate[node] using
+                             * dependency graph. */
+                            for (int j = m.jcG[tr]; j < m.jcG[tr + 1]; j++) {
+                                const double old =
+                                    m.t_rate[node * m.Nt + m.irG[j]];
+                                const double rate =
+                                    (*m.tr_fun[m.irG[j]]) (&m.u[node * m.Nc],
+                                                           &m.v[node * m.Nd],
+                                                           &m.ldata[node *
+                                                                    m.Nld],
+                                                           m.gdata,
+                                                           m.t_time[node]);
+
+                                m.t_rate[node * m.Nt + m.irG[j]] = rate;
+                                delta += rate - old;
+                                if (!R_FINITE(rate) || rate < 0.0) {
+                                    SimInf_print_status(m.Nc,
+                                                        &m.u[node * m.Nc],
+                                                        m.Nd,
+                                                        &m.v[node * m.Nd],
+                                                        m.Nld,
+                                                        &m.ldata[node *
+                                                                 m.Nld],
+                                                        (int) node,
+                                                        m.t_time[node],
+                                                        rate, m.irG[j]);
+                                    m.error = SIMINF_ERR_INVALID_RATE;
+                                }
+                            }
+                            m.sum_t_rate[node] += delta;
+                        }
+                    }
+
+                    /* (2 & 3) Incorporate all scheduled E1 and E2
+                     * events */
+                    SimInf_process_events(&m, &e, 1);
+
+                    /* (4) Incorporate model specific actions after
+                     * each timestep e.g. update the infectious
+                     * pressure variable. Moreover, update transition
+                     * rates in nodes that are indicated for update */
+                    for (ptrdiff_t node = 0; node < m.Nn && !m.error; node++) {
+                        const int rc = m.pts_fun(&m.v_new[node * m.Nd],
+                                                 &m.u[node * m.Nc],
+                                                 &m.v[node * m.Nd],
+                                                 &m.ldata[node * m.Nld],
+                                                 m.gdata,
+                                                 (int) node,
+                                                 m.tt);
+
+                        if (rc < 0) {
+                            m.error = rc;
+                            break;
+                        } else if (rc > 0 || m.update_node[node]) {
+                            /* Update transition rates */
+                            double delta = 0.0;
+
+                            for (int j = 0; j < m.Nt; j++) {
+                                const double old = m.t_rate[node * m.Nt + j];
+                                const double rate =
+                                    (*m.tr_fun[j]) (&m.u[node * m.Nc],
+                                                    &m.v_new[node * m.Nd],
+                                                    &m.ldata[node * m.Nld],
+                                                    m.gdata,
+                                                    m.tt);
+
+                                m.t_rate[node * m.Nt + j] = rate;
+                                delta += rate - old;
+                                if (!R_FINITE(rate) || rate < 0.0) {
+                                    SimInf_print_status(m.Nc,
+                                                        &m.u[node * m.Nc],
+                                                        m.Nd,
+                                                        &m.v[node * m.Nd],
+                                                        m.Nld,
+                                                        &m.ldata[node *
+                                                                 m.Nld],
+                                                        (int) node, m.tt,
+                                                        rate, j);
+                                    m.error = SIMINF_ERR_INVALID_RATE;
+                                }
+                            }
+                            m.sum_t_rate[node] += delta;
+
+                            m.update_node[node] = 0;
+                        }
+                    }
+
+                    /* (5) The global time now equals next unit of
+                     * time. */
+                    m.tt = m.next_unit_of_time;
+                    m.next_unit_of_time += 1.0;
+
+                    /* (6) Store solution if tt has passed the next
+                     * time in tspan. Report solution up to, but not
+                     * including tt. */
+                    if (m.U) {
+                        /* 6a) Dense matrix: copy compartment state to
+                         * U. */
+                        while (m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
+                            memcpy(&m.U[(ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
+                                        m.U_it++], m.u,
+                                   (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
+                                   sizeof(int));
+                        }
+                    } else {
+                        /* 6b) Sparse matrix: copy compartment state
+                         * to U_sparse. */
+                        while (m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
+                            const ptrdiff_t col_offset = replicate * m.tlen;
+                            for (int j = m.jcU[m.U_it + col_offset];
+                                 j < m.jcU[m.U_it + col_offset + 1];
+                                 j++) {
+                                m.prU[j] = m.u[m.irU[j]];
+                            }
+                            m.U_it++;
+                        }
+                    }
+
+                    if (m.V) {
+                        /* 6a) Dense matrix: copy continuous state to
+                         * V. */
+                        while (m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
+                            const ptrdiff_t v_len = (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nd *
+                                sizeof(double);
+                            if (v_len > 0) {
+                                memcpy(&m.V[(ptrdiff_t) m.Nd * (ptrdiff_t) m.Ntot * m.V_it],
+                                       m.v_new,
+                                       v_len);
+                            }
+                            m.V_it++;
+                        }
+                    } else {
+                        /* 6b) Sparse matrix: copy continuous state to
+                         * V_sparse. */
+                        while (m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
+                            const ptrdiff_t col_offset = replicate * m.tlen;
+                            for (int j = m.jcV[m.V_it + col_offset];
+                                 j < m.jcV[m.V_it + col_offset + 1];
+                                 j++) {
+                                m.prV[j] = m.v_new[m.irV[j]];
+                            }
+                            m.V_it++;
+                        }
+                    }
+
+                    /* Swap the pointers to the continuous state
+                     * variable so that 'v' equals 'v_new'. */
+                    double *v_tmp = m.v;
+                    m.v = m.v_new;
+                    m.v_new = v_tmp;
+
+                    /* If the simulation has reached the final time,
+                     * exit. */
+                    if (m.U_it >= m.tlen)
+                        break;
+                }
+            }
+
+            /* Restore original pointers to the model state. */
+            m.u = u;
+            m.U = U;
+            m.v = v;
+            m.v_new = v_new;
+            m.V = V;
+            *&model[i] = m;
+        }
+    } /* End of parallel region */
+
+    /* Check for error. */
+    for (int i = 0; i < Nthread; i++)
+        if (model[i].error)
+            return model[i].error;
+
+    return 0;
+}
+
+static void
+SimInf_mssm_crn_arguments_free(
+    SimInf_mssm_crn_arguments *method,
+    SimInf_compartment_model *model,
+    int Nthread)
+{
+    if (method) {
+        for (int i = 0; i < Nthread; i++) {
+            const SimInf_compartment_model *m = &model[i];
+            SimInf_mssm_crn_arguments *ma = &method[i];
+
+            if (ma->rng_vec) {
+                const ptrdiff_t n_rng = (ptrdiff_t) m->Nrep * (ptrdiff_t) m->Nn;
+                for (ptrdiff_t j = 0; j < n_rng; j++)
+                    gsl_rng_free(ma->rng_vec[j]);
+            }
+
+            free(ma->rng_vec);
+            ma->rng_vec = NULL;
+        }
+        free(method);
+    }
+}
+
+/**
+ * @param out the resulting data structure.
+ * @param Nthread the number of threads available
+ * @return 0 or SIMINF_ERR_ALLOC_MEMORY_BUFFER
+ */
+static int
+SimInf_mssm_crn_arguments_create(
+    SimInf_mssm_crn_arguments **out,
+    SimInf_compartment_model *model,
+    int Nthread,
+    gsl_rng *rng,
+    const gsl_rng_type *rng_type)
+{
+    SimInf_mssm_crn_arguments *method =
+        calloc(Nthread, sizeof(SimInf_mssm_crn_arguments));
+    if (!method)
+        goto on_error; /* #nocov */
+
+    for (int i = 0; i < Nthread; i++) {
+        const SimInf_compartment_model *m = &model[i];
+        const ptrdiff_t n_rng = (ptrdiff_t) m->Nrep * (ptrdiff_t) m->Nn;
+
+        /* Random generator for each node in the thread. */
+        method[i].rng_vec = (gsl_rng **) calloc(n_rng, sizeof(gsl_rng *));
+        if (!method[i].rng_vec)
+            goto on_error;      /* #nocov */
+
+        for (ptrdiff_t replicate = 0; replicate < m->Nrep; replicate++) {
+            for (ptrdiff_t node = 0; node < m->Nn; node++) {
+                const ptrdiff_t idx = replicate * m->Nn + node;
+
+                /* Random number generator */
+                method[i].rng_vec[idx] = gsl_rng_alloc(rng_type);
+                if (!method[i].rng_vec[idx])
+                    goto on_error;      /* #nocov */
+
+                gsl_rng_set(method[i].rng_vec[idx],
+                            gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
+            }
+        }
+    }
+
+    *out = method;
+
+    return 0;
+
+on_error: /* #nocov */
+    SimInf_mssm_crn_arguments_free(method, model, Nthread); /* #nocov */
+    return SIMINF_ERR_ALLOC_MEMORY_BUFFER; /* #nocov */
+}
+
+/**
+ * Initialize and run siminf solver
+ *
+ * @param args Structure with data for the solver.
+ * @return 0 if Ok, else error code.
+ */
+attribute_hidden int
+SimInf_run_solver_mssm_crn(
+    SimInf_solver_args *args)
+{
+    int err = 0;
+    gsl_rng *rng = NULL;
+    SimInf_scheduled_events *events = NULL;
+    SimInf_compartment_model *model = NULL;
+    SimInf_mssm_crn_arguments *method = NULL;
+    const gsl_rng_type *rng_type = SimInf_rng_type(args->rng_type);
+
+    rng = gsl_rng_alloc(gsl_rng_mt19937);
+    if (!rng) {
+        err = SIMINF_ERR_ALLOC_MEMORY_BUFFER;   /* #nocov */
+        goto cleanup;           /* #nocov */
+    }
+    gsl_rng_set(rng, args->seed);
+
+    err = SimInf_compartment_model_create(&model, args);
+    if (err)
+        goto cleanup;           /* #nocov */
+
+    err = SimInf_scheduled_events_create(&events, args, rng, rng_type);
+    if (err)
+        goto cleanup;           /* #nocov */
+
+    err = SimInf_mssm_crn_arguments_create(&method, model, args->Nthread, rng, rng_type);
+    if (err)
+        goto cleanup;           /* #nocov */
+
+    err = SimInf_solver_mssm_crn(model, method, events, args->Nthread);
+
+cleanup:
+    gsl_rng_free(rng);
+    SimInf_scheduled_events_free(events);
+    SimInf_mssm_crn_arguments_free(method, model, args->Nthread);
+    SimInf_compartment_model_free(model);
+
+    return err;
+}

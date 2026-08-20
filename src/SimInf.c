@@ -383,9 +383,9 @@ SimInf_run(
     if (args.solver == 0) {
         /* ssm */
         if (args.Nrep > 1) {
-            /* if (args.crn == 1) */
-            /*     err = SimInf_run_solver_mssm_crn(&args); */
-            /* else */
+            if (args.crn == 1)
+                err = SimInf_run_solver_mssm_crn(&args);
+            else
                 err = SimInf_run_solver_mssm(&args);
         } else {
             err = SimInf_run_solver_ssm(&args);

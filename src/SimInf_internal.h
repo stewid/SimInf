@@ -412,6 +412,10 @@ SimInf_run_solver_mssm(
     SimInf_solver_args *args);
 
 int
+SimInf_run_solver_mssm_crn(
+    SimInf_solver_args *args);
+
+int
 SimInf_run_solver_ssm(
     SimInf_solver_args *args);
 
