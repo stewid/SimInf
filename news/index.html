@@ -40,7 +40,6 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="siminf-development-version">SimInf (development version)<a class="anchor" aria-label="anchor" href="#siminf-development-version"></a></h2>
-<p>This release focuses primarily on enhancing the package documentation, including a new vignette, improved function descriptions, and clearer examples.</p>
 <div class="section level3">
 <h3 id="changes-or-improvements-development-version">CHANGES OR IMPROVEMENTS<a class="anchor" aria-label="anchor" href="#changes-or-improvements-development-version"></a></h3>
 <ul><li><p>The <code><a href="../reference/SimInf_model.html">SimInf_model()</a></code>, <code><a href="../reference/select_matrix.html">select_matrix()</a></code> and <code><a href="../reference/shift_matrix.html">shift_matrix()</a></code> functions now accept a data.frame as input to define the E (select) and N (shift) matrices using a simple tabular format, eliminating the need to manually construct matrices for complex event definitions.</p></li>
@@ -55,6 +54,10 @@
 <li><p>Refactored loop structures in C code for improved readability (replacing <code>for(;;)</code> with <code>while(true)</code>).</p></li>
 <li><p>Fixed error messages in internal <code>E_from_data_frame()</code> function to provide clearer feedback for non-data.frame inputs.</p></li>
 <li><p>Refactored how options are passed from the <code><a href="../reference/run.html">run()</a></code> function to the solvers. Options such as <code>solver</code> and <code>seed</code> are now passed via the <code>...</code> argument. See the <code><a href="../reference/run.html">run()</a></code> documentation.</p></li>
+<li><p>Fixed usage of deprecated argument names (.Dim, .Names, .Dimnames) in structure() calls within test files to resolve CRAN checks on R-devel.</p></li>
+<li><p>Fixed a memory leak in the AEM solver where RNG vectors were not properly freed.</p></li>
+<li><p>Added <code>SIMINF_ERR_SPARSE_MODEL</code> error code for better diagnostics when extracting sparse trajectories.</p></li>
+<li><p>Added <code>replicates</code> argument to <code><a href="../reference/mparse.html">mparse()</a></code> to easily run multiple independent realizations of a model. See the <code><a href="../reference/mparse.html">mparse()</a></code> documentation.</p></li>
 </ul></div>
 </div>
     <div class="section level2">

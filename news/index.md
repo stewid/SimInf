@@ -2,10 +2,6 @@
 
 ## SimInf (development version)
 
-This release focuses primarily on enhancing the package documentation,
-including a new vignette, improved function descriptions, and clearer
-examples.
-
 ### CHANGES OR IMPROVEMENTS
 
 - The
@@ -66,6 +62,21 @@ examples.
   the solvers. Options such as `solver` and `seed` are now passed via
   the `...` argument. See the
   [`run()`](http://stewid.github.io/SimInf/reference/run.md)
+  documentation.
+
+- Fixed usage of deprecated argument names (.Dim, .Names, .Dimnames) in
+  structure() calls within test files to resolve CRAN checks on R-devel.
+
+- Fixed a memory leak in the AEM solver where RNG vectors were not
+  properly freed.
+
+- Added `SIMINF_ERR_SPARSE_MODEL` error code for better diagnostics when
+  extracting sparse trajectories.
+
+- Added `replicates` argument to
+  [`mparse()`](http://stewid.github.io/SimInf/reference/mparse.md) to
+  easily run multiple independent realizations of a model. See the
+  [`mparse()`](http://stewid.github.io/SimInf/reference/mparse.md)
   documentation.
 
 ## SimInf 10.1.0 (2025-11-16)
