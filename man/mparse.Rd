@@ -178,27 +178,6 @@ R. \code{mparse} parses this description, generates model-specific
 C code, and returns a \code{\linkS4class{SimInf_model}} object
 ready for simulation.
 }
-\examples{
-## Create an SIR model with a defined population size variable.
-model <- mparse(
-  transitions = c(
-    "S -> beta * S * I / N -> I",
-    "I -> gamma * I -> R",
-    "N <- S + I + R"
-  ),
-  compartments = c("S", "I", "R"),
-  gdata = c(beta = 0.16, gamma = 0.077),
-  u0 = data.frame(S = 100, I = 1, R = 0),
-  tspan = 1:100
-)
-
-## Run the model with a fixed seed for reproducibility.
-result <- run(model, seed = 22)
-
-## Plot the distribution of susceptible, infected and recovered
-## individuals.
-plot(result)
-}
 \seealso{
 \code{\link{SimInf_model}} for the class definition of the
   returned model object.  \code{\link{SIR}}, \code{\link{SEIR}},
