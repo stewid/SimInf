@@ -1,6 +1,6 @@
 # Changelog
 
-## SimInf 11.0.0 (2026-09-08)
+## SimInf (development version)
 
 ### CHANGES OR IMPROVEMENTS
 
@@ -78,6 +78,14 @@
   into the generated model code. See the
   [`mparse()`](http://stewid.github.io/SimInf/reference/mparse.md)
   documentation.
+
+- The example in the
+  [`mparse()`](http://stewid.github.io/SimInf/reference/mparse.md)
+  documentation no longer runs the simulation, since running an `mparse`
+  model compiles model-specific C code at runtime and requires a working
+  C toolchain. The example now refers to the “Getting started with
+  mparse” vignette, which contains a complete walkthrough including
+  running and plotting a simulated trajectory.
 
 ## SimInf 10.1.0 (2025-11-16)
 
