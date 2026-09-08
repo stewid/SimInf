@@ -208,3 +208,25 @@ high-level model constructors that use predefined structures. Vignette
 custom models, including syntax, variables, and event handling.
 [`package_skeleton`](http://stewid.github.io/SimInf/reference/package_skeleton.md)
 for creating an installable R package from a `mparse` model.
+
+## Examples
+
+``` r
+## Create an SIR model with a defined population size variable.
+model <- mparse(
+  transitions = c(
+    "S -> beta * S * I / N -> I",
+    "I -> gamma * I -> R",
+    "N <- S + I + R"
+  ),
+  compartments = c("S", "I", "R"),
+  gdata = c(beta = 0.16, gamma = 0.077),
+  u0 = data.frame(S = 100, I = 1, R = 0),
+  tspan = 1:100
+)
+
+## Running a model defined with 'mparse' compiles model-specific C
+## code and requires a C compiler on the system. See the vignette
+## "Getting started with mparse" for a complete walkthrough
+## including running and plotting.
+```
