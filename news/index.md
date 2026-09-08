@@ -32,21 +32,14 @@
   data.frame interface for `select_matrix` and `shift_matrix`, providing
   clearer examples of how to specify scheduled events.
 
-- Improved documentation for
-  [`prevalence()`](http://stewid.github.io/SimInf/reference/prevalence.md),
-  [`trajectory()`](http://stewid.github.io/SimInf/reference/trajectory.md),
-  and [`plot()`](https://rdrr.io/r/graphics/plot.default.html) methods,
-  with clearer explanations of formula notation, aggregation levels, and
-  output formats.
-
-- Fixed several typos and clarified descriptions in function
-  documentation.
+- Improved and clarified the documentation for numerous functions
+  throughout the package.
 
 - Refactored S4 generic function definitions by removing unnecessary
   curly braces.
 
-- Eliminated repeated `#pragma omp parallel` directives in the ssm and
-  aem solvers to improve OpenMP efficiency.
+- Eliminated repeated `#pragma omp parallel` directives and deprecated
+  `#pragma omp master` constructs in the solvers.
 
 - Assigned unique names to OpenMP critical sections to prevent potential
   conflicts in parallel execution.
@@ -76,6 +69,13 @@
 - Added `replicates` argument to
   [`mparse()`](http://stewid.github.io/SimInf/reference/mparse.md) to
   easily run multiple independent realizations of a model. See the
+  [`mparse()`](http://stewid.github.io/SimInf/reference/mparse.md)
+  documentation.
+
+- Added `pre_code` argument to
+  [`mparse()`](http://stewid.github.io/SimInf/reference/mparse.md) to
+  insert custom C code, such as helper functions or include statements,
+  into the generated model code. See the
   [`mparse()`](http://stewid.github.io/SimInf/reference/mparse.md)
   documentation.
 

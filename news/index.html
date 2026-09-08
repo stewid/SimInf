@@ -46,10 +46,9 @@
 <li><p>Added a new vignette “Getting started with mparse” to illustrate how to create custom models using the <code><a href="../reference/mparse.html">mparse()</a></code> function. It covers basic syntax, variables, global/local data, open populations (births/deaths), and multi-stage models (Erlang distribution).</p></li>
 <li><p>Updated the “Post-process data in a trajectory” vignette, detailing how to extract data with <code><a href="../reference/trajectory.html">trajectory()</a></code>, calculate prevalence with <code><a href="../reference/prevalence.html">prevalence()</a></code> at different aggregation levels, and visualize results with <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>.</p></li>
 <li><p>Updated the “Scheduled events” vignette to demonstrate the new data.frame interface for <code>select_matrix</code> and <code>shift_matrix</code>, providing clearer examples of how to specify scheduled events.</p></li>
-<li><p>Improved documentation for <code><a href="../reference/prevalence.html">prevalence()</a></code>, <code><a href="../reference/trajectory.html">trajectory()</a></code>, and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods, with clearer explanations of formula notation, aggregation levels, and output formats.</p></li>
-<li><p>Fixed several typos and clarified descriptions in function documentation.</p></li>
+<li><p>Improved and clarified the documentation for numerous functions throughout the package.</p></li>
 <li><p>Refactored S4 generic function definitions by removing unnecessary curly braces.</p></li>
-<li><p>Eliminated repeated <code>#pragma omp parallel</code> directives in the ssm and aem solvers to improve OpenMP efficiency.</p></li>
+<li><p>Eliminated repeated <code>#pragma omp parallel</code> directives and deprecated <code>#pragma omp master</code> constructs in the solvers.</p></li>
 <li><p>Assigned unique names to OpenMP critical sections to prevent potential conflicts in parallel execution.</p></li>
 <li><p>Refactored loop structures in C code for improved readability (replacing <code>for(;;)</code> with <code>while(true)</code>).</p></li>
 <li><p>Fixed error messages in internal <code>E_from_data_frame()</code> function to provide clearer feedback for non-data.frame inputs.</p></li>
@@ -58,6 +57,7 @@
 <li><p>Fixed a memory leak in the AEM solver where RNG vectors were not properly freed.</p></li>
 <li><p>Added <code>SIMINF_ERR_SPARSE_MODEL</code> error code for better diagnostics when extracting sparse trajectories.</p></li>
 <li><p>Added <code>replicates</code> argument to <code><a href="../reference/mparse.html">mparse()</a></code> to easily run multiple independent realizations of a model. See the <code><a href="../reference/mparse.html">mparse()</a></code> documentation.</p></li>
+<li><p>Added <code>pre_code</code> argument to <code><a href="../reference/mparse.html">mparse()</a></code> to insert custom C code, such as helper functions or include statements, into the generated model code. See the <code><a href="../reference/mparse.html">mparse()</a></code> documentation.</p></li>
 </ul></div>
 </div>
     <div class="section level2">
