@@ -22,18 +22,14 @@
   data.frame interface for `select_matrix` and `shift_matrix`,
   providing clearer examples of how to specify scheduled events.
 
-* Improved documentation for `prevalence()`, `trajectory()`, and
-  `plot()` methods, with clearer explanations of formula notation,
-  aggregation levels, and output formats.
-
-* Fixed several typos and clarified descriptions in function
-  documentation.
+* Improved and clarified the documentation for numerous functions
+  throughout the package.
 
 * Refactored S4 generic function definitions by removing unnecessary
   curly braces.
 
-* Eliminated repeated `#pragma omp parallel` directives in the ssm and
-  aem solvers to improve OpenMP efficiency.
+* Eliminated repeated `#pragma omp parallel` directives and deprecated
+  `#pragma omp master` constructs in the solvers.
 
 * Assigned unique names to OpenMP critical sections to prevent
   potential conflicts in parallel execution.
@@ -61,6 +57,10 @@
 * Added `replicates` argument to `mparse()` to easily run multiple
   independent realizations of a model. See the `mparse()`
   documentation.
+
+* Added `pre_code` argument to `mparse()` to insert custom C code,
+  such as helper functions or include statements, into the generated
+  model code. See the `mparse()` documentation.
 
 # SimInf 10.1.0 (2025-11-16)
 
