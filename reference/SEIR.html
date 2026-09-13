@@ -83,19 +83,19 @@ an <code>integer</code> or a <code>Date</code> vector.</p><ul><li><p>If <code>in
 
 
 <dt id="arg-beta">beta<a class="anchor" aria-label="anchor" href="#arg-beta"></a></dt>
-<dd><p>A numeric vector with the transmission rate from
-susceptible to infected. Each node can have a different beta
-value.  The vector must have length 1 or <code>nrow(u0)</code>. If
-the vector has length 1 but the model contains more nodes, the
-beta value is repeated for all nodes.</p></dd>
+<dd><p>A numeric vector with the transition rate from Exposed
+to Infected. Each node can have a different beta value.  The
+vector must have length 1 or <code>nrow(u0)</code>. If the vector
+has length 1 but the model contains more nodes, the beta value
+is repeated for all nodes.</p></dd>
 
 
 <dt id="arg-epsilon">epsilon<a class="anchor" aria-label="anchor" href="#arg-epsilon"></a></dt>
-<dd><p>A numeric vector with the incubation rate from
-exposed to infected. Each node can have a different value. The
-vector must have length 1 or <code>nrow(u0)</code>. If the vector
-has length 1 but the model contains more nodes, the value is
-repeated for all nodes.</p></dd>
+<dd><p>A numeric vector with the incubation rate (1 /
+incubation period) from exposed to infected. Each node can
+have a different value. The vector must have length 1 or
+<code>nrow(u0)</code>. If the vector has length 1 but the model
+contains more nodes, the value is repeated for all nodes.</p></dd>
 
 
 <dt id="arg-gamma">gamma<a class="anchor" aria-label="anchor" href="#arg-gamma"></a></dt>

@@ -39,17 +39,17 @@ SEIR(u0, tspan, events = NULL, beta = NULL, epsilon = NULL, gamma = NULL)
 
 - beta:
 
-  A numeric vector with the transmission rate from susceptible to
-  infected. Each node can have a different beta value. The vector must
-  have length 1 or `nrow(u0)`. If the vector has length 1 but the model
-  contains more nodes, the beta value is repeated for all nodes.
+  A numeric vector with the transition rate from Exposed to Infected.
+  Each node can have a different beta value. The vector must have length
+  1 or `nrow(u0)`. If the vector has length 1 but the model contains
+  more nodes, the beta value is repeated for all nodes.
 
 - epsilon:
 
-  A numeric vector with the incubation rate from exposed to infected.
-  Each node can have a different value. The vector must have length 1 or
-  `nrow(u0)`. If the vector has length 1 but the model contains more
-  nodes, the value is repeated for all nodes.
+  A numeric vector with the incubation rate (1 / incubation period) from
+  exposed to infected. Each node can have a different value. The vector
+  must have length 1 or `nrow(u0)`. If the vector has length 1 but the
+  model contains more nodes, the value is repeated for all nodes.
 
 - gamma:
 
