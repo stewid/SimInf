@@ -71,20 +71,29 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/stewid/SimInf" class="external-link">SimInf</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S -&gt; beta*S*I/N -&gt; I"</span>,</span>
-<span>                 <span class="st">"I -&gt; gamma*I -&gt; R"</span>,</span>
-<span>                 <span class="st">"N &lt;- S+I+R"</span><span class="op">)</span></span>
+<span><span class="va">transitions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"S -&gt; beta*S*I/N -&gt; I"</span>,</span>
+<span>  <span class="st">"I -&gt; gamma*I -&gt; R"</span>,</span>
+<span>  <span class="st">"N &lt;- S+I+R"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">compartments</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span></span></code></pre></div>
 <p>The <code>transitions</code> and <code>compartments</code> variables together with the constants <code>beta</code> and <code>gamma</code> can now be used to generate a model with <code>mparse</code>. The model also needs to be initialised with the initial condition <code>u0</code> and <code>tspan</code>, a vector of time points where the state of the system is to be returned. Let us create a model that consists of 1000 replicates of a population, denoted a <em>node</em> in SimInf, that each starts with 99 susceptibles, 5 infected and 0 recovered individuals.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
-<span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">99</span>, <span class="va">n</span><span class="op">)</span>, I <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="va">n</span><span class="op">)</span>, R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">n</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">99</span>, <span class="va">n</span><span class="op">)</span>,</span>
+<span>  I <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="va">n</span><span class="op">)</span>,</span>
+<span>  R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">n</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mparse.html">mparse</a></span><span class="op">(</span>transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
-<span>                compartments <span class="op">=</span> <span class="va">compartments</span>,</span>
-<span>                gdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.16</span>, gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span>,</span>
-<span>                u0 <span class="op">=</span> <span class="va">u0</span>,</span>
-<span>                tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">150</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mparse.html">mparse</a></span><span class="op">(</span></span>
+<span>  transitions <span class="op">=</span> <span class="va">transitions</span>,</span>
+<span>  compartments <span class="op">=</span> <span class="va">compartments</span>,</span>
+<span>  gdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.16</span>, gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span>,</span>
+<span>  u0 <span class="op">=</span> <span class="va">u0</span>,</span>
+<span>  tspan <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">150</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>To generate data from the model and then print some basic information about the outcome, run the following commands:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
