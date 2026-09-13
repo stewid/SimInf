@@ -80,12 +80,16 @@ select_matrix_SEIR <- function() {
 ##' @template u0-param
 ##' @template tspan-param
 ##' @template events-param
-##' @template beta-param
-##' @param epsilon A numeric vector with the incubation rate from
-##'     exposed to infected. Each node can have a different value. The
+##' @param beta A numeric vector with the transition rate from Exposed
+##'     to Infected. Each node can have a different beta value.  The
 ##'     vector must have length 1 or \code{nrow(u0)}. If the vector
-##'     has length 1 but the model contains more nodes, the value is
-##'     repeated for all nodes.
+##'     has length 1 but the model contains more nodes, the beta value
+##'     is repeated for all nodes.
+##' @param epsilon A numeric vector with the incubation rate (1 /
+##'     incubation period) from exposed to infected. Each node can
+##'     have a different value. The vector must have length 1 or
+##'     \code{nrow(u0)}. If the vector has length 1 but the model
+##'     contains more nodes, the value is repeated for all nodes.
 ##' @template gamma-param
 ##' @return A \code{\link{SimInf_model}} of class \code{SEIR}
 ##' @seealso \code{\linkS4class{SEIR}} for the class definition.
