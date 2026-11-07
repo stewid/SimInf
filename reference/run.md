@@ -1,12 +1,11 @@
-# Run a SimInf model simulation
+# Run the SimInf stochastic simulation algorithm
 
-Simulate a
-[`trajectory`](http://stewid.github.io/SimInf/reference/trajectory.md)
-from a SimInf model. The function compiles and loads model-specific C
-code (if not already compiled), initializes the solver, and advances the
-simulation in continuous time from the first to the last time point in
-`tspan`. The state of the system is recorded at each time point
-specified in `tspan`. Sparse output can be requested with
+Simulate a stochastic trajectory from a SimInf model. The function
+compiles and loads model-specific C code (if not already compiled),
+initializes the solver, and advances the simulation in continuous time
+from the first to the last time point in `tspan`, recording the state of
+the system at each of these time points. Sparse output can be requested
+with
 [`punchcard<-`](http://stewid.github.io/SimInf/reference/punchcard-set.md)
 to store only selected time points or compartments.
 
@@ -47,7 +46,11 @@ run(model, ...)
 
 - model:
 
-  The SimInf model to run.
+  The
+  [`SimInf_model`](http://stewid.github.io/SimInf/reference/SimInf_model-class.md)
+  (or
+  [`SimInf_abc`](http://stewid.github.io/SimInf/reference/SimInf_abc-class.md))
+  object to run.
 
 - ...:
 
@@ -100,6 +103,16 @@ stream for consistent operational times across simulations; see Bauer
 and Engblom (2015). The `"aem"` solver cannot be used with replicated
 models.
 
+For a
+[`SimInf_abc`](http://stewid.github.io/SimInf/reference/SimInf_abc-class.md)
+object, `run()` samples one parameter set (a particle) from the last
+generation of an approximate Bayesian computation sequential Monte Carlo
+(ABC SMC) analysis and applies it to the underlying model before
+simulating a stochastic trajectory. The particle is drawn uniformly at
+random from the particles in the final generation, such that repeated
+calls to `run()` yield simulations distributed according to the
+approximated posterior distribution.
+
 ## References
 
 S. Widgren, P. Bauer, R. Eriksson and S. Engblom. SimInf: An R Package
@@ -120,6 +133,13 @@ Mathematics and Advanced Applications - ENUMATH 2013*, pp. 519–527,
 Lecture Notes in Computational Science and Engineering, vol 103.
 Springer, Cham, 2015.
 [doi:10.1007/978-3-319-10705-9_51](https://doi.org/10.1007/978-3-319-10705-9_51)
+
+## See also
+
+[`trajectory`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_model-method.md)
+for extracting the simulated data, and
+[`prevalence`](http://stewid.github.io/SimInf/reference/prevalence-SimInf_model-method.md)
+for calculating prevalence from the trajectory.
 
 ## Examples
 
