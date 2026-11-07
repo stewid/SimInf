@@ -97,16 +97,16 @@ model_dll_key <- function(model) {
     key
 }
 
-##' Run a SimInf model simulation
+##' Run the SimInf stochastic simulation algorithm
 ##'
-##' Simulate a \code{\link{trajectory}} from a SimInf model. The
-##' function compiles and loads model-specific C code (if not already
+##' Simulate a stochastic trajectory from a SimInf model. The function
+##' compiles and loads model-specific C code (if not already
 ##' compiled), initializes the solver, and advances the simulation in
 ##' continuous time from the first to the last time point in
-##' \code{tspan}. The state of the system is recorded at each time
-##' point specified in \code{tspan}. Sparse output can be requested
-##' with \code{\link[=punchcard<-,SimInf_model-method]{punchcard<-}}
-##' to store only selected time points or compartments.
+##' \code{tspan}, recording the state of the system at each of these
+##' time points. Sparse output can be requested with
+##' \code{\link[=punchcard<-,SimInf_model-method]{punchcard<-}} to
+##' store only selected time points or compartments.
 ##'
 ##' The solver uses a split-step method: for each unit of time, it
 ##' first integrates the continuous-time Markov chain within each node
@@ -125,7 +125,16 @@ model_dll_key <- function(model) {
 ##' Engblom (2015).  The \code{"aem"} solver cannot be used with
 ##' replicated models.
 ##'
-##' @param model The SimInf model to run.
+##' For a \code{\linkS4class{SimInf_abc}} object, \code{run()} samples
+##' one parameter set (a particle) from the last generation of an
+##' approximate Bayesian computation sequential Monte Carlo (ABC SMC)
+##' analysis and applies it to the underlying model before simulating
+##' a stochastic trajectory. The particle is drawn uniformly at random
+##' from the particles in the final generation, such that repeated
+##' calls to \code{run()} yield simulations distributed according to
+##' the approximated posterior distribution.
+##' @param model The \code{\linkS4class{SimInf_model}} (or
+##'     \code{\linkS4class{SimInf_abc}}) object to run.
 ##' @param ... Optional arguments that affect the simulation:
 ##'     \describe{
 ##'       \item{solver}{Character string specifying the numerical
@@ -145,6 +154,11 @@ model_dll_key <- function(model) {
 ##'     }
 ##' @return The model object with a single stochastic trajectory
 ##'     attached.
+##' @seealso
+##'     \code{\link[=trajectory,SimInf_model-method]{trajectory}} for
+##'     extracting the simulated data, and
+##'     \code{\link[=prevalence,SimInf_model-method]{prevalence}} for
+##'     calculating prevalence from the trajectory.
 ##' @references
 ##'
 ##' \Widgren2019

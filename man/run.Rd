@@ -11,7 +11,7 @@
 \alias{run,SISe3_sp-method}
 \alias{run,SISe_sp-method}
 \alias{run,SimInf_abc-method}
-\title{Run a SimInf model simulation}
+\title{Run the SimInf stochastic simulation algorithm}
 \usage{
 run(model, ...)
 
@@ -34,7 +34,8 @@ run(model, ...)
 \S4method{run}{SimInf_abc}(model, ...)
 }
 \arguments{
-\item{model}{The SimInf model to run.}
+\item{model}{The \code{\linkS4class{SimInf_model}} (or
+\code{\linkS4class{SimInf_abc}}) object to run.}
 
 \item{...}{Optional arguments that affect the simulation:
 \describe{
@@ -59,14 +60,14 @@ The model object with a single stochastic trajectory
     attached.
 }
 \description{
-Simulate a \code{\link{trajectory}} from a SimInf model. The
-function compiles and loads model-specific C code (if not already
+Simulate a stochastic trajectory from a SimInf model. The function
+compiles and loads model-specific C code (if not already
 compiled), initializes the solver, and advances the simulation in
 continuous time from the first to the last time point in
-\code{tspan}. The state of the system is recorded at each time
-point specified in \code{tspan}. Sparse output can be requested
-with \code{\link[=punchcard<-,SimInf_model-method]{punchcard<-}}
-to store only selected time points or compartments.
+\code{tspan}, recording the state of the system at each of these
+time points. Sparse output can be requested with
+\code{\link[=punchcard<-,SimInf_model-method]{punchcard<-}} to
+store only selected time points or compartments.
 }
 \details{
 The solver uses a split-step method: for each unit of time, it
@@ -85,6 +86,15 @@ assigns each reaction channel its own random number stream for
 consistent operational times across simulations; see Bauer and
 Engblom (2015).  The \code{"aem"} solver cannot be used with
 replicated models.
+
+For a \code{\linkS4class{SimInf_abc}} object, \code{run()} samples
+one parameter set (a particle) from the last generation of an
+approximate Bayesian computation sequential Monte Carlo (ABC SMC)
+analysis and applies it to the underlying model before simulating
+a stochastic trajectory. The particle is drawn uniformly at random
+from the particles in the final generation, such that repeated
+calls to \code{run()} yield simulations distributed according to
+the approximated posterior distribution.
 }
 \examples{
 ## For reproducibility, specify the number of threads to use.
@@ -115,4 +125,10 @@ plot(result)
 \Bauer2016
 
 \Bauer2015
+}
+\seealso{
+\code{\link[=trajectory,SimInf_model-method]{trajectory}} for
+    extracting the simulated data, and
+    \code{\link[=prevalence,SimInf_model-method]{prevalence}} for
+    calculating prevalence from the trajectory.
 }
