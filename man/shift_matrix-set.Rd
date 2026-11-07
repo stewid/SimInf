@@ -19,11 +19,11 @@ a matrix to handle scheduled events, see
 corresponds to one compartment in the model. The values in a
 column define how to move sampled individuals before adding
 them to the destination. Let \code{q <- shift}, then each
-non-zero entry in \code{N[, q]} defines the number of rows to
-move sampled individuals from that compartment i.e., sampled
-individuals from compartment \code{p} are moved to compartment
-\code{N[p, q] + p}, where \code{1 <= N[p, q] + p <=
-N_compartments}. This matrix is used for \emph{enter},
+non-zero entry in \code{N[, q]} defines the number of
+compartments to move sampled individuals from that compartment
+i.e., sampled individuals from compartment \code{p} are moved
+to compartment \code{N[p, q] + p}, where \code{1 <= N[p, q] +
+p <= N_compartments}. This matrix is used for \emph{enter},
 \emph{internal transfer} and \emph{external transfer} events.
 The shift matrix \code{N} can either be specified as a
 \code{matrix}, or as a \code{data.frame}.  When \code{N} is
@@ -38,26 +38,56 @@ contain a column named \code{value} with the integer value in
 \code{SimInf_model} object
 }
 \description{
-Utility function to set \code{events@N} in a \code{SimInf_model}
-object, see \code{\linkS4class{SimInf_events}}.
+Replace the shift matrix \code{events@N} that determines how
+individuals are shifted between compartments when processing
+\emph{enter}, \emph{internal transfer} and \emph{external
+transfer} events. The shift matrix can be specified as a
+\code{matrix}, or as a \code{data.frame} with the columns
+\code{compartment}, \code{shift}, and \code{value}; see
+\sQuote{Arguments} for details, and
+\code{\linkS4class{SimInf_events}} for how the shift matrix is
+used when processing events.
 }
 \examples{
-## Create an SIR model
-model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-             tspan = 1:5, beta = 0.16, gamma = 0.077)
+## Create an 'SIR' model and turn off the disease dynamics to
+## focus on the scheduled event.
+model <- SIR(
+  u0 = data.frame(
+    S = 100,
+    I = 10,
+    R = 0),
+  tspan = 1:20,
+  beta = 0,
+  gamma = 0,
+  events = data.frame(
+    event = "intTrans",
+    time = 10,
+    node = 1,
+    dest = 0,
+    n = 30,
+    proportion = 0,
+    select = 1,
+    shift = 1
+  )
+)
 
-## Set the shift matrix.
-shift_matrix(model) <- matrix(c(2, 1, 0), nrow = 3)
-
-## Extract the shift matrix from the model.
-shift_matrix(model)
-
-## Set the shift matrix using a data.frame instead.
+## Vaccinate 30 susceptible individuals at t = 10 by moving
+## them to the 'R' compartment (compartment 1 + 2 = 3).
 shift_matrix(model) <- data.frame(
-    compartment = c("S", "I", "R"),
-    shift = c(1, 1, 1),
-    value = c(2, 1, 0))
+  compartment = "S",
+  shift = 1,
+  value = 2
+)
 
-## Extract the shift matrix from the model.
-shift_matrix(model)
+## Run the model and extract the trajectory.
+result <- run(model)
+trajectory(result)
+}
+\seealso{
+\code{\link[=shift_matrix,SimInf_model-method]{shift_matrix}}
+    to extract the shift matrix, and
+    \code{\link[=select_matrix,SimInf_model-method]{select_matrix}}
+    to extract the select matrix. The vignette "Scheduled events"
+    for a tutorial on scheduled events, see
+    \code{vignette("Scheduled events", package = "SimInf")}.
 }
