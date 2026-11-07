@@ -67,7 +67,7 @@ functions:
   visualizing the time series of compartments and continuous state
   variables.
 
-- [`trajectory`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_model-method.md)
+- [`trajectory`](http://stewid.github.io/SimInf/reference/trajectory.md)
   for extracting the full time series data for custom analysis.
 
 - [`prevalence`](http://stewid.github.io/SimInf/reference/prevalence.md)

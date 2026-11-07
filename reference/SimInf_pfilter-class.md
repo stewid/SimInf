@@ -39,7 +39,7 @@ sample size (ESS) at each time-point.
 running a bootstrap particle filter and creating objects of this class,
 [`logLik`](http://stewid.github.io/SimInf/reference/logLik-SimInf_pfilter-method.md)
 for extracting the log-likelihood,
-[`trajectory`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_pfilter-method.md)
+[`trajectory`](http://stewid.github.io/SimInf/reference/trajectory.md)
 for extracting the filtered trajectory,
 [`prevalence`](http://stewid.github.io/SimInf/reference/prevalence-SimInf_pfilter-method.md)
 for computing prevalence from the filtered trajectory,

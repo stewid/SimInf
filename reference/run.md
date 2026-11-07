@@ -136,7 +136,7 @@ Springer, Cham, 2015.
 
 ## See also
 
-[`trajectory`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_model-method.md)
+[`trajectory`](http://stewid.github.io/SimInf/reference/trajectory.md)
 for extracting the simulated data, and
 [`prevalence`](http://stewid.github.io/SimInf/reference/prevalence-SimInf_model-method.md)
 for calculating prevalence from the trajectory.

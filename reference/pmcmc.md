@@ -67,7 +67,7 @@ pmcmc(
   function is the result from a run of the model and it contains one
   trajectory with simulated data for a time-point, where the trajectory
   contains `n_particles` replicates, see
-  [`trajectory,SimInf_model-method`](http://stewid.github.io/SimInf/reference/trajectory-SimInf_model-method.md).
+  [`trajectory,SimInf_model-method`](http://stewid.github.io/SimInf/reference/trajectory.md).
   The second argument to the `obs_process` function is a `data.frame`
   containing the rows for the specific time-point that the function is
   called for. Note that the function must return the log of the density.
