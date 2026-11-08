@@ -129,20 +129,22 @@ extract the select matrix from.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Change the select matrix so that individuals in the 'I'</span></span></span>
 <span class="r-in"><span><span class="co">## compartment are twice as likely to be selected when</span></span></span>
-<span class="r-in"><span><span class="co">## processing an event with 'select' = 4.</span></span></span>
+<span class="r-in"><span><span class="co">## processing an event with 'select' = 4. Note that the</span></span></span>
+<span class="r-in"><span><span class="co">## data.frame replaces the entire select matrix, so the entries</span></span></span>
+<span class="r-in"><span><span class="co">## in columns 1, 2 and 3 must also be specified.</span></span></span>
 <span class="r-in"><span><span class="fu">select_matrix</span><span class="op">(</span><span class="va">model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  compartment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  compartment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span>, <span class="st">"S"</span>, <span class="st">"I"</span>, <span class="st">"R"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Extract the updated select matrix from the model.</span></span></span>
 <span class="r-in"><span><span class="fu">select_matrix</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 x 4 sparse Matrix of class "dgCMatrix"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1 2 3 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> S . . . 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> I . . . 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> R . . . 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> S 1 . . 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> I . 1 . 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> R . . 1 1</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

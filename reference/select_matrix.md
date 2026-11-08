@@ -67,18 +67,20 @@ select_matrix(model)
 
 ## Change the select matrix so that individuals in the 'I'
 ## compartment are twice as likely to be selected when
-## processing an event with 'select' = 4.
+## processing an event with 'select' = 4. Note that the
+## data.frame replaces the entire select matrix, so the entries
+## in columns 1, 2 and 3 must also be specified.
 select_matrix(model) <- data.frame(
-  compartment = c("S", "I", "R"),
-  select = c(4, 4, 4),
-  value = c(1, 2, 1)
+  compartment = c("S", "I", "R", "S", "I", "R"),
+  select = c(1, 2, 3, 4, 4, 4),
+  value = c(1, 1, 1, 1, 2, 1)
 )
 
 ## Extract the updated select matrix from the model.
 select_matrix(model)
 #> 3 x 4 sparse Matrix of class "dgCMatrix"
 #>   1 2 3 4
-#> S . . . 1
-#> I . . . 2
-#> R . . . 1
+#> S 1 . . 1
+#> I . 1 . 2
+#> R . . 1 1
 ```
