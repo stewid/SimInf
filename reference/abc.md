@@ -169,7 +169,9 @@ Analysis*, **16**(2), 397–423, 2021.
 
 [`plot`](http://stewid.github.io/SimInf/reference/plot-SimInf_abc-method.md),
 [`summary`](http://stewid.github.io/SimInf/reference/summary-SimInf_abc-method.md)
-and `as.data.frame` to inspect the fitted object,
+and
+[`as.data.frame`](http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_abc.md)
+to inspect the fitted object,
 [`continue_abc`](http://stewid.github.io/SimInf/reference/continue_abc.md)
 to refine the fit with additional generations, and
 [`run`](http://stewid.github.io/SimInf/reference/run.md) to generate
