@@ -205,8 +205,8 @@ plot(fit)
 \seealso{
 \code{\link[=plot,SimInf_abc-method]{plot}},
     \code{\link[=summary,SimInf_abc-method]{summary}} and
-    \code{\link[=as.data.frame,SimInf_abc-method]{as.data.frame}}
-    to inspect the fitted object, \code{\link{continue_abc}} to
+    \code{\link[=as.data.frame.SimInf_abc]{as.data.frame}} to
+    inspect the fitted object, \code{\link{continue_abc}} to
     refine the fit with additional generations, and
     \code{\link[=run,SimInf_model-method]{run}} to generate
     trajectories from the posterior.
