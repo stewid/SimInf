@@ -844,6 +844,26 @@ abc_internal <- function(object,
 
 ##' Approximate Bayesian computation
 ##'
+##' Fit a model to data using the approximate Bayesian computation
+##' sequential Monte Carlo (ABC SMC) algorithm of Toni and others
+##' (2009). Each generation of the algorithm propagates a population
+##' of candidate parameter sets (particles), drawn from the priors in
+##' the first generation and from perturbed particles of the previous
+##' generation thereafter, with the latter weighted by the ratio of
+##' their prior to proposal densities. A particle is simulated by
+##' applying it to the model and generating a stochastic trajectory
+##' with \code{\link[=run,SimInf_model-method]{run}}. The particle is
+##' retained if the distance between the summary statistics of the
+##' simulated trajectory and the observed \code{data} is less than or
+##' equal to the tolerance for the generation. As generations progress
+##' and the tolerances decrease, the population of particles converges
+##' towards an approximation of the posterior distribution.
+##'
+##' The tolerances can either be supplied explicitly through the
+##' \code{tolerance} argument, or determined adaptively using the
+##' algorithm of Simola and others (2021), see \code{n_init}. The
+##' returned \code{\linkS4class{SimInf_abc}} object holds the accepted
+##' particles for each generation together with their weights.
 ##'
 ##' @param model The \code{SimInf_model} object to generate data from.
 ##' @template priors-param
@@ -866,23 +886,23 @@ abc_internal <- function(object,
 ##'     trajectory attached to it. The second argument,
 ##'     \code{generation}, to \code{distance} is an integer with the
 ##'     generation of the particle(s). Further arguments that can
-##'     passed to the \code{distance} function comes from \code{...}
-##'     in the \code{abc} function. Depending on the underlying model
-##'     structure, data for one or more particles have been generated
-##'     in each call to \code{distance}. If the \code{model} only
-##'     contains one node and all the parameters to fit are in
-##'     \code{ldata}, then that node will be replicated and each of
-##'     the replicated nodes represent one particle in the trajectory
-##'     (see \sQuote{Examples}). On the other hand if the model
-##'     contains multiple nodes or the parameters to fit are contained
-##'     in \code{gdata}, then the trajectory in the \code{result}
-##'     argument represents one particle. The function can return a
-##'     numeric matrix (number of particles \eqn{\times} number of
-##'     summary statistics). Or, if the distance contains one summary
-##'     statistic, a numeric vector with the length equal to the
-##'     number of particles. Note that when using adaptive tolerance
-##'     selection, only one summary statistic can be used, i.e., the
-##'     function must return a matrix (number of particles
+##'     passed to the \code{distance} function comes from the
+##'     \code{data} argument in the \code{abc} function. Depending on
+##'     the underlying model structure, data for one or more particles
+##'     have been generated in each call to \code{distance}. If the
+##'     \code{model} only contains one node and all the parameters to
+##'     fit are in \code{ldata}, then that node will be replicated and
+##'     each of the replicated nodes represent one particle in the
+##'     trajectory (see \sQuote{Examples}). On the other hand if the
+##'     model contains multiple nodes or the parameters to fit are
+##'     contained in \code{gdata}, then the trajectory in the
+##'     \code{result} argument represents one particle. The function
+##'     can return a numeric matrix (number of particles \eqn{\times}
+##'     number of summary statistics). Or, if the distance contains
+##'     one summary statistic, a numeric vector with the length equal
+##'     to the number of particles. Note that when using adaptive
+##'     tolerance selection, only one summary statistic can be used,
+##'     i.e., the function must return a matrix (number of particles
 ##'     \eqn{\times} 1) or a numeric vector.
 ##' @param tolerance A numeric matrix (number of summary statistics
 ##'     \eqn{\times} number of generations) where each column contains
@@ -898,6 +918,13 @@ abc_internal <- function(object,
 ##' @template post_gen-param
 ##' @template init_model-param
 ##' @return A \code{SimInf_abc} object.
+##' @seealso \code{\link[=plot,SimInf_abc-method]{plot}},
+##'     \code{\link[=summary,SimInf_abc-method]{summary}} and
+##'     \code{\link[=as.data.frame,SimInf_abc-method]{as.data.frame}}
+##'     to inspect the fitted object, \code{\link{continue_abc}} to
+##'     refine the fit with additional generations, and
+##'     \code{\link[=run,SimInf_model-method]{run}} to generate
+##'     trajectories from the posterior.
 ##' @references
 ##'
 ##' \Toni2009
