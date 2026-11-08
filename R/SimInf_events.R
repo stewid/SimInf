@@ -998,52 +998,77 @@ setMethod(
 
 ##' Set the select matrix for a \code{SimInf_model} object
 ##'
-##' Utility function to set \code{events@@E} in a \code{SimInf_model}
-##' object, see \code{\linkS4class{SimInf_events}}.
+##' Replace the select matrix \code{events@E} that determines which
+##' compartments an event samples individuals from when processing
+##' \emph{exit}, \emph{enter}, \emph{internal transfer} and
+##' \emph{external transfer} events. The values in the selected
+##' column are used as weights when sampling individuals from the
+##' compartments with non-zero entries. The select matrix can be
+##' specified as a \code{matrix}, or as a \code{data.frame} with the
+##' columns \code{compartment} and \code{select}, and an optional
+##' column \code{value} (default \code{1}); see \sQuote{Arguments}
+##' for details, and \code{\linkS4class{SimInf_events}} for how the
+##' select matrix is used when processing events.
 ##'
-##' @param model The \code{SimInf_model} object to set the select
-##'     matrix for.
+##' @param model The \code{\linkS4class{SimInf_model}} object to set
+##'     the select matrix for.
 ##' @param value The new value for \code{E} in the model. \code{E} is
 ##'     a matrix to handle scheduled events, see
 ##'     \code{\linkS4class{SimInf_events}}. Each row in \code{E}
-##'     corresponds to one compartment in the model. The non-zero
-##'     entries in a column indicate the compartments to include in an
-##'     event. For the \emph{exit}, \emph{internal transfer} and
-##'     \emph{external transfer} events, the values in \code{E[,
-##'     select]} are used as weights when sampling individuals without
-##'     replacement, with probability proportional to the weight. For
-##'     the \emph{enter} event, the values in \code{E[, select]} are
-##'     used as weights when determining which compartment to add
-##'     individuals to. If the column \code{E[, select]} contains
-##'     several non-zero entries, the compartment is sampled with
-##'     probability proportional to the weight in \code{E[, select]}.
-##'     The select matrix \code{E} can either be specified as a
-##'     \code{matrix}, or as a \code{data.frame}.  When \code{E} is
-##'     specified as a \code{data.frame}, it must have one column
-##'     named \code{compartment} that defines which compartment is
-##'     referred to, and one column \code{select} that defines the
-##'     column in \code{E}.  In addition, the \code{data.frame} can
-##'     contain an optional column named \code{value} with the value
-##'     in \code{E}.  When the \code{value} column is missing,
-##'     \code{1} is used as the default value.
-##' @export
+##'     corresponds to one compartment in the model. The values in a
+##'     column are used as weights when sampling individuals from the
+##'     compartments with non-zero entries when processing an event.
+##'     Let \code{s <- select}, then the non-zero entries in
+##'     \code{E[, s]} determine which compartments to sample
+##'     individuals from. This matrix is used for \emph{exit},
+##'     \emph{enter}, \emph{internal transfer} and \emph{external
+##'     transfer} events. The select matrix \code{E} can either be
+##'     specified as a \code{matrix}, or as a \code{data.frame}.
+##'     When \code{E} is specified as a \code{data.frame}, it must
+##'     have one column named \code{compartment} that defines which
+##'     compartment is referred to, and one column \code{select} that
+##'     defines the column in \code{E}. In addition, the
+##'     \code{data.frame} may contain a column named \code{value}
+##'     with the weight in \code{E} (\code{1} if the column is
+##'     omitted). Note that the \code{data.frame} replaces the entire
+##'     select matrix: entries not included are set to zero, so all
+##'     columns that the scheduled events refer to must be specified.
+##' @return The \code{\linkS4class{SimInf_model}} object with the
+##'     updated select matrix.
+##' @seealso
+##'     \code{\link[=select_matrix,SimInf_model-method]{select_matrix}}
+##'     to extract the select matrix, and
+##'     \code{\link[=shift_matrix,SimInf_model-method]{shift_matrix}}
+##'     to extract the shift matrix. The vignette "Scheduled events"
+##'     for a tutorial on scheduled events, see
+##'     \code{vignette("Scheduled events", package = "SimInf")}.
 ##' @examples
-##' ## Create an SIR model.
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
-##'
-##' ## Set the select matrix.
-##' select_matrix(model) <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0, 1), nrow = 3)
+##' ## Create an 'SIR' model.
+##' model <- SIR(
+##'   u0 = data.frame(
+##'     S = 100,
+##'     I = 10,
+##'     R = 0),
+##'   tspan = 1:5,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
 ##'
 ##' ## Extract the select matrix from the model.
 ##' select_matrix(model)
 ##'
-##' ## Set the select matrix using a data.frame instead.
+##' ## Change the select matrix so that individuals in the 'I'
+##' ## compartment are twice as likely to be selected when
+##' ## processing an event with 'select' = 4. Note that the
+##' ## data.frame replaces the entire select matrix, so the entries
+##' ## in columns 1, 2 and 3 must also be specified.
 ##' select_matrix(model) <- data.frame(
-##'     compartment = c("S", "S", "I", "R", "R"),
-##'     select      = c( 1,   2,   2,   2,   3))
+##'   compartment = c("S", "I", "R", "S", "I", "R"),
+##'   select = c(1, 2, 3, 4, 4, 4),
+##'   value = c(1, 1, 1, 1, 2, 1)
+##' )
 ##'
-##' ## Extract the select matrix from the model.
+##' ## Extract the updated select matrix from the model.
 ##' select_matrix(model)
 ## nolint start: brace_linter
 setGeneric(
