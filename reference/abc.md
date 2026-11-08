@@ -1,6 +1,19 @@
 # Approximate Bayesian computation
 
-Approximate Bayesian computation
+Fit a model to data using the approximate Bayesian computation
+sequential Monte Carlo (ABC SMC) algorithm of Toni and others (2009).
+Each generation of the algorithm propagates a population of candidate
+parameter sets (particles), drawn from the priors in the first
+generation and from perturbed particles of the previous generation
+thereafter, with the latter weighted by the ratio of their prior to
+proposal densities. A particle is simulated by applying it to the model
+and generating a stochastic trajectory with
+[`run`](http://stewid.github.io/SimInf/reference/run.md). The particle
+is retained if the distance between the summary statistics of the
+simulated trajectory and the observed `data` is less than or equal to
+the tolerance for the generation. As generations progress and the
+tolerances decrease, the population of particles converges towards an
+approximation of the posterior distribution.
 
 ## Usage
 
@@ -75,21 +88,21 @@ abc(
   model with one trajectory attached to it. The second argument,
   `generation`, to `distance` is an integer with the generation of the
   particle(s). Further arguments that can passed to the `distance`
-  function comes from `...` in the `abc` function. Depending on the
-  underlying model structure, data for one or more particles have been
-  generated in each call to `distance`. If the `model` only contains one
-  node and all the parameters to fit are in `ldata`, then that node will
-  be replicated and each of the replicated nodes represent one particle
-  in the trajectory (see ‘Examples’). On the other hand if the model
-  contains multiple nodes or the parameters to fit are contained in
-  `gdata`, then the trajectory in the `result` argument represents one
-  particle. The function can return a numeric matrix (number of
-  particles \\\times\\ number of summary statistics). Or, if the
-  distance contains one summary statistic, a numeric vector with the
-  length equal to the number of particles. Note that when using adaptive
-  tolerance selection, only one summary statistic can be used, i.e., the
-  function must return a matrix (number of particles \\\times\\ 1) or a
-  numeric vector.
+  function comes from the `data` argument in the `abc` function.
+  Depending on the underlying model structure, data for one or more
+  particles have been generated in each call to `distance`. If the
+  `model` only contains one node and all the parameters to fit are in
+  `ldata`, then that node will be replicated and each of the replicated
+  nodes represent one particle in the trajectory (see ‘Examples’). On
+  the other hand if the model contains multiple nodes or the parameters
+  to fit are contained in `gdata`, then the trajectory in the `result`
+  argument represents one particle. The function can return a numeric
+  matrix (number of particles \\\times\\ number of summary statistics).
+  Or, if the distance contains one summary statistic, a numeric vector
+  with the length equal to the number of particles. Note that when using
+  adaptive tolerance selection, only one summary statistic can be used,
+  i.e., the function must return a matrix (number of particles
+  \\\times\\ 1) or a numeric vector.
 
 - tolerance:
 
@@ -130,6 +143,15 @@ abc(
 
 A `SimInf_abc` object.
 
+## Details
+
+The tolerances can either be supplied explicitly through the `tolerance`
+argument, or determined adaptively using the algorithm of Simola and
+others (2021), see `n_init`. The returned
+[`SimInf_abc`](http://stewid.github.io/SimInf/reference/SimInf_abc-class.md)
+object holds the accepted particles for each generation together with
+their weights.
+
 ## References
 
 T. Toni, D. Welch, N. Strelkowa, A. Ipsen, and M. P. H. Stumpf.
@@ -144,6 +166,14 @@ Analysis*, **16**(2), 397–423, 2021.
 [doi:10.1214/20-BA1211](https://doi.org/10.1214/20-BA1211)
 
 ## See also
+
+[`plot`](http://stewid.github.io/SimInf/reference/plot-SimInf_abc-method.md),
+[`summary`](http://stewid.github.io/SimInf/reference/summary-SimInf_abc-method.md)
+and `as.data.frame` to inspect the fitted object,
+[`continue_abc`](http://stewid.github.io/SimInf/reference/continue_abc.md)
+to refine the fit with additional generations, and
+[`run`](http://stewid.github.io/SimInf/reference/run.md) to generate
+trajectories from the posterior.
 
 [`continue_abc`](http://stewid.github.io/SimInf/reference/continue_abc.md).
 
