@@ -291,6 +291,9 @@ particles for each generation together with their weights.</p>
 <span class="r-in"><span>        ncol <span class="op">=</span> <span class="fu"><a href="n_nodes.html">n_nodes</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="co">## Return the sum of squared errors for each node, i.e. one</span></span></span>
+<span class="r-in"><span>    <span class="co">## distance per proposal. The length of the returned vector must</span></span></span>
+<span class="r-in"><span>    <span class="co">## match the number of nodes in 'result'.</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">residuals</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
