@@ -217,9 +217,7 @@ distance <- function(result, generation, data) {
     ## One column per node: subtract the observed series row-wise. The
     ## residuals are squared and summed within each column, giving the
     ## sum of squared errors: larger deviations from the observed
-    ## trajectory count proportionally more against a proposal. Each
-    ## proposal will be accepted or rejected depending on whether the
-    ## distance is at most the tolerance for the current generation.
+    ## trajectory count proportionally more against a proposal.
     residuals <- matrix(
         sim$I - data,
         nrow = length(data),
@@ -227,8 +225,10 @@ distance <- function(result, generation, data) {
     )
 
     ## Return the sum of squared errors for each node, i.e. one
-    ## distance per proposal. The length of the returned vector must
-    ## match the number of nodes in 'result'.
+    ## distance per proposal. Each proposal will be accepted or
+    ## rejected depending on whether the distance is at most the
+    ## tolerance for the current generation. The length of the
+    ## returned vector must match the number of nodes in 'result'.
     colSums(residuals^2)
 }
 

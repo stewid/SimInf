@@ -282,9 +282,7 @@ particles for each generation together with their weights.</p>
 <span class="r-in"><span>    <span class="co">## One column per node: subtract the observed series row-wise. The</span></span></span>
 <span class="r-in"><span>    <span class="co">## residuals are squared and summed within each column, giving the</span></span></span>
 <span class="r-in"><span>    <span class="co">## sum of squared errors: larger deviations from the observed</span></span></span>
-<span class="r-in"><span>    <span class="co">## trajectory count proportionally more against a proposal. Each</span></span></span>
-<span class="r-in"><span>    <span class="co">## proposal will be accepted or rejected depending on whether the</span></span></span>
-<span class="r-in"><span>    <span class="co">## distance is at most the tolerance for the current generation.</span></span></span>
+<span class="r-in"><span>    <span class="co">## trajectory count proportionally more against a proposal.</span></span></span>
 <span class="r-in"><span>    <span class="va">residuals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>        <span class="va">sim</span><span class="op">$</span><span class="va">I</span> <span class="op">-</span> <span class="va">data</span>,</span></span>
 <span class="r-in"><span>        nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>,</span></span>
@@ -292,8 +290,10 @@ particles for each generation together with their weights.</p>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>    <span class="co">## Return the sum of squared errors for each node, i.e. one</span></span></span>
-<span class="r-in"><span>    <span class="co">## distance per proposal. The length of the returned vector must</span></span></span>
-<span class="r-in"><span>    <span class="co">## match the number of nodes in 'result'.</span></span></span>
+<span class="r-in"><span>    <span class="co">## distance per proposal. Each proposal will be accepted or</span></span></span>
+<span class="r-in"><span>    <span class="co">## rejected depending on whether the distance is at most the</span></span></span>
+<span class="r-in"><span>    <span class="co">## tolerance for the current generation. The length of the</span></span></span>
+<span class="r-in"><span>    <span class="co">## returned vector must match the number of nodes in 'result'.</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">residuals</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
