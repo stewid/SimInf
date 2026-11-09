@@ -42,6 +42,9 @@ distance <- function(result, generation, data) {
         ncol = n_nodes(result)
     )
 
+    ## Return the sum of squared errors for each node, i.e. one
+    ## distance per proposal. The length of the returned vector must
+    ## match the number of nodes in 'result'.
     colSums(residuals^2)
 }
 
