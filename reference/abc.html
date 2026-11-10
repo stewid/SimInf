@@ -279,10 +279,11 @@ particles for each generation together with their weights.</p>
 <span class="r-in"><span>    <span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="trajectory.html">trajectory</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"I"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="va">sim</span> <span class="op">&lt;-</span> <span class="va">sim</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">node</span>, <span class="va">sim</span><span class="op">$</span><span class="va">time</span><span class="op">)</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>    <span class="co">## One column per node: subtract the observed series row-wise. The</span></span></span>
-<span class="r-in"><span>    <span class="co">## residuals are squared and summed within each column, giving the</span></span></span>
-<span class="r-in"><span>    <span class="co">## sum of squared errors: larger deviations from the observed</span></span></span>
-<span class="r-in"><span>    <span class="co">## trajectory count proportionally more against a proposal.</span></span></span>
+<span class="r-in"><span>    <span class="co">## One column per node: subtract the observed series row-wise</span></span></span>
+<span class="r-in"><span>    <span class="co">## ('data' is recycled once per node). The residuals are squared</span></span></span>
+<span class="r-in"><span>    <span class="co">## and summed within each column, giving the sum of squared</span></span></span>
+<span class="r-in"><span>    <span class="co">## errors: larger deviations from the observed trajectory count</span></span></span>
+<span class="r-in"><span>    <span class="co">## proportionally more against a proposal.</span></span></span>
 <span class="r-in"><span>    <span class="va">residuals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>        <span class="va">sim</span><span class="op">$</span><span class="va">I</span> <span class="op">-</span> <span class="va">data</span>,</span></span>
 <span class="r-in"><span>        nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>,</span></span>

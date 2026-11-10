@@ -214,10 +214,11 @@ distance <- function(result, generation, data) {
     sim <- trajectory(result, "I")
     sim <- sim[order(sim$node, sim$time), ]
 
-    ## One column per node: subtract the observed series row-wise. The
-    ## residuals are squared and summed within each column, giving the
-    ## sum of squared errors: larger deviations from the observed
-    ## trajectory count proportionally more against a proposal.
+    ## One column per node: subtract the observed series row-wise
+    ## ('data' is recycled once per node). The residuals are squared
+    ## and summed within each column, giving the sum of squared
+    ## errors: larger deviations from the observed trajectory count
+    ## proportionally more against a proposal.
     residuals <- matrix(
         sim$I - data,
         nrow = length(data),
