@@ -208,8 +208,7 @@ fit <- abc(
   n_particles = 100,
   n_init = 1000,
   distance = distance,
-  data = infectious,
-  verbose = TRUE
+  data = infectious
 )
 
 ## Print a brief summary.
