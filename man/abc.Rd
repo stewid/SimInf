@@ -139,7 +139,11 @@ returned \code{\linkS4class{SimInf_abc}} object holds the accepted
 particles for each generation together with their weights.
 }
 \examples{
-\dontrun{
+## For reproducibility, specify a seed and the number of threads to
+## use.
+set.seed(22)
+set_num_threads(1)
+
 ## Let us consider an SIR model in a closed population with N = 100
 ## individuals of whom one is initially infectious and the rest are
 ## susceptible. First, generate one realisation (with a specified
@@ -157,7 +161,6 @@ model <- SIR(
 )
 
 ## Run the SIR model and plot the number of infectious.
-set.seed(22)
 infectious <- trajectory(run(model), "I")$I
 plot(infectious, type = "s")
 
@@ -200,8 +203,8 @@ distance <- function(result, generation, data) {
 fit <- abc(
   model = model,
   priors = c(
-      beta ~ uniform(0, 1),
-      gamma ~ uniform(0, 1)),
+    beta ~ uniform(0, 1),
+    gamma ~ uniform(0, 1)),
   n_particles = 100,
   n_init = 1000,
   distance = distance,
@@ -214,7 +217,6 @@ fit
 
 ## Display the ABC posterior distribution.
 plot(fit)
-}
 }
 \references{
 \Toni2009
