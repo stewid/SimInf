@@ -247,7 +247,11 @@ particles for each generation together with their weights.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## For reproducibility, specify a seed and the number of threads to</span></span></span>
+<span class="r-in"><span><span class="co">## use.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">22</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Let us consider an SIR model in a closed population with N = 100</span></span></span>
 <span class="r-in"><span><span class="co">## individuals of whom one is initially infectious and the rest are</span></span></span>
 <span class="r-in"><span><span class="co">## susceptible. First, generate one realisation (with a specified</span></span></span>
@@ -265,9 +269,9 @@ particles for each generation together with their weights.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Run the SIR model and plot the number of infectious.</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">22</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">infectious</span> <span class="op">&lt;-</span> <span class="fu"><a href="trajectory.html">trajectory</a></span><span class="op">(</span><span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, <span class="st">"I"</span><span class="op">)</span><span class="op">$</span><span class="va">I</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">infectious</span>, type <span class="op">=</span> <span class="st">"s"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="abc-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## The distance function to accept or reject a proposal. Each node in</span></span></span>
 <span class="r-in"><span><span class="co">## the simulated trajectory (contained in the 'result' object)</span></span></span>
@@ -308,21 +312,122 @@ particles for each generation together with their weights.</p>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">abc</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  model <span class="op">=</span> <span class="va">model</span>,</span></span>
 <span class="r-in"><span>  priors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      <span class="va">beta</span> <span class="op">~</span> <span class="fu">uniform</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>      <span class="va">gamma</span> <span class="op">~</span> <span class="fu">uniform</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="va">beta</span> <span class="op">~</span> <span class="fu">uniform</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="va">gamma</span> <span class="op">~</span> <span class="fu">uniform</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  n_particles <span class="op">=</span> <span class="fl">100</span>,</span></span>
 <span class="r-in"><span>  n_init <span class="op">=</span> <span class="fl">1000</span>,</span></span>
 <span class="r-in"><span>  distance <span class="op">=</span> <span class="va">distance</span>,</span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">infectious</span>,</span></span>
 <span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Generation 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   accrate = 1.00e-01, ESS = 1.00e+02 time = 0.12 secs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Distance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> --------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Min. 1st Qu. Median  Mean 3rd Qu.  Max.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:  2343   10097  10172  9511   10183 10188</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           Min. 1st Qu.  Median    Mean 3rd Qu.    Max.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  beta  0.00358 0.12090 0.26697 0.29588 0.40229 0.96667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  gamma 0.00324 0.13668 0.26885 0.32486 0.46367 0.91321</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Generation 2 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |====================                                                  |  28%
+  |                                                                            
+  |===================================                                   |  50%
+  |                                                                            
+  |====================================================                  |  74%
+  |                                                                            
+  |======================================================================| 100%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   accrate = 2.57e-02, ESS = 9.91e+01 time = 0.08 secs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Distance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> --------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Min. 1st Qu. Median Mean 3rd Qu. Max.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:  839    5921   7562 6913    8881 9773</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Min. 1st Qu. Median   Mean 3rd Qu.   Max.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  beta  0.0129  0.1178 0.2080 0.2301  0.3264 0.5396</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  gamma 0.0126  0.0774 0.1239 0.1504  0.2098 0.4143</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Generation 3 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |================================                                      |  46%
+  |                                                                            
+  |======================================================================| 100%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   accrate = 5.70e-02, ESS = 9.01e+01 time = 0.03 secs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Distance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> --------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Min. 1st Qu. Median Mean 3rd Qu. Max.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:  791    2916   4664 4360    5923 6780</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           Min. 1st Qu.  Median    Mean 3rd Qu.    Max.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  beta  0.01309 0.12520 0.18060 0.18702 0.24867 0.42615</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  gamma 0.00442 0.06799 0.09722 0.10298 0.13134 0.21276</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Generation 4 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |====================================                                  |  52%
+  |                                                                            
+  |======================================================================| 100%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   accrate = 5.05e-02, ESS = 8.55e+01 time = 0.04 secs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Distance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> --------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Min. 1st Qu. Median Mean 3rd Qu. Max.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:  986    2259   3292 3247    4348 5058</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           Min. 1st Qu.  Median    Mean 3rd Qu.    Max.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  beta  0.03512 0.12079 0.18568 0.19028 0.24370 0.45717</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  gamma 0.00527 0.07022 0.09189 0.09719 0.11748 0.23464</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Print a brief summary.</span></span></span>
 <span class="r-in"><span><span class="va">fit</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of particles per generation: 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of generations: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Generation 4:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Accrate: 5.05e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ESS: 8.55e+01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           Min. 1st Qu.  Median    Mean 3rd Qu.    Max.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  beta  0.03512 0.12079 0.18568 0.19028 0.24370 0.45717</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  gamma 0.00527 0.07022 0.09189 0.09719 0.11748 0.23464</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Display the ABC posterior distribution.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-plt img"><img src="abc-2.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -182,7 +182,11 @@ trajectories from the posterior.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+## For reproducibility, specify a seed and the number of threads to
+## use.
+set.seed(22)
+set_num_threads(1)
+
 ## Let us consider an SIR model in a closed population with N = 100
 ## individuals of whom one is initially infectious and the rest are
 ## susceptible. First, generate one realisation (with a specified
@@ -200,9 +204,9 @@ model <- SIR(
 )
 
 ## Run the SIR model and plot the number of infectious.
-set.seed(22)
 infectious <- trajectory(run(model), "I")$I
 plot(infectious, type = "s")
+
 
 ## The distance function to accept or reject a proposal. Each node in
 ## the simulated trajectory (contained in the 'result' object)
@@ -243,19 +247,119 @@ distance <- function(result, generation, data) {
 fit <- abc(
   model = model,
   priors = c(
-      beta ~ uniform(0, 1),
-      gamma ~ uniform(0, 1)),
+    beta ~ uniform(0, 1),
+    gamma ~ uniform(0, 1)),
   n_particles = 100,
   n_init = 1000,
   distance = distance,
   data = infectious,
   verbose = TRUE
 )
+#> 
+#> Generation 1 ...
+#> 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+#> 
+#>   accrate = 1.00e-01, ESS = 1.00e+02 time = 0.12 secs
+#> 
+#> Distance
+#> --------
+#>      Min. 1st Qu. Median  Mean 3rd Qu.  Max.
+#>  1:  2343   10097  10172  9511   10183 10188
+#> 
+#> Parameters
+#> ----------
+#>           Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+#>  beta  0.00358 0.12090 0.26697 0.29588 0.40229 0.96667
+#>  gamma 0.00324 0.13668 0.26885 0.32486 0.46367 0.91321
+#> 
+#> Generation 2 ...
+#> 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |====================                                                  |  28%
+  |                                                                            
+  |===================================                                   |  50%
+  |                                                                            
+  |====================================================                  |  74%
+  |                                                                            
+  |======================================================================| 100%
+#> 
+#>   accrate = 2.57e-02, ESS = 9.91e+01 time = 0.08 secs
+#> 
+#> Distance
+#> --------
+#>     Min. 1st Qu. Median Mean 3rd Qu. Max.
+#>  1:  839    5921   7562 6913    8881 9773
+#> 
+#> Parameters
+#> ----------
+#>          Min. 1st Qu. Median   Mean 3rd Qu.   Max.
+#>  beta  0.0129  0.1178 0.2080 0.2301  0.3264 0.5396
+#>  gamma 0.0126  0.0774 0.1239 0.1504  0.2098 0.4143
+#> 
+#> Generation 3 ...
+#> 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |================================                                      |  46%
+  |                                                                            
+  |======================================================================| 100%
+#> 
+#>   accrate = 5.70e-02, ESS = 9.01e+01 time = 0.03 secs
+#> 
+#> Distance
+#> --------
+#>     Min. 1st Qu. Median Mean 3rd Qu. Max.
+#>  1:  791    2916   4664 4360    5923 6780
+#> 
+#> Parameters
+#> ----------
+#>           Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+#>  beta  0.01309 0.12520 0.18060 0.18702 0.24867 0.42615
+#>  gamma 0.00442 0.06799 0.09722 0.10298 0.13134 0.21276
+#> 
+#> Generation 4 ...
+#> 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |====================================                                  |  52%
+  |                                                                            
+  |======================================================================| 100%
+#> 
+#>   accrate = 5.05e-02, ESS = 8.55e+01 time = 0.04 secs
+#> 
+#> Distance
+#> --------
+#>     Min. 1st Qu. Median Mean 3rd Qu. Max.
+#>  1:  986    2259   3292 3247    4348 5058
+#> 
+#> Parameters
+#> ----------
+#>           Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+#>  beta  0.03512 0.12079 0.18568 0.19028 0.24370 0.45717
+#>  gamma 0.00527 0.07022 0.09189 0.09719 0.11748 0.23464
 
 ## Print a brief summary.
 fit
+#> Number of particles per generation: 100
+#> Number of generations: 4
+#> 
+#> Generation 4:
+#> -------------
+#>  Accrate: 5.05e-02
+#>  ESS: 8.55e+01
+#> 
+#>           Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+#>  beta  0.03512 0.12079 0.18568 0.19028 0.24370 0.45717
+#>  gamma 0.00527 0.07022 0.09189 0.09719 0.11748 0.23464
 
 ## Display the ABC posterior distribution.
 plot(fit)
-} # }
 ```
