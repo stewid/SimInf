@@ -19,16 +19,19 @@ sample size (ESS) at each time-point.
 - `n_particles`:
 
   An integer with the number of particles that was used at each
-  time-step.
+  time-point.
 
 - `loglik`:
 
-  The estimated log-likelihood.
+  The estimated log-likelihood of the observed data.
 
 - `ess`:
 
   A numeric vector with the effective sample size (ESS) at each
-  time-point. The effective sample size is computed as
+  time-point, computed from the normalized particle weights before
+  resampling. A small ESS indicates that few particles carry most of the
+  weight, and that more particles may be needed. The effective sample
+  size is computed as
   \$\$\left(\sum\_{i=1}^N\\(w\_{t}^{i})^2\right)^{-1},\$\$ where
   \\w\_{t}^{i}\\ is the normalized weight of particle \\i\\ at time
   \\t\\.

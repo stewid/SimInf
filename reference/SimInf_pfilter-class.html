@@ -70,16 +70,19 @@ time-points is reconstructed.</p></dd>
 
 <dt><code>n_particles</code></dt>
 <dd><p>An integer with the number of particles that was
-used at each time-step.</p></dd>
+used at each time-point.</p></dd>
 
 
 <dt><code>loglik</code></dt>
-<dd><p>The estimated log-likelihood.</p></dd>
+<dd><p>The estimated log-likelihood of the observed data.</p></dd>
 
 
 <dt><code>ess</code></dt>
 <dd><p>A numeric vector with the effective sample size (ESS) at
-each time-point.  The effective sample size is computed as
+each time-point, computed from the normalized particle weights
+before resampling. A small ESS indicates that few particles
+carry most of the weight, and that more particles may be
+needed. The effective sample size is computed as
 $$\left(\sum_{i=1}^N\!(w_{t}^{i})^2\right)^{-1},$$ where \(w_{t}^{i}\) is the normalized
 weight of particle \(i\) at time \(t\).</p></dd>
 

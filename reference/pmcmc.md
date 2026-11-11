@@ -64,12 +64,12 @@ pmcmc(
   `x ~ uniform(min, max)`. The observation process can also be a
   function to evaluate the probability density of the observations given
   the simulated states. The first argument passed to the `obs_process`
-  function is the result from a run of the model and it contains one
-  trajectory with simulated data for a time-point, where the trajectory
-  contains `n_particles` replicates, see
+  function is the result from a run of the model for the current time
+  interval: a trajectory with one replicate per particle for that
+  time-point, see
   [`trajectory,SimInf_model-method`](http://stewid.github.io/SimInf/reference/trajectory.md).
   The second argument to the `obs_process` function is a `data.frame`
-  containing the rows for the specific time-point that the function is
+  containing the rows in `data` for the time-point that the function is
   called for. Note that the function must return the log of the density.
 
 - data:
