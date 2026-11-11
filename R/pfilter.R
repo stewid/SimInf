@@ -470,9 +470,9 @@ pfilter_internal <- function(model,
     ## final particle system. The weights are already incorporated in
     ## the last resampling step, which equalised the weights, so
     ## sampling uniformly from the particles after resampling is
-    ## equivalent to sampling proportionally to the weights.  Trace
-    ## the sampled particle backward through the ancestor indices 'a'
-    ## to recover a full trajectory that is consistent with the
+    ## equivalent to sampling proportionally to the weights. Trace the
+    ## sampled particle backward through the ancestor indices 'a' to
+    ## recover a full trajectory that is consistent with the
     ## resampling performed at each time-step.
     i <- sample.int(n_particles, 1)
     for (j in rev(seq_len(Ntspan))) {
@@ -531,10 +531,12 @@ pfilter_internal <- function(model,
 ##'     on trajectories that are consistent with the data and yields a
 ##'     weighted approximation of the filtered state distribution at
 ##'     each observation time. The accuracy of the approximation
-##'     improves as the number of particles increases.  After the
-##'     final observation, a single trajectory is sampled from the
-##'     particle system and traced backward through the ancestral
-##'     lineages.
+##'     improves as the number of particles increases. After the final
+##'     observation, a single trajectory is sampled from the particle
+##'     system and traced backward through the ancestral lineages. The
+##'     effective sample size is recorded at each observation, before
+##'     resampling, as a measure of how unevenly the weights were
+##'     distributed at that step.
 ##' @param model The \code{SimInf_model} object to simulate data from.
 ##' @template obs_process-param
 ##' @template data-param
@@ -544,13 +546,92 @@ pfilter_internal <- function(model,
 ##'     trajectory: a single trajectory sampled from the particle
 ##'     system (traced backward through the particle genealogy),
 ##'     together with the estimated log-likelihood of the data and the
-##'     effective sample size at each time-step. See
+##'     effective sample size at each observation. See
 ##'     \code{\link{SimInf_pfilter-class}} for details.
 ##' @references
 ##'
 ##' \Gordon1993
 ##' @export
-##' @example man/examples/pfilter.R
+##' @examples
+##' ## For reproducibility, specify a seed and the number of threads to
+##' ## use.
+##' set.seed(22)
+##' set_num_threads(1)
+##'
+##' ## Let us consider an SIR model in a closed population with 'N = 100'
+##' ## individuals of whom one is initially infectious and the rest
+##' ## are susceptible. First, generate one realisation from the model
+##' ## with known parameters 'beta = 0.16' and 'gamma = 0.077'. Specify
+##' ## 'tspan' to record the process every third day. Then, use
+##' ## 'pfilter' to apply the bootstrap particle filter algorithm on
+##' ## the simulated data.
+##' model <- SIR(
+##'   u0 = data.frame(
+##'     S = 99,
+##'     I = 1,
+##'     R = 0),
+##'   tspan = seq(1, 100, by = 3),
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Run the SIR model to generate the latent number of infected
+##' ## individuals, then simulate noisy observations from them using the
+##' ## Poisson observation model.
+##' infected <- trajectory(run(model))
+##' infected$Iobs <- rpois(nrow(infected), infected$I)
+##'
+##' ## Use a Poisson observation process for the number of infected
+##' ## individuals: Iobs ~ poisson(I + 1e-6). A small constant '1e-6' is
+##' ## added because the latent counts 'I' can be zero, in which case the
+##' ## Poisson density is zero for any positive observation. In the
+##' ## particle filter this would give the particle zero likelihood, so
+##' ## the small constant keeps the weights finite.
+##'
+##' ## Use a low number of particles here to keep the run-time of
+##' ## the example short. In practice, you may need to increase the
+##' ## number of particles for a smoother filtered trajectory.
+##' pf <- pfilter(
+##'   model,
+##'   obs_process = Iobs ~ poisson(I + 1e-6),
+##'   data = infected[, c("time", "Iobs")],
+##'   n_particles = 100
+##' )
+##'
+##' ## Print a brief summary.
+##' pf
+##'
+##' ## Compare the number of infected individuals 'I' in the filtered
+##' ## trajectory with the noisy observations 'Iobs' and the latent
+##' ## trajectory 'I'.
+##' plot(pf, ~I, ylim = c(0, 30))
+##'
+##' lines(
+##'   Iobs ~ time,
+##'   infected,
+##'   col = "blue",
+##'   lwd = 2,
+##'   type = "s",
+##'   lty = "dotted"
+##' )
+##'
+##' lines(
+##'   I ~ time,
+##'   infected,
+##'   col = "red",
+##'   lwd = 2,
+##'   type = "s",
+##'   lty = "dashed"
+##' )
+##'
+##' ## Add a legend.
+##' legend(
+##'   "topright",
+##'   legend = c("Filtered", "Observed", "Latent"),
+##'   col = c("black", "blue", "red"),
+##'   lty = c("solid", "dotted", "dashed"),
+##'   lwd = 2
+##' )
 ## nolint start: brace_linter
 setGeneric(
     "pfilter",
