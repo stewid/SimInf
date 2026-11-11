@@ -113,7 +113,7 @@ model before running a trajectory with proposed parameters.</p></dd>
     trajectory: a single trajectory sampled from the particle
     system (traced backward through the particle genealogy),
     together with the estimated log-likelihood of the data and the
-    effective sample size at each time-step. See
+    effective sample size at each observation. See
     <code><a href="SimInf_pfilter-class.html">SimInf_pfilter-class</a></code> for details.</p>
     </div>
     <div class="section level2">
@@ -131,10 +131,12 @@ model before running a trajectory with proposed parameters.</p></dd>
     on trajectories that are consistent with the data and yields a
     weighted approximation of the filtered state distribution at
     each observation time. The accuracy of the approximation
-    improves as the number of particles increases.  After the
-    final observation, a single trajectory is sampled from the
-    particle system and traced backward through the ancestral
-    lineages.</p>
+    improves as the number of particles increases. After the final
+    observation, a single trajectory is sampled from the particle
+    system and traced backward through the ancestral lineages. The
+    effective sample size is recorded at each observation, before
+    resampling, as a measure of how unevenly the weights were
+    distributed at that step.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -143,43 +145,88 @@ model before running a trajectory with proposed parameters.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co">## Let us consider an SIR model in a closed population with N = 100</span></span></span>
-<span class="r-in"><span><span class="co">## individuals of whom one is initially infectious and the rest are</span></span></span>
-<span class="r-in"><span><span class="co">## susceptible. First, generate one realisation (with a specified</span></span></span>
-<span class="r-in"><span><span class="co">## seed) from the model with known parameters 'beta = 0.16' and</span></span></span>
-<span class="r-in"><span><span class="co">## 'gamma = 0.077'. Then, use 'pfilter' to apply the bootstrap</span></span></span>
-<span class="r-in"><span><span class="co">## particle algorithm on the simulated data.</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SIR.html">SIR</a></span><span class="op">(</span>u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>S <span class="op">=</span> <span class="fl">99</span>, I <span class="op">=</span> <span class="fl">1</span>, R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>             tspan <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">100</span>, by <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>             beta <span class="op">=</span> <span class="fl">0.16</span>,</span></span>
-<span class="r-in"><span>             gamma <span class="op">=</span> <span class="fl">0.077</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Run the SIR model to generate simulated observed data for the</span></span></span>
-<span class="r-in"><span><span class="co">## number of infected individuals.</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## For reproducibility, specify a seed and the number of threads to</span></span></span>
+<span class="r-in"><span><span class="co">## use.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">22</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">infected</span> <span class="op">&lt;-</span> <span class="fu"><a href="trajectory.html">trajectory</a></span><span class="op">(</span><span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, <span class="st">"I"</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"time"</span>, <span class="st">"I"</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">infected</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"time"</span>, <span class="st">"Iobs"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Use a Poison observation process for the infected individuals, such</span></span></span>
-<span class="r-in"><span><span class="co">## that 'Iobs ~ poison(I + 1e-6)'. A small constant '1e-6' is added to</span></span></span>
-<span class="r-in"><span><span class="co">## prevent numerical errors, since the simulated counts 'I' could be</span></span></span>
-<span class="r-in"><span><span class="co">## zero, which would result in the Poisson rate parameter being zero,</span></span></span>
-<span class="r-in"><span><span class="co">## which violates the conditions of the Poisson distribution. Use 1000</span></span></span>
-<span class="r-in"><span><span class="co">## particles.</span></span></span>
-<span class="r-in"><span><span class="va">pf</span> <span class="op">&lt;-</span> <span class="fu">pfilter</span><span class="op">(</span><span class="va">model</span>,</span></span>
-<span class="r-in"><span>              obs_process <span class="op">=</span> <span class="va">Iobs</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span><span class="va">I</span> <span class="op">+</span> <span class="fl">1e-6</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              data <span class="op">=</span> <span class="va">infected</span>,</span></span>
-<span class="r-in"><span>              n_particles <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Let us consider an SIR model in a closed population with 'N = 100'</span></span></span>
+<span class="r-in"><span><span class="co">## individuals of whom one is initially infectious and the rest</span></span></span>
+<span class="r-in"><span><span class="co">## are susceptible. First, generate one realisation from the model</span></span></span>
+<span class="r-in"><span><span class="co">## with known parameters 'beta = 0.16' and 'gamma = 0.077'. Specify</span></span></span>
+<span class="r-in"><span><span class="co">## 'tspan' to record the process every third day. Then, use</span></span></span>
+<span class="r-in"><span><span class="co">## 'pfilter' to apply the bootstrap particle filter algorithm on</span></span></span>
+<span class="r-in"><span><span class="co">## the simulated data.</span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="SIR.html">SIR</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  u0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    S <span class="op">=</span> <span class="fl">99</span>,</span></span>
+<span class="r-in"><span>    I <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>    R <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  tspan <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">100</span>, by <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  beta <span class="op">=</span> <span class="fl">0.16</span>,</span></span>
+<span class="r-in"><span>  gamma <span class="op">=</span> <span class="fl">0.077</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Run the SIR model to generate the latent number of infected</span></span></span>
+<span class="r-in"><span><span class="co">## individuals, then simulate noisy observations from them using the</span></span></span>
+<span class="r-in"><span><span class="co">## Poisson observation model.</span></span></span>
+<span class="r-in"><span><span class="va">infected</span> <span class="op">&lt;-</span> <span class="fu"><a href="trajectory.html">trajectory</a></span><span class="op">(</span><span class="fu"><a href="run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">infected</span><span class="op">$</span><span class="va">Iobs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">infected</span><span class="op">)</span>, <span class="va">infected</span><span class="op">$</span><span class="va">I</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Use a Poisson observation process for the number of infected</span></span></span>
+<span class="r-in"><span><span class="co">## individuals: Iobs ~ poisson(I + 1e-6). A small constant '1e-6' is</span></span></span>
+<span class="r-in"><span><span class="co">## added because the latent counts 'I' can be zero, in which case the</span></span></span>
+<span class="r-in"><span><span class="co">## Poisson density is zero for any positive observation. In the</span></span></span>
+<span class="r-in"><span><span class="co">## particle filter this would give the particle zero likelihood, so</span></span></span>
+<span class="r-in"><span><span class="co">## the small constant keeps the weights finite.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Use a low number of particles here to keep the run-time of</span></span></span>
+<span class="r-in"><span><span class="co">## the example short. In practice, you may need to increase the</span></span></span>
+<span class="r-in"><span><span class="co">## number of particles for a smoother filtered trajectory.</span></span></span>
+<span class="r-in"><span><span class="va">pf</span> <span class="op">&lt;-</span> <span class="fu">pfilter</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">model</span>,</span></span>
+<span class="r-in"><span>  obs_process <span class="op">=</span> <span class="va">Iobs</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span><span class="va">I</span> <span class="op">+</span> <span class="fl">1e-6</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">infected</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"time"</span>, <span class="st">"Iobs"</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  n_particles <span class="op">=</span> <span class="fl">100</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Print a brief summary.</span></span></span>
 <span class="r-in"><span><span class="va">pf</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of particles: 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Log-likelihood: -87.932284</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Compare the number infected 'I' in the filtered trajectory with the</span></span></span>
-<span class="r-in"><span><span class="co">## infected 'Iobs' in the observed data.</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pf</span>, <span class="op">~</span><span class="va">I</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">Iobs</span> <span class="op">~</span> <span class="va">time</span>, <span class="va">infected</span>, col <span class="op">=</span> <span class="st">"blue"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, type <span class="op">=</span> <span class="st">"s"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co">## Compare the number of infected individuals 'I' in the filtered</span></span></span>
+<span class="r-in"><span><span class="co">## trajectory with the noisy observations 'Iobs' and the latent</span></span></span>
+<span class="r-in"><span><span class="co">## trajectory 'I'.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pf</span>, <span class="op">~</span><span class="va">I</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">30</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">Iobs</span> <span class="op">~</span> <span class="va">time</span>,</span></span>
+<span class="r-in"><span>  <span class="va">infected</span>,</span></span>
+<span class="r-in"><span>  col <span class="op">=</span> <span class="st">"blue"</span>,</span></span>
+<span class="r-in"><span>  lwd <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"s"</span>,</span></span>
+<span class="r-in"><span>  lty <span class="op">=</span> <span class="st">"dotted"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">I</span> <span class="op">~</span> <span class="va">time</span>,</span></span>
+<span class="r-in"><span>  <span class="va">infected</span>,</span></span>
+<span class="r-in"><span>  col <span class="op">=</span> <span class="st">"red"</span>,</span></span>
+<span class="r-in"><span>  lwd <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"s"</span>,</span></span>
+<span class="r-in"><span>  lty <span class="op">=</span> <span class="st">"dashed"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Add a legend.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"topright"</span>,</span></span>
+<span class="r-in"><span>  legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Filtered"</span>, <span class="st">"Observed"</span>, <span class="st">"Latent"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"blue"</span>, <span class="st">"red"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  lty <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"solid"</span>, <span class="st">"dotted"</span>, <span class="st">"dashed"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  lwd <span class="op">=</span> <span class="fl">2</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="pfilter-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
