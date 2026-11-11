@@ -2,7 +2,7 @@
 ## disease spread simulations.
 ##
 ## Copyright (C) 2022 Ivana Rodriguez Ewerlöf
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -690,46 +690,57 @@ events <- data.frame(
               NA, 20, 20, NA))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 0),
+    u0_from_individual_events(individual_events(events),
+                              time = 0),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S_1 = c(0L, 0L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 1),
+    u0_from_individual_events(individual_events(events),
+                              time = 1),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S_1 = c(1L, 0L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 2),
+    u0_from_individual_events(individual_events(events),
+                              time = 2),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S_1 = c(1L, 1L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 2, target = "SIS"),
+    u0_from_individual_events(individual_events(events),
+                              time = 2,
+                              target = "SIS"),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S = c(1L, 1L),
                I = c(0L, 0L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 2, target = "SISe"),
+    u0_from_individual_events(individual_events(events),
+                              time = 2,
+                              target = "SISe"),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S = c(1L, 1L),
                I = c(0L, 0L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 2, target = "SISe_sp"),
+    u0_from_individual_events(individual_events(events),
+                              time = 2,
+                              target = "SISe_sp"),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S = c(1L, 1L),
                I = c(0L, 0L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 2, target = "SIR"),
+    u0_from_individual_events(individual_events(events),
+                              time = 2,
+                              target = "SIR"),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S = c(1L, 1L),
@@ -737,7 +748,9 @@ stopifnot(identical(
                R = c(0L, 0L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 2, target = "SEIR"),
+    u0_from_individual_events(individual_events(events),
+                              time = 2,
+                              target = "SEIR"),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S = c(1L, 1L),
@@ -746,7 +759,10 @@ stopifnot(identical(
                R = c(0L, 0L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 2, age = c(1, 2), target = "SISe3"),
+    u0_from_individual_events(individual_events(events),
+                              time = 2,
+                              age = c(1, 2),
+                              target = "SISe3"),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S_1 = c(1L, 0L),
@@ -757,7 +773,10 @@ stopifnot(identical(
                I_3 = c(0L, 0L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 2, age = c(1, 2), target = "SISe3_sp"),
+    u0_from_individual_events(individual_events(events),
+                              time = 2,
+                              age = c(1, 2),
+                              target = "SISe3_sp"),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S_1 = c(1L, 0L),
@@ -768,81 +787,98 @@ stopifnot(identical(
                I_3 = c(0L, 0L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 3),
+    u0_from_individual_events(individual_events(events),
+                              time = 3),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S_1 = c(0L, 2L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 4),
+    u0_from_individual_events(individual_events(events),
+                              time = 4),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S_1 = c(0L, 1L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 5),
+    u0_from_individual_events(individual_events(events),
+                              time = 5),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S_1 = c(0L, 0L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 3, age = 2),
+    u0_from_individual_events(individual_events(events),
+                              time = 3,
+                              age = 2),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S_1 = c(0L, 1L),
                S_2 = c(0L, 1L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 3, age = 5),
+    u0_from_individual_events(individual_events(events),
+                              time = 3,
+                              age = 5),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S_1 = c(0L, 2L),
                S_2 = c(0L, 0L))))
 
 stopifnot(identical(
-    u0(individual_events(events), time = 3, age = 1),
+    u0_from_individual_events(individual_events(events),
+                              time = 3,
+                              age = 1),
     data.frame(key = c(10, 20),
                node = c(1L, 2L),
                S_1 = c(0L, 0L),
                S_2 = c(0L, 2L))))
 
-res <- assertError(u0(individual_events(events),
-                      time = 3,
-                      age = 1,
-                      target = "SIR"))
+res <- assertError(u0_from_individual_events(individual_events(events),
+                                             time = 3,
+                                             age = 1,
+                                             target = "SIR"))
 check_error(
     res,
     "Invalid 'age' for 'target' model.")
 
-res <- assertError(u0(individual_events(events), time = 4.3))
+res <- assertError(u0_from_individual_events(individual_events(events),
+                                             time = 4.3))
 check_error(
     res,
     "'time' must be an integer or date.")
 
-res <- assertError(u0(individual_events(events),
-                      time = c("2021-01-01", "2022-01-01")))
+res <- assertError(u0_from_individual_events(individual_events(events),
+                                             time = c("2021-01-01",
+                                                      "2022-01-01")))
 check_error(
     res,
     "'time' must be an integer or date.")
 
-res <- assertError(u0(individual_events(events), time = "2021-01-01"))
+res <- assertError(u0_from_individual_events(individual_events(events),
+                                             time = "2021-01-01"))
 check_error(
     res,
     "'time' must be an integer.")
 
-res <- assertError(u0(individual_events(events), time = list()))
+res <- assertError(u0_from_individual_events(individual_events(events),
+                                             time = list()))
 check_error(
     res,
     "'time' must be an integer or date.")
 
-res <- assertError(u0(individual_events(events), time = 3, age = -1))
+res <- assertError(u0_from_individual_events(individual_events(events),
+                                             time = 3,
+                                             age = -1))
 check_error(
     res,
     "'age' must be an integer vector with values > 0.")
 
-res <- assertError(SimInf:::u0_target(u0(individual_events(events),
-                                         time = 2),
-                                      target = "Unknown"))
+res <- assertError(SimInf:::u0_target(
+                                u0_from_individual_events(
+                                    individual_events(events),
+                                    time = 2),
+                                target = "Unknown"))
 check_error(
     res,
     "Invalid 'target' for 'u0'.")
@@ -859,7 +895,7 @@ events <- data.frame(
     dest  = c(NA, "node-2", "node-2", NA,
               NA, "node-2", "node-2", NA))
 
-u0_obs <- u0(individual_events(events))
+u0_obs <- u0_from_individual_events(individual_events(events))
 
 u0_exp <- data.frame(
     key = c("node-1", "node-2"),
@@ -868,7 +904,8 @@ u0_exp <- data.frame(
 
 stopifnot(identical(u0_obs, u0_exp))
 
-u0_obs <- u0(individual_events(events[rev(seq_len(nrow(events))), ]))
+u0_obs <- u0_from_individual_events(
+    individual_events(events[rev(seq_len(nrow(events))), ]))
 
 stopifnot(identical(u0_obs, u0_exp))
 

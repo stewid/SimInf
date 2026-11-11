@@ -21,10 +21,8 @@
 ##' @slot model The \code{SimInf_model} object to estimate parameters
 ##'     in.
 ##' @template priors-slot
-##' @slot target Character vector (\code{gdata} or \code{ldata}) that
-##'     determines if the \code{pmcmc} method estimates parameters in
-##'     \code{model@@gdata} or in \code{model@@ldata}.
-##' @slot pars Index to the parameters in \code{target}.
+##' @template target-slot
+##' @template pars-slot
 ##' @slot n_particles An integer with the number of particles (> 1) to
 ##'     use in the bootstrap particle filter.
 ##' @slot data A \code{data.frame} holding the time series data for
@@ -34,9 +32,13 @@
 ##'     \code{parameters} for each iteration.
 ##' @slot covmat A named numeric \code{(npars x npars)} matrix with
 ##'     covariances to use as initial proposal matrix.
-##' @slot adaptmix Mixing proportion for adaptive proposal.
-##' @slot adaptive Controls when to start adaptive update.
-##' @seealso \code{\link{pmcmc}} and \code{\link{continue_pmcmc}}.
+##' @slot adaptmix A numeric scalar specifying the mixing proportion
+##'     for the adaptive proposal distribution.
+##' @slot adaptive An integer specifying when to start the adaptive
+##'     update of the proposal distribution (iteration number).
+##' @seealso \code{\link{pmcmc}} for the main PMCMC function,
+##'     \code{\link{continue_pmcmc}} for continuing an existing PMCMC
+##'     run.
 ##' @export
 setClass(
     "SimInf_pmcmc",
@@ -86,11 +88,26 @@ setAs(
     }
 )
 
-##' Coerce to data frame
+##' Coerce a \code{SimInf_pmcmc} object to a \code{data.frame}
 ##'
+##' Extract the posterior samples from the MCMC chain stored in a
+##' \code{SimInf_pmcmc} object and convert them into a
+##' \code{data.frame}.
+##'
+##' The resulting \code{data.frame} contains one row per MCMC
+##' iteration and one column per parameter. These samples represent
+##' the joint posterior distribution of the parameters.  This format
+##' is convenient for post-processing and visualization.
+##'
+##' @param x A \code{SimInf_pmcmc} object.
+##' @param ... Additional arguments (currently ignored).
+##' @return A \code{data.frame} where rows represent MCMC iterations
+##'     and columns represent the posterior samples of the parameters.
+##' @seealso \code{\link{pmcmc}} for running the PMCMC analysis,
+##'     \code{\linkS4class{SimInf_pmcmc}} for the class definition,
+##'     and \code{\link{continue_pmcmc}} for continuing an existing
+##'     PMCMC run.
 ##' @method as.data.frame SimInf_pmcmc
-##'
-##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_pmcmc <- function(x, ...) {
     methods::as(x, "data.frame")
@@ -112,8 +129,19 @@ acceptance_ratio <- function(object) {
 
 ##' Brief summary of a \code{SimInf_pmcmc} object
 ##'
-##' @param object The \code{SimInf_pmcmc} object.
-##' @return \code{invisible(object)}.
+##' Display a summary of a particle Markov chain Monte Carlo (PMCMC)
+##' analysis, including the number of iterations, number of particles,
+##' mixing proportion for the adaptive proposal, acceptance ratio, and
+##' posterior quantiles (2.5%, 25%, 50%, 75%, 97.5%), mean, and
+##' standard deviation for each estimated parameter.
+##'
+##' @param object The \code{\linkS4class{SimInf_pmcmc}} object to
+##'     display.
+##' @return The \code{object}, returned invisibly.
+##' @seealso \code{\link{pmcmc}} for running a PMCMC analysis,
+##'     \code{\link{continue_pmcmc}} for continuing an existing PMCMC
+##'     chain, \code{\linkS4class{SimInf_pmcmc}} for the class
+##'     definition.
 ##' @export
 setMethod(
     "show",
@@ -140,9 +168,27 @@ setMethod(
 
 ##' Detailed summary of a \code{SimInf_pmcmc} object
 ##'
-##' @param object The \code{SimInf_pmcmc} object
-##' @param ... Not used.
-##' @return None (invisible 'NULL').
+##' Display a detailed summary of a particle Markov chain Monte Carlo
+##' (PMCMC) analysis, including the number of iterations, number of
+##' particles, acceptance ratio, model characteristics (name, number
+##' of nodes, transitions), and posterior quantiles (2.5%, 25%, 50%,
+##' 75%, 97.5%), mean, and standard deviation for each estimated
+##' parameter.
+##'
+##' Compared to \code{\link[=show,SimInf_pmcmc-method]{show}}, the
+##' summary additionally displays model characteristics such as the
+##' model name, number of nodes, and transition details.
+##'
+##' @param object The \code{\linkS4class{SimInf_pmcmc}} object to
+##'     summarize.
+##' @param ... Additional arguments affecting the summary
+##'     produced. Currently ignored.
+##' @return \code{NULL}, returned invisibly.
+##' @seealso \code{\link{pmcmc}} for running a PMCMC analysis,
+##'     \code{\link{continue_pmcmc}} for continuing an existing PMCMC
+##'     chain, \code{\linkS4class{SimInf_pmcmc}} for the class
+##'     definition, \code{\link[=show,SimInf_pmcmc-method]{show}} for
+##'     a brief summary.
 ##' @export
 setMethod(
     "summary",

@@ -25,8 +25,8 @@
 ##' \code{\linkS4class{SimInf_model}}, meaning that \acronym{SEIR}
 ##' objects are fully compatible with all generic functions defined
 ##' for \code{SimInf_model}, such as \code{\link{run}},
-##' \code{\link{plot,SimInf_model-method}}, \code{\link{trajectory}},
-##' and \code{\link{prevalence}}.
+##' \code{\link[=plot,SimInf_model-method]{plot}},
+##' \code{\link{trajectory}}, and \code{\link{prevalence}}.
 ##'
 ##' @template SEIR-details
 ##'
@@ -80,29 +80,29 @@ select_matrix_SEIR <- function() {
 ##' @template u0-param
 ##' @template tspan-param
 ##' @template events-param
-##' @template beta-param
-##' @param epsilon A numeric vector with the incubation rate from
-##'     exposed to infected. Each node can have a different value. The
+##' @param beta A numeric vector with the transition rate from Exposed
+##'     to Infected. Each node can have a different beta value.  The
 ##'     vector must have length 1 or \code{nrow(u0)}. If the vector
-##'     has length 1 but the model contains more nodes, the value is
-##'     repeated for all nodes.
+##'     has length 1 but the model contains more nodes, the beta value
+##'     is repeated for all nodes.
+##' @param epsilon A numeric vector with the incubation rate (1 /
+##'     incubation period) from exposed to infected. Each node can
+##'     have a different value. The vector must have length 1 or
+##'     \code{nrow(u0)}. If the vector has length 1 but the model
+##'     contains more nodes, the value is repeated for all nodes.
 ##' @template gamma-param
 ##' @return A \code{\link{SimInf_model}} of class \code{SEIR}
-##' @seealso
-##' \code{\linkS4class{SEIR}} for the class definition.
-##' \code{\link{SIR}}, \code{\link{SIS}}, \code{\link{SISe}},
-##' \code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
-##' models.  \code{\link{mparse}} for creating custom models.
-##' \code{\link{run}} for running the simulation.
-##' \code{\link{trajectory}}, \code{\link{prevalence}} and
-##' \code{\link{plot,SimInf_model-method}} for post-processing and
-##' visualization.
+##' @seealso \code{\linkS4class{SEIR}} for the class definition.
+##'     \code{\link{SIR}}, \code{\link{SIS}}, \code{\link{SISe}},
+##'     \code{\link{SISe3}} and \code{\link{SISe_sp}} for other
+##'     predefined models.  \code{\link{mparse}} for creating custom
+##'     models.  \code{\link{run}} for running the simulation.
+##'     \code{\link{trajectory}}, \code{\link{prevalence}} and
+##'     \code{\link[=plot,SimInf_model-method]{plot}} for
+##'     post-processing and visualization.
 ##' @include check_arguments.R
 ##' @export
 ##' @examples
-##' ## For reproducibility, set the seed.
-##' set.seed(3)
-##'
 ##' ## Create an SEIR model object.
 ##' model <- SEIR(
 ##'   u0 = data.frame(S = 99, E = 0, I = 1, R = 0),
@@ -112,8 +112,11 @@ select_matrix_SEIR <- function() {
 ##'   gamma = 0.077
 ##' )
 ##'
-##' ## Run the SEIR model and plot the result.
-##' result <- run(model)
+##' ## Run the SEIR model with a fixed seed for reproducibility.
+##' result <- run(model, seed = 22)
+##'
+##' ## Plot the distribution of susceptible, exposed, infected and
+##' ## recovered individuals.
 ##' plot(result)
 SEIR <- function(u0,
                  tspan,
@@ -124,7 +127,7 @@ SEIR <- function(u0,
     ## Check arguments.
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments_SEIR())
+    u0 <- check_initial_state(u0, compartments_SEIR())
 
     ## Check for non-numeric parameters
     check_ldata_arg(nrow(u0), beta, epsilon, gamma)

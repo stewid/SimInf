@@ -2,16 +2,28 @@
 % Please edit documentation in R/SimInf_individual_events.R
 \name{show,SimInf_individual_events-method}
 \alias{show,SimInf_individual_events-method}
-\title{Print summary of a \code{SimInf_individual_events} object}
+\title{Brief summary of a \code{SimInf_individual_events} object}
 \usage{
 \S4method{show}{SimInf_individual_events}(object)
 }
 \arguments{
-\item{object}{The \code{SimInf_individual_events} object.}
+\item{object}{The \code{\linkS4class{SimInf_individual_events}}
+object to display.}
 }
 \value{
-\code{invisible(object)}.
+The \code{object}, returned invisibly.
 }
 \description{
-Print summary of a \code{SimInf_individual_events} object
+Display the number of unique individuals and the total number of
+event records in a \code{\linkS4class{SimInf_individual_events}}
+object. The individual count reflects the distinct \code{id}
+values, while the event count represents all recorded events
+(exit, enter, internal transfer, and external transfer).
+}
+\seealso{
+\code{\link{individual_events}} for creating
+    \code{SimInf_individual_events} objects,
+    \code{\linkS4class{SimInf_individual_events}} for the class
+    definition, \code{\linkS4class{SimInf_events}} for the
+    node-level event class.
 }

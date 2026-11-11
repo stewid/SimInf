@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2025 Stefan Widgren
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,8 +185,11 @@ typedef struct SimInf_solver_args {
     /* Number of threads to use during simulation. */
     int Nthread;
 
-    /* Random number seed. */
-    unsigned long int seed;
+    /* Solver options parsed from the options list. */
+    int solver;                 /**< 0 = ssm, 1 = aem */
+    int crn;                    /**< 0 = FALSE, 1 = TRUE */
+    int rng_type;               /**< 0 = mt19937, 1 = taus2 */
+    unsigned long int seed;     /**< Random number seed. */
 
     /* Vector of function pointers to transition rate functions. */
     TRFun *tr_fun;
@@ -378,11 +381,6 @@ SimInf_compartment_model_free(
     SimInf_compartment_model *model);
 
 int
-SimInf_get_solver(
-    int *out,
-    SEXP solver);
-
-int
 SimInf_num_threads(
     void);
 
@@ -414,6 +412,10 @@ SimInf_run_solver_mssm(
     SimInf_solver_args *args);
 
 int
+SimInf_run_solver_mssm_crn(
+    SimInf_solver_args *args);
+
+int
 SimInf_run_solver_ssm(
     SimInf_solver_args *args);
 
@@ -421,7 +423,8 @@ int
 SimInf_scheduled_events_create(
     SimInf_scheduled_events **out,
     const SimInf_solver_args *args,
-    gsl_rng *rng);
+    gsl_rng *rng,
+    const gsl_rng_type *rng_type);
 
 void
 SimInf_scheduled_events_free(
@@ -455,3 +458,7 @@ update(
     int *INDEX,
     int *INDEX2,
     int N);
+
+const gsl_rng_type *
+SimInf_rng_type(
+    int rng_type);

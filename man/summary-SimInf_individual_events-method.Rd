@@ -7,13 +7,28 @@
 \S4method{summary}{SimInf_individual_events}(object, ...)
 }
 \arguments{
-\item{object}{The \code{SimInf_individual_events} object}
+\item{object}{The \code{\linkS4class{SimInf_individual_events}}
+object to summarize.}
 
-\item{...}{Additional arguments affecting the summary produced.}
+\item{...}{Additional arguments affecting the summary produced.
+Currently ignored.}
 }
 \value{
-None (invisible 'NULL').
+\code{NULL}, returned invisibly.
 }
 \description{
-Detailed summary of a \code{SimInf_individual_events} object
+Display a summary of a
+\code{\linkS4class{SimInf_individual_events}} object, including
+the number of unique individuals, the total number of event
+records, and the number of events by event type (exit, enter,
+internal transfer, and external transfer).
+}
+\seealso{
+\code{\link{individual_events}} for creating
+    \code{SimInf_individual_events} objects,
+    \code{\linkS4class{SimInf_individual_events}} for the class
+    definition, \code{\linkS4class{SimInf_events}} for the
+    node-level event class,
+    \code{\link[=show,SimInf_individual_events-method]{show}} for
+    a brief summary.
 }

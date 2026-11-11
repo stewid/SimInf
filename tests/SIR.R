@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ sessionInfo()
 
 ## Check invalid u0
 res <- assertError(SIR(u0 = "u0"))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
                  I  = c(0, 0, 0, 0, 0, 0),
@@ -39,13 +39,13 @@ u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
 
 ## Check missing columns in u0
 res <- assertError(SIR(u0 = u0[, c("I", "R"), drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(SIR(u0 = u0[, c("S", "R"), drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(SIR(u0 = u0[, c("S", "I"), drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 ## Check missing beta
 res <- assertError(SIR(u0     = u0,
@@ -108,7 +108,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L,
                           2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L,
                           3L, 4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L, 0L, 1L, 2L, 3L,
                           4L, 5L, 0L, 1L, 2L, 3L, 4L, 5L),
-                        .Dim = c(6L, 10L))
+                        dim = c(6L, 10L))
 
 S_observed <- trajectory(result, compartments = "S", format = "matrix")
 stopifnot(identical(S_observed, S_expected))
@@ -118,7 +118,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(6L, 10L))
+                        dim = c(6L, 10L))
 
 I_observed <- trajectory(result, compartments = "I", format = "matrix")
 stopifnot(identical(I_observed, I_expected))
@@ -128,7 +128,7 @@ R_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(6L, 10L))
+                        dim = c(6L, 10L))
 
 R_observed <- trajectory(result, compartments = "R", format = "matrix")
 
@@ -497,14 +497,56 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              beta = 0.16,
              gamma = 0.077)
 
-res <- assertError(.Call(SimInf:::SIR_run, model, c("ssm", "ssm")))
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(solver = c("ssm", "ssm"))))
 check_error(res, "Invalid 'solver' value.")
-res <- assertError(.Call(SimInf:::SIR_run, model, "non-existing-solver"))
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(solver = "non-existing-solver")))
 check_error(res, "Invalid 'solver' value.")
-res <- assertError(.Call(SimInf:::SIR_run, model, NA_character_))
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(solver = NA_character_)))
 check_error(res, "Invalid 'solver' value.")
-res <- assertError(.Call(SimInf:::SIR_run, model, 5))
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(solver = 5)))
 check_error(res, "Invalid 'solver' value.")
+
+## Check that an invalid seed argument raises an error.
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:100,
+             beta = 0.16,
+             gamma = 0.077)
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(seed = c(1L, 2L))))
+check_error(res, "Invalid 'seed' value.")
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(seed = NA_integer_)))
+check_error(res, "Invalid 'seed' value.")
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(seed = c(1, 2))))
+check_error(res, "Invalid 'seed' value.")
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(seed = NA_real_)))
+check_error(res, "Invalid 'seed' value.")
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(seed = "1")))
+check_error(res, "Invalid 'seed' value.")
 
 ## Trigger a negative state error
 model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
@@ -513,7 +555,13 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              gamma = 0)
 model@S@x[1] <- -1000
 set.seed(123)
-res <- assertError(.Call(SimInf:::SIR_run, model, "ssm"))
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(solver = "ssm")))
 check_error(res, "Negative state detected.")
-res <- assertError(.Call(SimInf:::SIR_run, model, "aem"))
+
+res <- assertError(.Call(SimInf:::SIR_run,
+                         model,
+                         list(solver = "aem")))
 check_error(res, "Negative state detected.")

@@ -10,21 +10,61 @@ select_matrix(model)
 \S4method{select_matrix}{SimInf_model}(model)
 }
 \arguments{
-\item{model}{The \code{model} to extract the select matrix
-\code{E} from.}
+\item{model}{The \code{\linkS4class{SimInf_model}} object to
+extract the select matrix from.}
 }
 \value{
-\code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} object.
+The sparse select matrix \code{events@E} (of class
+    \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}) where each
+    row corresponds to one compartment in the model.
 }
 \description{
-Utility function to extract \code{events@E} from a
-\code{SimInf_model} object, see \code{\linkS4class{SimInf_events}}
+Get the select matrix \code{events@E} that determines which
+compartments an event samples individuals from when processing
+\emph{exit}, \emph{enter}, \emph{internal transfer} and
+\emph{external transfer} events. Each row in the select matrix
+corresponds to one compartment in the model, and each column
+defines a sampling pattern. The \code{select} value of an event
+determines which column to use, and the values in the selected
+column \eqn{E[, s]} are used as weights when sampling individuals
+from the compartments with non-zero entries. See
+\code{\linkS4class{SimInf_events}} for details on the event
+processing.
 }
 \examples{
-## Create an SIR model
-model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-             tspan = 1:5, beta = 0.16, gamma = 0.077)
+## Create an 'SIR' model.
+model <- SIR(
+  u0 = data.frame(
+    S = 100,
+    I = 10,
+    R = 0),
+  tspan = 1:5,
+  beta = 0.16,
+  gamma = 0.077
+)
 
-## Extract the select matrix from the model
+## Extract the select matrix from the model.
 select_matrix(model)
+
+## Change the select matrix so that individuals in the 'I'
+## compartment are twice as likely to be selected when
+## processing an event with 'select' = 4. Note that the
+## data.frame replaces the entire select matrix, so the entries
+## in columns 1, 2 and 3 must also be specified.
+select_matrix(model) <- data.frame(
+  compartment = c("S", "I", "R", "S", "I", "R"),
+  select = c(1, 2, 3, 4, 4, 4),
+  value = c(1, 1, 1, 1, 2, 1)
+)
+
+## Extract the updated select matrix from the model.
+select_matrix(model)
+}
+\seealso{
+\code{\link[=select_matrix<-,SimInf_model-method]{select_matrix<-}}
+    to set the select matrix, and
+    \code{\link[=shift_matrix,SimInf_model-method]{shift_matrix}}
+    to extract the shift matrix. The vignette "Scheduled events"
+    for a tutorial on scheduled events, see
+    \code{vignette("Scheduled events", package = "SimInf")}.
 }

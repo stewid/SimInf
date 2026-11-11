@@ -25,8 +25,8 @@
 ##' \code{\linkS4class{SimInf_model}}, meaning that \acronym{SIR}
 ##' objects are fully compatible with all generic functions defined
 ##' for \code{SimInf_model}, such as \code{\link{run}},
-##' \code{\link{plot,SimInf_model-method}}, \code{\link{trajectory}},
-##' and \code{\link{prevalence}}.
+##' \code{\link[=plot,SimInf_model-method]{plot}},
+##' \code{\link{trajectory}}, and \code{\link{prevalence}}.
 ##'
 ##' @template SIR-details
 ##'
@@ -82,21 +82,17 @@ select_matrix_SIR <- function() {
 ##' @template beta-param
 ##' @template gamma-param
 ##' @return A \code{\link{SimInf_model}} of class \code{SIR}
-##' @seealso
-##' \code{\linkS4class{SIR}} for the class definition.
-##' \code{\link{SEIR}}, \code{\link{SIS}}, \code{\link{SISe}},
-##' \code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
-##' models.  \code{\link{mparse}} for creating custom models.
-##' \code{\link{run}} for running the simulation.
-##' \code{\link{trajectory}}, \code{\link{prevalence}} and
-##' \code{\link{plot,SimInf_model-method}} for post-processing and
-##' visualization.
+##' @seealso \code{\linkS4class{SIR}} for the class definition.
+##'     \code{\link{SEIR}}, \code{\link{SIS}}, \code{\link{SISe}},
+##'     \code{\link{SISe3}} and \code{\link{SISe_sp}} for other
+##'     predefined models.  \code{\link{mparse}} for creating custom
+##'     models.  \code{\link{run}} for running the simulation.
+##'     \code{\link{trajectory}}, \code{\link{prevalence}} and
+##'     \code{\link[=plot,SimInf_model-method]{plot}} for
+##'     post-processing and visualization.
 ##' @include check_arguments.R
 ##' @export
 ##' @examples
-##' ## For reproducibility, set the seed.
-##' set.seed(22)
-##'
 ##' ## Create an SIR model object.
 ##' model <- SIR(
 ##'   u0 = data.frame(S = 99, I = 1, R = 0),
@@ -105,8 +101,11 @@ select_matrix_SIR <- function() {
 ##'   gamma = 0.077
 ##' )
 ##'
-##' ## Run the SIR model and plot the result.
-##' result <- run(model)
+##' ## Run the SIR model with a fixed seed for reproducibility.
+##' result <- run(model, seed = 22)
+##'
+##' ## Plot the distribution of susceptible, infected and recovered
+##' ## individuals.
 ##' plot(result)
 SIR <- function(u0,
                 tspan,
@@ -116,7 +115,7 @@ SIR <- function(u0,
     ## Check arguments.
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments_SIR())
+    u0 <- check_initial_state(u0, compartments_SIR())
 
     ## Check for non-numeric parameters
     check_ldata_arg(nrow(u0), beta, gamma)

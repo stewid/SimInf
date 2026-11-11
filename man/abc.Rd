@@ -65,23 +65,23 @@ function is the result from a \code{run} of the model with one
 trajectory attached to it. The second argument,
 \code{generation}, to \code{distance} is an integer with the
 generation of the particle(s). Further arguments that can
-passed to the \code{distance} function comes from \code{...}
-in the \code{abc} function. Depending on the underlying model
-structure, data for one or more particles have been generated
-in each call to \code{distance}. If the \code{model} only
-contains one node and all the parameters to fit are in
-\code{ldata}, then that node will be replicated and each of
-the replicated nodes represent one particle in the trajectory
-(see \sQuote{Examples}). On the other hand if the model
-contains multiple nodes or the parameters to fit are contained
-in \code{gdata}, then the trajectory in the \code{result}
-argument represents one particle. The function can return a
-numeric matrix (number of particles \eqn{\times} number of
-summary statistics). Or, if the distance contains one summary
-statistic, a numeric vector with the length equal to the
-number of particles. Note that when using adaptive tolerance
-selection, only one summary statistic can be used, i.e., the
-function must return a matrix (number of particles
+passed to the \code{distance} function comes from the
+\code{data} argument in the \code{abc} function. Depending on
+the underlying model structure, data for one or more particles
+have been generated in each call to \code{distance}. If the
+\code{model} only contains one node and all the parameters to
+fit are in \code{ldata}, then that node will be replicated and
+each of the replicated nodes represent one particle in the
+trajectory (see \sQuote{Examples}). On the other hand if the
+model contains multiple nodes or the parameters to fit are
+contained in \code{gdata}, then the trajectory in the
+\code{result} argument represents one particle. The function
+can return a numeric matrix (number of particles \eqn{\times}
+number of summary statistics). Or, if the distance contains
+one summary statistic, a numeric vector with the length equal
+to the number of particles. Note that when using adaptive
+tolerance selection, only one summary statistic can be used,
+i.e., the function must return a matrix (number of particles
 \eqn{\times} 1) or a numeric vector.}
 
 \item{tolerance}{A numeric matrix (number of summary statistics
@@ -116,59 +116,100 @@ model before running a trajectory with proposed parameters.}
 A \code{SimInf_abc} object.
 }
 \description{
-Approximate Bayesian computation
+Fit a model to data using the approximate Bayesian computation
+sequential Monte Carlo (ABC SMC) algorithm of Toni and others
+(2009). Each generation of the algorithm propagates a population
+of candidate parameter sets (particles), drawn from the priors in
+the first generation and from perturbed particles of the previous
+generation thereafter, with the latter weighted by the ratio of
+their prior to proposal densities. A particle is simulated by
+applying it to the model and generating a stochastic trajectory
+with \code{\link[=run,SimInf_model-method]{run}}. The particle is
+retained if the distance between the summary statistics of the
+simulated trajectory and the observed \code{data} is less than or
+equal to the tolerance for the generation. As generations progress
+and the tolerances decrease, the population of particles converges
+towards an approximation of the posterior distribution.
+}
+\details{
+The tolerances can either be supplied explicitly through the
+\code{tolerance} argument, or determined adaptively using the
+algorithm of Simola and others (2021), see \code{n_init}. The
+returned \code{\linkS4class{SimInf_abc}} object holds the accepted
+particles for each generation together with their weights.
 }
 \examples{
-\dontrun{
+## For reproducibility, specify a seed and the number of threads to
+## use.
+set.seed(22)
+set_num_threads(1)
+
 ## Let us consider an SIR model in a closed population with N = 100
 ## individuals of whom one is initially infectious and the rest are
 ## susceptible. First, generate one realisation (with a specified
-## seed) from the model with known parameters \code{beta = 0.16} and
-## \code{gamma = 0.077}. Then, use \code{abc} to infer the (known)
-## parameters from the simulated data.
-model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-             tspan = 1:100,
-             beta = 0.16,
-             gamma = 0.077)
+## seed) from the model with known parameters beta=0.16 and
+## gamma=0.077. Then, use abc to infer the (known) parameters from the
+## simulated data.
+model <- SIR(
+  u0 = data.frame(
+    S = 99,
+    I = 1,
+    R = 0),
+  tspan = 1:100,
+  beta = 0.16,
+  gamma = 0.077
+)
 
 ## Run the SIR model and plot the number of infectious.
-set.seed(22)
 infectious <- trajectory(run(model), "I")$I
 plot(infectious, type = "s")
 
-## The distance function to accept or reject a proposal. Each node
-## in the simulated trajectory (contained in the 'result' object)
+## The distance function to accept or reject a proposal. Each node in
+## the simulated trajectory (contained in the 'result' object)
 ## represents one proposal.
-distance <- function(result, ...) {
+distance <- function(result, generation, data) {
     ## Extract the time-series of infectious in each node as a
-    ## data.frame.
+    ## data.frame, ordered so that time-points for the same node are
+    ## contiguous.
     sim <- trajectory(result, "I")
+    sim <- sim[order(sim$node, sim$time), ]
 
-    ## Split the 'sim' data.frame by node and calculate the sum of the
-    ## squared distance at each time-point for each node.
-    dist <- tapply(sim$I, sim$node, function(sim_infectious) {
-        sum((infectious - sim_infectious)^2)
-    })
+    ## One column per node: subtract the observed series row-wise
+    ## ('data' is recycled once per node). The residuals are squared
+    ## and summed within each column, giving the sum of squared
+    ## errors: larger deviations from the observed trajectory count
+    ## proportionally more against a proposal.
+    residuals <- matrix(
+        sim$I - data,
+        nrow = length(data),
+        ncol = n_nodes(result)
+    )
 
-    ## Return the distance for each node. Each proposal will be
-    ## accepted or rejected depending on if the distance is less than
-    ## the tolerance for the current generation.
-    dist
+    ## Return the sum of squared errors for each node, i.e. one
+    ## distance per proposal. Each proposal will be accepted or
+    ## rejected depending on whether the distance is at most the
+    ## tolerance for the current generation. The length of the
+    ## returned vector must match the number of nodes in 'result'.
+    colSums(residuals^2)
 }
 
 ## Fit the model parameters using ABC-SMC and adaptive tolerance
 ## selection. The priors for the parameters are specified using a
-## formula notation. Here we use a uniform distribtion for each
+## formula notation. Here we use a uniform distribution for each
 ## parameter with lower bound = 0 and upper bound = 1. Note that we
-## use a low number particles here to keep the run-time of the example
-## short. In practice you would want to use many more to ensure better
-## approximations.
-fit <- abc(model = model,
-           priors = c(beta ~ uniform(0, 1), gamma ~ uniform(0, 1)),
-           n_particles = 100,
-           n_init = 1000,
-           distance = distance,
-           verbose = TRUE)
+## use a low number of particles here to keep the run-time of the
+## example short. In practice you would want to use many more to
+## ensure better approximations.
+fit <- abc(
+  model = model,
+  priors = c(
+    beta ~ uniform(0, 1),
+    gamma ~ uniform(0, 1)),
+  n_particles = 100,
+  n_init = 1000,
+  distance = distance,
+  data = infectious
+)
 
 ## Print a brief summary.
 fit
@@ -176,12 +217,19 @@ fit
 ## Display the ABC posterior distribution.
 plot(fit)
 }
-}
 \references{
 \Toni2009
 
 \Simola2021
 }
 \seealso{
+\code{\link[=plot,SimInf_abc-method]{plot}},
+    \code{\link[=summary,SimInf_abc-method]{summary}} and
+    \code{\link[=as.data.frame.SimInf_abc]{as.data.frame}} to
+    inspect the fitted object, \code{\link{continue_abc}} to
+    refine the fit with additional generations, and
+    \code{\link[=run,SimInf_model-method]{run}} to generate
+    trajectories from the posterior.
+
 \code{\link{continue_abc}}.
 }

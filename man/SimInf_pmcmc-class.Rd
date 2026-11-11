@@ -39,11 +39,13 @@ for the parameters. It contains four columns:
     }
 }}
 
-\item{\code{target}}{Character vector (\code{gdata} or \code{ldata}) that
-determines if the \code{pmcmc} method estimates parameters in
-\code{model@gdata} or in \code{model@ldata}.}
+\item{\code{target}}{Character vector (\code{"gdata"} or \code{"ldata"})
+that determines if the ABC-SMC method estimates parameters in
+\code{model@gdata} (global data) or in \code{model@ldata}
+(local data).}
 
-\item{\code{pars}}{Index to the parameters in \code{target}.}
+\item{\code{pars}}{An integer vector with the indices of the parameters in
+\code{target} that are being estimated.}
 
 \item{\code{n_particles}}{An integer with the number of particles (> 1) to
 use in the bootstrap particle filter.}
@@ -58,11 +60,15 @@ the observation process.}
 \item{\code{covmat}}{A named numeric \code{(npars x npars)} matrix with
 covariances to use as initial proposal matrix.}
 
-\item{\code{adaptmix}}{Mixing proportion for adaptive proposal.}
+\item{\code{adaptmix}}{A numeric scalar specifying the mixing proportion
+for the adaptive proposal distribution.}
 
-\item{\code{adaptive}}{Controls when to start adaptive update.}
+\item{\code{adaptive}}{An integer specifying when to start the adaptive
+update of the proposal distribution (iteration number).}
 }}
 
 \seealso{
-\code{\link{pmcmc}} and \code{\link{continue_pmcmc}}.
+\code{\link{pmcmc}} for the main PMCMC function,
+    \code{\link{continue_pmcmc}} for continuing an existing PMCMC
+    run.
 }

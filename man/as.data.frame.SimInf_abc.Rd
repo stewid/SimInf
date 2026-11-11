@@ -2,15 +2,40 @@
 % Please edit documentation in R/abc.R
 \name{as.data.frame.SimInf_abc}
 \alias{as.data.frame.SimInf_abc}
-\title{Coerce to data frame}
+\title{Coerce a \code{SimInf_abc} object to a \code{data.frame}}
 \usage{
 \method{as.data.frame}{SimInf_abc}(x, ...)
 }
 \arguments{
-\item{x}{any \R object.}
+\item{x}{A \code{SimInf_abc} object.}
 
-\item{...}{additional arguments to be passed to or from methods.}
+\item{...}{Additional arguments (currently ignored).}
+}
+\value{
+A \code{data.frame} containing all particles from all
+    generations.
 }
 \description{
-Coerce to data frame
+Convert the results of an Approximate Bayesian Computation (ABC)
+analysis into a single \code{data.frame}. This function extracts
+the particle parameters, their acceptance weights, and the
+generation number for every particle across all generations.
+}
+\details{
+The resulting \code{data.frame} has one row per particle. The
+columns include:
+\itemize{
+  \item \code{generation}: The generation number (integer).
+  \item \code{weight}: The normalized weight of the particle
+  (numeric).
+  \item \strong{Parameter columns}: One column for each parameter
+    estimated in the ABC analysis (e.g., \code{beta},
+    \code{gamma}, \code{sigma}).  The column names match the
+    parameter names defined in the \code{priors}.
+}
+}
+\seealso{
+\code{\link{abc}} for running the ABC analysis,
+    \code{\linkS4class{SimInf_abc}} for the class definition, and
+    \code{\link{continue_abc}} for continuing an existing ABC run.
 }

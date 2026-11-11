@@ -444,7 +444,8 @@ attribute_hidden int
 SimInf_scheduled_events_create(
     SimInf_scheduled_events **out,
     const SimInf_solver_args *args,
-    gsl_rng *rng)
+    gsl_rng *rng,
+    const gsl_rng_type *rng_type)
 {
     SimInf_scheduled_events *events = NULL;
 
@@ -470,7 +471,7 @@ SimInf_scheduled_events_create(
             goto on_error;      /* #nocov */
 
         /* Random number generator */
-        events[i].rng = gsl_rng_alloc(gsl_rng_mt19937);
+        events[i].rng = gsl_rng_alloc(rng_type);
         if (!events[i].rng)
             goto on_error;      /* #nocov */
         gsl_rng_set(events[i].rng, gsl_rng_uniform_int(rng, gsl_rng_max(rng)));
@@ -1074,10 +1075,21 @@ SimInf_compartment_model_create(
                     goto on_error;      /* #nocov */
             }
 
-            if (args->U)
+            if (args->U) {
                 model[i].U = &args->U[tlen * l * Nn * Nc];
-            if (args->V)
+            } else {
+                model[i].irU = args->irU;
+                model[i].jcU = &args->jcU[tlen * l];
+                model[i].prU = args->prU;
+            }
+
+            if (args->V) {
                 model[i].V = &args->V[tlen * l * Nn * Nd];
+            } else {
+                model[i].irV = args->irV;
+                model[i].jcV = &args->jcV[tlen * l];
+                model[i].prV = args->prV;
+            }
         } else {
             /* The nodes are split between the threads when running
              * one replicate of a model. */
@@ -1234,4 +1246,19 @@ SimInf_print_status(
 
         R_FlushConsole();
     }
+}
+
+/**
+ * Map an integer rng_type code to a GSL RNG type.
+ *
+ * @param rng_type 0 for mt19937, 1 for taus2.
+ * @return Pointer to the corresponding gsl_rng_type.
+ */
+attribute_hidden const gsl_rng_type *
+SimInf_rng_type(
+    int rng_type)
+{
+    if (rng_type == 1)
+        return gsl_rng_taus2;
+    return gsl_rng_mt19937;
 }

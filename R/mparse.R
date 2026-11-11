@@ -600,6 +600,17 @@ dependency_graph <- function(transitions, S) {
 ##'     variable names. Default is \code{FALSE} (parameters accessed
 ##'     by integer indices).
 ##'
+##' @param pre_code Optional character vector with C code to be
+##'     inserted into the generated model code, after the enumeration
+##'     constants and before the transition rate functions. This
+##'     allows users to define helper functions or include statements
+##'     that can be referenced from transition propensity
+##'     expressions. Include statements, if needed, should be placed
+##'     at the beginning of the vector. Default is \code{NULL}, i.e.,
+##'     no additional code is inserted.
+##'
+##' @template replicates-param
+##'
 ##' @return a \code{\linkS4class{SimInf_model}} object
 ##'
 ##' @seealso
@@ -614,9 +625,6 @@ dependency_graph <- function(transitions, S) {
 ##'
 ##' @export
 ##' @examples
-##' ## For reproducibility, set the seed.
-##' set.seed(22)
-##'
 ##' ## Create an SIR model with a defined population size variable.
 ##' model <- mparse(
 ##'   transitions = c(
@@ -630,13 +638,24 @@ dependency_graph <- function(transitions, S) {
 ##'   tspan = 1:100
 ##' )
 ##'
-##' ## Run and plot the result.
-##' result <- run(model)
-##' plot(result)
-mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
-                   gdata = NULL, u0 = NULL, v0 = NULL, tspan = NULL,
-                   events = NULL, E = NULL, N = NULL, pts_fun = NULL,
-                   use_enum = FALSE) {
+##' ## Running a model defined with 'mparse' compiles model-specific C
+##' ## code and requires a C compiler on the system. See the vignette
+##' ## "Getting started with mparse" for a complete walkthrough
+##' ## including running and plotting.
+mparse <- function(transitions = NULL,
+                   compartments = NULL,
+                   ldata = NULL,
+                   gdata = NULL,
+                   u0 = NULL,
+                   v0 = NULL,
+                   tspan = NULL,
+                   events = NULL,
+                   E = NULL,
+                   N = NULL,
+                   pts_fun = NULL,
+                   use_enum = FALSE,
+                   pre_code = NULL,
+                   replicates = NULL) {
     ## Check transitions
     if (!is.vector(transitions, mode = "character") ||
         any(nchar(transitions) == 0)) {
@@ -645,7 +664,7 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     }
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments)
+    u0 <- check_initial_state(u0, compartments)
 
     ## Add enumeration value to compartments.
     attr(compartments, "value") <- seq_along(compartments) - 1L
@@ -668,17 +687,25 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
     }
 
     ## Parse transitions
-    transitions <- parse_transitions(transitions, compartments,
-                                     ldata_names, gdata_names,
-                                     v0_names, use_enum)
+    transitions <- parse_transitions(transitions,
+                                     compartments,
+                                     ldata_names,
+                                     gdata_names,
+                                     v0_names,
+                                     use_enum)
 
     S <- state_change_matrix(transitions$propensities, compartments)
     G <- dependency_graph(transitions$propensities, S)
 
     ## Generate C code.
-    C_code <- C_code_mparse(transitions, pts_fun, compartments,
-                            ldata_names, gdata_names, v0_names,
-                            use_enum)
+    C_code <- C_code_mparse(transitions,
+                            pts_fun,
+                            compartments,
+                            ldata_names,
+                            gdata_names,
+                            v0_names,
+                            use_enum,
+                            pre_code)
 
     SimInf_model(G      = G,
                  S      = S,
@@ -690,5 +717,6 @@ mparse <- function(transitions = NULL, compartments = NULL, ldata = NULL,
                  gdata  = gdata,
                  u0     = u0,
                  v0     = v0,
+                 replicates = replicates,
                  C_code = C_code)
 }

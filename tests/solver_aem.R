@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2021 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -31,17 +31,17 @@ sessionInfo()
 
 ## Check invalid u0
 res <- assertError(SISe(u0 = "u0"))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 u0 <- data.frame(S  = c(9, 9, 9, 9, 9, 10),
                  I  = c(1, 1, 1, 1, 1, 0))
 
 ## Check missing columns in u0
 res <- assertError(SISe(u0 = u0[, "I", drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(SISe(u0 = u0[, "S", drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 ## Check 'susceptible' and 'infected' compartments
 ## no events
@@ -71,7 +71,7 @@ S_expected <- structure(c(
     10L, 9L, 8L, 10L, 9L, 8L, 10L, 9L, 8L, 10L, 9L, 8L, 10L,
     10L, 8L, 10L, 9L, 8L, 10L, 10L, 7L, 10L, 10L, 7L, 10L,
     10L, 7L, 10L, 10L, 7L, 10L, 10L, 7L, 10L),
-    .Dim = c(6L, 10L))
+    dim = c(6L, 10L))
 
 S_observed <- trajectory(result, compartments = "S", format = "matrix")
 stopifnot(identical(S_observed, S_expected))
@@ -81,7 +81,7 @@ I_expected <- structure(c(1L, 1L, 0L, 1L, 1L, 0L, 1L, 1L, 0L, 1L, 1L, 0L, 1L,
                           0L, 1L, 2L, 0L, 1L, 2L, 0L, 1L, 2L, 0L, 1L, 2L, 0L,
                           0L, 2L, 0L, 1L, 2L, 0L, 0L, 3L, 0L, 0L, 3L, 0L, 0L,
                           3L, 0L, 0L, 3L, 0L, 0L, 3L, 0L),
-                        .Dim = c(6L, 10L))
+                        dim = c(6L, 10L))
 
 I_observed <- trajectory(result, compartments = "I", format = "matrix")
 stopifnot(identical(I_observed, I_expected))
@@ -121,14 +121,14 @@ result <- run(model, solver = "aem")
 
 S_expected <- structure(c(10L, 8L, 8L, 9L, 7L, 10L, 6L, 10L, 6L, 10L, 8L, 6L,
                           7L, 7L, 7L, 7L, 7L, 7L, 7L, 9L),
-                        .Dim = c(2L, 10L))
+                        dim = c(2L, 10L))
 
 S_observed <- trajectory(result, compartments = "S", format = "matrix")
 stopifnot(identical(S_observed, S_expected))
 
 I_expected <- structure(c(0L, 2L, 0L, 3L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 4L, 3L,
                           3L, 3L, 3L, 3L, 3L, 3L, 1L),
-                        .Dim = c(2L, 10L))
+                        dim = c(2L, 10L))
 
 I_observed <- trajectory(result, compartments = "I", format = "matrix")
 stopifnot(identical(I_observed, I_expected))

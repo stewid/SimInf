@@ -22,7 +22,7 @@
 ##' \code{\linkS4class{SimInf_model}}, meaning that \acronym{SIS}
 ##' objects are fully compatible with all generic functions defined
 ##' for \code{SimInf_model}, such as \code{\link{run}},
-##' \code{\link{plot,SimInf_model-method}}, \code{\link{trajectory}},
+##' \code{\link[=plot,SimInf_model-method]{plot}}, \code{\link{trajectory}},
 ##' and \code{\link{prevalence}}.
 ##'
 ##' @template SIS-details
@@ -78,21 +78,17 @@ select_matrix_SIS <- function() {
 ##' @template beta-param
 ##' @template gamma-param
 ##' @return A \code{\link{SimInf_model}} of class \code{SIS}
-##' @seealso
-##' \code{\linkS4class{SIS}} for the class definition.
-##' \code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SISe}},
-##' \code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
-##' models.  \code{\link{mparse}} for creating custom models.
-##' \code{\link{run}} for running the simulation.
-##' \code{\link{trajectory}}, \code{\link{prevalence}} and
-##' \code{\link{plot,SimInf_model-method}} for post-processing and
-##' visualization.
+##' @seealso \code{\linkS4class{SIS}} for the class definition.
+##'     \code{\link{SIR}}, \code{\link{SEIR}}, \code{\link{SISe}},
+##'     \code{\link{SISe3}} and \code{\link{SISe_sp}} for other
+##'     predefined models.  \code{\link{mparse}} for creating custom
+##'     models.  \code{\link{run}} for running the simulation.
+##'     \code{\link{trajectory}}, \code{\link{prevalence}} and
+##'     \code{\link[=plot,SimInf_model-method]{plot}} for
+##'     post-processing and visualization.
 ##' @include check_arguments.R
 ##' @export
 ##' @examples
-##' ## For reproducibility, set the seed.
-##' set.seed(22)
-##'
 ##' ## Create an SIS model object.
 ##' model <- SIS(
 ##'   u0 = data.frame(S = 99, I = 1),
@@ -101,8 +97,10 @@ select_matrix_SIS <- function() {
 ##'   gamma = 0.077
 ##' )
 ##'
-##' ## Run the SIS model and plot the result.
-##' result <- run(model)
+##' ## Run the SIS model with a fixed seed for reproducibility.
+##' result <- run(model, seed = 22)
+##'
+##' ## Plot the distribution of susceptible and infected individuals.
 ##' plot(result)
 SIS <- function(u0,
                 tspan,
@@ -112,7 +110,7 @@ SIS <- function(u0,
     ## Check arguments.
 
     ## Check u0 and compartments
-    u0 <- check_u0(u0, compartments_SIS())
+    u0 <- check_initial_state(u0, compartments_SIS())
 
     ## Check for non-numeric parameters
     check_ldata_arg(nrow(u0), beta, gamma)

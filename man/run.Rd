@@ -15,58 +15,107 @@
 \usage{
 run(model, ...)
 
-\S4method{run}{SimInf_model}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SimInf_model}(model, ...)
 
-\S4method{run}{SEIR}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SEIR}(model, ...)
 
-\S4method{run}{SIR}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SIR}(model, ...)
 
-\S4method{run}{SIS}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SIS}(model, ...)
 
-\S4method{run}{SISe}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SISe}(model, ...)
 
-\S4method{run}{SISe3}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SISe3}(model, ...)
 
-\S4method{run}{SISe3_sp}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SISe3_sp}(model, ...)
 
-\S4method{run}{SISe_sp}(model, solver = c("ssm", "aem"), ...)
+\S4method{run}{SISe_sp}(model, ...)
 
 \S4method{run}{SimInf_abc}(model, ...)
 }
 \arguments{
-\item{model}{The SimInf model to run.}
+\item{model}{The \code{\linkS4class{SimInf_model}} (or
+\code{\linkS4class{SimInf_abc}}) object to run.}
 
-\item{...}{Additional arguments.}
-
-\item{solver}{Which numerical solver to utilize. Default is 'ssm'.}
+\item{...}{Optional arguments that affect the simulation:
+\describe{
+  \item{solver}{Character string specifying the numerical
+  solver. Either \code{"ssm"} (default) or \code{"aem"}. If
+  not provided, the \code{"ssm"} solver is used. See details.}
+  \item{seed}{Numeric or integer specifying the random seed
+  for the simulation. If not provided, a seed is randomly
+  sampled from the current R RNG state.}
+  \item{crn}{Logical. If \code{TRUE}, use common random
+  numbers for the \code{"mssm"} solver by assigning each node
+  and replicate a separate random number stream, enabling
+  variance reduction across simulation runs. If not provided,
+  \code{crn} is \code{FALSE}.}
+  \item{rng_type}{Character string specifying the random
+  number generator algorithm. Either \code{"mt19937"} or
+  \code{"taus2"}. If not provided, \code{"mt19937"} is used.}
+}}
 }
 \value{
-\code{\link{SimInf_model}} object with result from
-    simulation.
+The model object with a single stochastic trajectory
+    attached.
 }
 \description{
-Run the SimInf stochastic simulation algorithm
+Simulate a stochastic trajectory from a SimInf model. The function
+compiles and loads model-specific C code (if not already
+compiled), initializes the solver, and advances the simulation in
+continuous time from the first to the last time point in
+\code{tspan}, recording the state of the system at each of these
+time points. Sparse output can be requested with
+\code{\link[=punchcard<-,SimInf_model-method]{punchcard<-}} to
+store only selected time points or compartments.
+}
+\details{
+The solver uses a split-step method: for each unit of time, it
+first integrates the continuous-time Markov chain within each node
+using direct SSA (Gillespie's algorithm), then processes scheduled
+events (exit, enter, internal transfer, and external transfer),
+and finally calls the post time step function to update continuous
+state variables; see Widgren and others (2019) for details.
+
+Two numerical solvers are available. The default solver is
+\code{"ssm"} (split-step method), which becomes \code{"mssm"}
+(multi-model split-step method) automatically when the model
+contains multiple replicates (\code{replicates > 1}). The
+alternative solver is \code{"aem"} (all events method), which
+assigns each reaction channel its own random number stream for
+consistent operational times across simulations; see Bauer and
+Engblom (2015).  The \code{"aem"} solver cannot be used with
+replicated models.
+
+For a \code{\linkS4class{SimInf_abc}} object, \code{run()} samples
+one parameter set (a particle) from the last generation of an
+approximate Bayesian computation sequential Monte Carlo (ABC SMC)
+analysis and applies it to the underlying model before simulating
+a stochastic trajectory. The particle is drawn uniformly at random
+from the particles in the final generation, such that repeated
+calls to \code{run()} yield simulations distributed according to
+the approximated posterior distribution.
 }
 \examples{
-## For reproducibility, call the set.seed() function and specify
-## the number of threads to use. To use all available threads,
-## remove the set_num_threads() call.
-set.seed(123)
+## For reproducibility, specify the number of threads to use.
 set_num_threads(1)
 
-## Create an 'SIR' model with 10 nodes and initialise
-## it to run over 100 days.
-model <- SIR(u0 = data.frame(S = rep(99, 10),
-                             I = rep(1, 10),
-                             R = rep(0, 10)),
-             tspan = 1:100,
-             beta = 0.16,
-             gamma = 0.077)
+## Create an 'SIR' model with 10 nodes.
+model <- SIR(
+  u0 = data.frame(
+    S = rep(99, 10),
+    I = rep(1, 10),
+    R = rep(0, 10)
+  ),
+  tspan = 1:100,
+  beta = 0.16,
+  gamma = 0.077
+)
 
-## Run the model and save the result.
-result <- run(model)
+## Run the model with a fixed seed for reproducibility.
+result <- run(model, seed = 22)
 
-## Plot the proportion of susceptible, infected and recovered
+## Plot the distribution of susceptible, infected and recovered
 ## individuals.
 plot(result)
 }
@@ -76,4 +125,10 @@ plot(result)
 \Bauer2016
 
 \Bauer2015
+}
+\seealso{
+\code{\link[=trajectory,SimInf_model-method]{trajectory}} for
+    extracting the simulated data, and
+    \code{\link[=prevalence,SimInf_model-method]{prevalence}} for
+    calculating prevalence from the trajectory.
 }

@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -359,7 +359,7 @@ model <- SISe3(u0        = u0,
 U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(12L, 3L))
+                        dim = c(12L, 3L))
 
 result <- run(model)
 stopifnot(identical(model@G, result@G))
@@ -431,7 +431,7 @@ model <- SISe3(u0        = u0,
 U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
                           1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(12L, 3L))
+                        dim = c(12L, 3L))
 
 result <- run(model)
 stopifnot(identical(model@G, result@G))
@@ -503,7 +503,7 @@ model <- SISe3(u0        = u0,
 U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 0L, 0L, 0L, 0L, 0L,
                           1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L,
                           1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = c(12L, 3L))
+                        dim = c(12L, 3L))
 
 result <- run(model)
 stopifnot(identical(model@G, result@G))
@@ -576,7 +576,7 @@ model <- SISe3(u0        = u0,
 U_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 2L, 8L, 0L, 0L, 0L, 0L,
                           0L, 1L, 0L, 0L, 0L, 0L, 2L, 7L, 0L, 0L, 0L, 0L,
                           0L, 1L, 0L, 0L, 0L, 0L, 2L, 7L, 0L, 0L, 0L, 0L),
-                        .Dim = c(12L, 3L))
+                        dim = c(12L, 3L))
 
 set.seed(1)
 result <- run(model)
@@ -658,7 +658,7 @@ U <- structure(
       1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L,
       0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 1L, 0L,
       0L, 0L, 0L, 0L),
-    .Dim = c(12L, 11L))
+    dim = c(12L, 11L))
 
 res <- run(model)
 stopifnot(identical(res@U, U))
@@ -846,13 +846,13 @@ model <- SIR(u0 = data.frame(S = 1, I = 1, R = 1),
 
 ## With equal weight the individual is sampled from the S compartment.
 set.seed(2)
-stopifnot(identical(run(model)@U, structure(c(0L, 1L, 1L), .Dim = c(3L, 1L))))
+stopifnot(identical(run(model)@U, structure(c(0L, 1L, 1L), dim = c(3L, 1L))))
 
 ## With non-equal weight the individual is sampled from the R
 ## compartment (using the same seed).
 model@events@E[3, 4] <- 1000
 set.seed(2)
-stopifnot(identical(run(model)@U, structure(c(1L, 1L, 0L), .Dim = c(3L, 1L))))
+stopifnot(identical(run(model)@U, structure(c(1L, 1L, 0L), dim = c(3L, 1L))))
 
 ## Check that an error is raised if there are no non-zero elements in
 ## the selected column in E.
@@ -911,7 +911,7 @@ model@events@n <- 0L
 model@events@proportion <- 0.1
 model@events@select <- 1L
 set.seed(3)
-stopifnot(identical(run(model)@U, structure(c(2L, 1L, 1L), .Dim = c(3L, 1L))))
+stopifnot(identical(run(model)@U, structure(c(2L, 1L, 1L), dim = c(3L, 1L))))
 
 ## Check that an enter event fails with shift without N.
 model@events@n <- 1L
@@ -938,4 +938,4 @@ check_error(res, "'shift' is out of bounds.")
 model@events@N <- matrix(c(1L, 0L, 0L),
                          nrow = 3, ncol = 1,
                          dimnames = list(c("S", "I", "R"), "1"))
-stopifnot(identical(run(model)@U, structure(c(1L, 2L, 1L), .Dim = c(3L, 1L))))
+stopifnot(identical(run(model)@U, structure(c(1L, 2L, 1L), dim = c(3L, 1L))))

@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -29,6 +29,9 @@ max_threads <- set_num_threads(1)
 
 ## For debugging
 sessionInfo()
+
+## Define a tolerance
+tol <- 1e-8
 
 ## Create a model
 model <- SIR(u0 = data.frame(S = 100:105, I = 1:6, R = rep(0, 6)),
@@ -357,3 +360,88 @@ stopifnot(identical(
               0L, 0L, 0L, 0L),
         phi = c(1, NA, NA, 2, 1, NA, NA, 2, 1, NA, NA, 2, 1, NA, NA, 2, 1, NA,
                 NA, 2))))
+
+## Check punchcard for model with replicates. Remove columns from
+## ldata to set replicates.
+model <- SISe(u0 = data.frame(S = 101:106, I = 1:6),
+              tspan = 1:10, events = NULL,
+              phi = c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6),
+              upsilon = 0, gamma = 0, alpha = 0, epsilon = 0,
+              beta_t1 = 0, beta_t2 = 0, beta_t3 = 0, beta_t4 = 0,
+              end_t1 = 91, end_t2 = 182, end_t3 = 273, end_t4 = 365)
+
+model@ldata <- model@ldata[, 1:3, drop = FALSE]
+model@replicates <- 2L
+
+punchcard(model) <- data.frame(
+    node = rep(c(1, 3), 10),
+    time = rep(1:10, each = 2),
+    S = c(TRUE, FALSE, FALSE, TRUE),
+    I = c(FALSE, TRUE, TRUE, FALSE),
+    phi = c(TRUE, FALSE, FALSE, TRUE))
+
+i <- c(1, 6, 2, 5, 1, 6, 2, 5, 1, 6, 2, 5, 1, 6, 2, 5, 1, 6, 2, 5,
+       1, 6, 2, 5, 1, 6, 2, 5, 1, 6, 2, 5, 1, 6, 2, 5, 1, 6, 2, 5)
+j <- c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
+       12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20)
+sparse <- Matrix::sparseMatrix(i = i, j = j, x = NA_real_, dims = c(6, 20))
+stopifnot(identical(model@U_sparse, sparse))
+
+i <- c(1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3)
+j <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,  18, 19, 20)
+sparse <- Matrix::sparseMatrix(i = i, j = j, x = NA_real_, dims = c(3, 20))
+stopifnot(identical(model@V_sparse, sparse))
+
+if (SimInf:::have_openmp() && max_threads > 1) {
+    set_num_threads(2)
+    result <- run(model)
+    set_num_threads(1)
+
+    stopifnot(identical(
+        c(101L, 3L, 1L, 103L, 101L, 3L, 1L, 103L, 101L, 3L, 1L, 103L,
+          101L, 3L, 1L, 103L, 101L, 3L, 1L, 103L, 104L, 6L, 4L, 106L, 104L,
+          6L, 4L, 106L, 104L, 6L, 4L, 106L, 104L, 6L, 4L, 106L, 104L, 6L,
+          4L, 106L),
+        as.integer(result@U_sparse@x)))
+
+    stopifnot(all(abs(result@V_sparse@x - c(0.1, 0.3, 0.1, 0.3, 0.1, 0.3,
+                                            0.1, 0.3, 0.1, 0.3, 0.4, 0.6,
+                                            0.4, 0.6, 0.4, 0.6, 0.4, 0.6,
+                                            0.4, 0.6)) < tol))
+
+    tr_exp <- data.frame(
+        node = c(1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L,
+                 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L,
+                 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L, 1L, 3L),
+        time = c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L, 5L, 5L, 6L, 6L, 7L, 7L,
+                 8L, 8L, 9L, 9L, 10L, 10L, 1L, 1L, 2L, 2L, 3L, 3L, 4L,
+                 4L, 5L, 5L, 6L, 6L, 7L, 7L, 8L, 8L, 9L, 9L, 10L, 10L),
+        replicate = c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L,
+                      1L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L,
+                      2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L),
+        S = c(101L, NA, NA, 103L, 101L, NA, NA, 103L, 101L, NA, NA, 103L,
+              101L, NA, NA, 103L, 101L, NA, NA, 103L, 104L, NA, NA, 106L,
+              104L, NA, NA, 106L, 104L, NA, NA, 106L, 104L, NA, NA, 106L,
+              104L, NA, NA, 106L),
+        I = c(NA, 3L, 1L, NA, NA, 3L, 1L, NA, NA, 3L, 1L, NA, NA, 3L, 1L,
+              NA, NA, 3L, 1L, NA, NA, 6L, 4L, NA, NA, 6L, 4L, NA, NA, 6L,
+              4L, NA, NA, 6L, 4L, NA, NA, 6L, 4L, NA),
+        phi = c(0.1, NA, NA, 0.3, 0.1, NA, NA, 0.3, 0.1, NA, NA, 0.3, 0.1,
+                NA, NA, 0.3, 0.1, NA, NA, 0.3, 0.4, NA, NA, 0.6, 0.4, NA,
+                NA, 0.6, 0.4, NA, NA, 0.6, 0.4, NA, NA, 0.6, 0.4, NA, NA,
+                0.6))
+
+    tr_obs <- trajectory(result)
+
+    stopifnot(identical(tr_exp$node, tr_obs$node))
+    stopifnot(identical(tr_exp$time, tr_obs$time))
+    stopifnot(identical(tr_exp$replicate, tr_obs$replicate))
+    stopifnot(identical(tr_exp$S, tr_obs$S))
+    stopifnot(identical(tr_exp$I, tr_obs$I))
+    stopifnot(all(is.na(tr_obs$phi[c(2L, 3L, 6L, 7L, 10L, 11L, 14L, 15L, 18L,
+                                     19L, 22L, 23L, 26L, 27L, 30L, 31L, 34L,
+                                     35L, 38L, 39L)])))
+    i <- c(1L, 4L, 5L, 8L, 9L, 12L, 13L, 16L, 17L, 20L, 21L, 24L, 25L,
+           28L, 29L, 32L, 33L, 36L, 37L, 40L)
+    stopifnot(all(abs(tr_obs$phi[i] - tr_exp$phi[i]) < tol))
+}

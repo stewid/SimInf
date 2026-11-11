@@ -58,8 +58,7 @@
 ##' @include SimInf_model.R
 ##' @export
 ##' @examples
-##' ## For reproducibility, set the seed and number of threads.
-##' set.seed(123)
+##' ## For reproducibility, specify the number of threads.
 ##' set_num_threads(1)
 ##'
 ##' ## Create an 'SIR' model with 6 nodes
@@ -75,8 +74,9 @@
 ##'   gamma = 0.077
 ##' )
 ##'
-##' ## Run the model with default recording (all data)
-##' result_full <- run(model)
+##' ## Run the model with default recording (all data).
+##' ## For reproducibility, specify the seed.
+##' result_full <- run(model, seed = 22)
 ##' head(trajectory(result_full))
 ##'
 ##' ## Define a template to record only nodes 2 and 4 at times 3 and 5
@@ -88,7 +88,7 @@
 ##' )
 ##' punchcard(model) <- df
 ##'
-##' result_sparse <- run(model)
+##' result_sparse <- run(model, seed = 22)
 ##' trajectory(result_sparse)
 ##'
 ##' ## Record only specific compartments (e.g., S and R, but not I)
@@ -98,7 +98,7 @@
 ##'   S = TRUE, I = FALSE, R = TRUE
 ##' )
 ##' punchcard(model) <- df
-##' result_partial <- run(model)
+##' result_partial <- run(model, seed = 22)
 ##' trajectory(result_partial)
 ##'
 ##' ## Shortcut: If only 'time' and 'node' are specified, all
@@ -111,7 +111,7 @@
 ##'
 ##' ## Reset to record all data (equivalent to no template)
 ##' punchcard(model) <- NULL
-##' result_reset <- run(model)
+##' result_reset <- run(model, seed = 22)
 ##' head(trajectory(result_reset))
 ## nolint start: brace_linter
 setGeneric(
@@ -129,13 +129,21 @@ setMethod(
     "punchcard<-",
     signature(model = "SimInf_model"),
     function(model, value) {
-        template <- create_template(value, model@tspan, seq_len(n_nodes(model)),
-                                    rownames(model@S), integer(0))
+        template <- create_template(value = value,
+                                    tspan = model@tspan,
+                                    nodes = seq_len(n_nodes(model)),
+                                    compartments = rownames(model@S),
+                                    data = integer(0),
+                                    replicates = n_replicates(model))
         model@U <- template$dense
         model@U_sparse <- template$sparse
 
-        template <- create_template(value, model@tspan, seq_len(n_nodes(model)),
-                                    rownames(model@v0), numeric(0))
+        template <- create_template(value = value,
+                                    tspan = model@tspan,
+                                    nodes = seq_len(n_nodes(model)),
+                                    compartments = rownames(model@v0),
+                                    data = numeric(0),
+                                    replicates = n_replicates(model))
         model@V <- template$dense
         model@V_sparse <- template$sparse
 
@@ -144,20 +152,30 @@ setMethod(
     }
 )
 
-##' Create  template for where to record result during a simualtion
+##' Create template for where to record result during a simulation
 ##'
-##' @param value A \code{data.frame} that specify the nodes,
+##' @param value a \code{data.frame} that specify the nodes,
 ##'     time-points and compartments to record the number of
 ##'     individuals at \code{tspan}. Use \code{NULL} to reset the
-##'     model to record the number of inidividuals in each compartment
+##'     model to record the number of individuals in each compartment
 ##'     in every node at each time-point in tspan.
 ##' @param tspan time points in trajectory.
+##' @param nodes available nodes in the model.
 ##' @param compartments available compartments in the simulated data.
 ##' @param data default data in dense matrix.
+##' @param replicates number of parallel replicates simulated for this
+##'     model.
 ##' @noRd
-create_template <- function(value, tspan, nodes, compartments, data) {
+create_template <- function(value,
+                            tspan,
+                            nodes,
+                            compartments,
+                            data,
+                            replicates) {
+    dense <- matrix(data = data, nrow = 0, ncol = 0)
+    dims <- c(length(nodes) * length(compartments), replicates * length(tspan))
+
     if (is.null(value)) {
-        dense <- matrix(data = data, nrow = 0, ncol = 0)
         sparse <- methods::new("dgCMatrix")
         return(list(dense = dense, sparse = sparse))
     }
@@ -166,8 +184,6 @@ create_template <- function(value, tspan, nodes, compartments, data) {
         stop("'value' argument is not a 'data.frame'.", call. = FALSE)
 
     if (nrow(value) == 0) {
-        dense <- matrix(data = data, nrow = 0, ncol = 0)
-        dims <- c(length(nodes) * length(compartments), length(tspan))
         sparse <- Matrix::sparseMatrix(i = numeric(0), j = numeric(0),
                                        x = NA_real_, dims = dims)
         return(list(dense = dense, sparse = sparse))
@@ -216,13 +232,17 @@ create_template <- function(value, tspan, nodes, compartments, data) {
         j <- rep(j, each = length(compartments))
         j <- j[value]
 
-        dims <- c(length(nodes) * length(compartments), length(tspan))
-        d1_times_d2 <- as.numeric(dims[1]) * as.numeric(dims[2])
-        if (sum(value, na.rm = TRUE) == d1_times_d2) {
-            dense <- matrix(data = data, nrow = 0, ncol = 0)
+        ## Use a dense matrix if all nodes and compartments are included.
+        d <- prod(c(length(nodes), length(compartments), length(tspan)))
+        if (sum(value, na.rm = TRUE) == d) {
             sparse <- methods::new("dgCMatrix")
         } else {
-            dense <- matrix(data = data, nrow = 0, ncol = 0)
+            ## Create replicates of the punchcard.
+            i <- rep(i, replicates)
+            j <- rep(j, replicates) +
+                rep(seq(from = 0, length.out = replicates) * length(tspan),
+                    each = length(j))
+
             sparse <- Matrix::sparseMatrix(i = i, j = j, x = NA_real_,
                                            dims = dims)
         }
@@ -230,8 +250,6 @@ create_template <- function(value, tspan, nodes, compartments, data) {
         return(list(dense = dense, sparse = sparse))
     }
 
-    dense <- matrix(data = data, nrow = 0, ncol = 0)
-    dims <- c(length(nodes) * length(compartments), length(tspan))
     sparse <- Matrix::sparseMatrix(i = numeric(0), j = numeric(0),
                                    x = NA_real_, dims = dims)
     list(dense = dense, sparse = sparse)

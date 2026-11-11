@@ -28,15 +28,14 @@
 ##'     the model structure (transitions, compartments, etc.) for
 ##'     which parameters are being estimated.
 ##' @template priors-slot
-##' @slot target Character vector (\code{gdata} or \code{ldata}) that
-##'     determines if the ABC-SMC method estimates parameters in
-##'     \code{model@@gdata} or in \code{model@@ldata}.
-##' @slot pars Index to the parameters in \code{target}.
+##' @template target-slot
+##' @template pars-slot
 ##' @slot nprop An integer vector with the number of simulated
-##'     proposals in each generation.
-##' @slot fn A function for calculating the summary statistics for the
-##'     simulated trajectory and determine the distance for each
-##'     particle, see \code{\link{abc}} for more details.
+##'     proposals (particles) generated in each generation.
+##' @slot fn A function used to calculate summary statistics from the
+##'     simulated trajectory and compute the distance for each
+##'     particle.  See \code{\link{abc}} for details on the required
+##'     function signature.
 ##' @slot tolerance A numeric matrix (number of summary statistics
 ##'     \eqn{\times} number of generations) where each column contains
 ##'     the tolerances for a generation and each row contains a
@@ -61,10 +60,12 @@
 ##' @slot init_model An optional function that, if non-NULL, is
 ##'     applied before running each proposal. The function must accept
 ##'     one argument of type \code{SimInf_model} with the current
-##'     model of the fitting process. This function can be useful to
-##'     specify the initial state of \code{u0} or \code{v0} of the
-##'     model before running a trajectory with proposed parameters.
-##' @seealso \code{\link{abc}} and \code{\link{continue_abc}}.
+##'     model of the fitting process and return a modified model. This
+##'     function can be useful to specify the initial state of
+##'     \code{u0} or \code{v0} of the model before running a
+##'     trajectory with proposed parameters.
+##' @seealso \code{\link{abc}} for the main ABC function and
+##'     \code{\link{continue_abc}} for continuing an ABC run.
 ##' @export
 setClass(
     "SimInf_abc",
@@ -125,11 +126,33 @@ setAs(
     }
 )
 
-##' Coerce to data frame
+##' Coerce a \code{SimInf_abc} object to a \code{data.frame}
 ##'
+##' Convert the results of an Approximate Bayesian Computation (ABC)
+##' analysis into a single \code{data.frame}. This function extracts
+##' the particle parameters, their acceptance weights, and the
+##' generation number for every particle across all generations.
+##'
+##' The resulting \code{data.frame} has one row per particle. The
+##' columns include:
+##' \itemize{
+##'   \item \code{generation}: The generation number (integer).
+##'   \item \code{weight}: The normalized weight of the particle
+##'   (numeric).
+##'   \item \strong{Parameter columns}: One column for each parameter
+##'     estimated in the ABC analysis (e.g., \code{beta},
+##'     \code{gamma}, \code{sigma}).  The column names match the
+##'     parameter names defined in the \code{priors}.
+##' }
+##'
+##' @param x A \code{SimInf_abc} object.
+##' @param ... Additional arguments (currently ignored).
+##' @return A \code{data.frame} containing all particles from all
+##'     generations.
+##' @seealso \code{\link{abc}} for running the ABC analysis,
+##'     \code{\linkS4class{SimInf_abc}} for the class definition, and
+##'     \code{\link{continue_abc}} for continuing an existing ABC run.
 ##' @method as.data.frame SimInf_abc
-##'
-##' @inheritParams base::as.data.frame
 ##' @export
 as.data.frame.SimInf_abc <- function(x, ...) {
     methods::as(x, "data.frame")
@@ -177,10 +200,22 @@ summary_particles <- function(object, i) {
     summary_matrix(t(abc_particles(object, i)))
 }
 
-##' Print summary of a \code{SimInf_abc} object
+##' Brief summary of a \code{SimInf_abc} object
 ##'
-##' @param object The \code{SimInf_abc} object.
-##' @return \code{invisible(object)}.
+##' Display a summary of an approximate Bayesian computation (ABC)
+##' analysis, including the number of particles per generation, the
+##' number of generations, and—for the final generation—the acceptance
+##' rate, effective sample size (ESS), and summary statistics
+##' (minimum, first quartile, median, mean, third quartile, and
+##' maximum) for each parameter in the posterior distribution.
+##'
+##' @param object The \code{\linkS4class{SimInf_abc}} object to
+##'     display.
+##' @return The \code{object}, returned invisibly.
+##' @seealso \code{\link{abc}} for running an ABC analysis,
+##'     \code{\link{continue_abc}} for continuing an existing ABC
+##'     chain, \code{\linkS4class{SimInf_abc}} for the class
+##'     definition.
 ##' @export
 setMethod(
     "show",
@@ -200,9 +235,27 @@ setMethod(
 
 ##' Detailed summary of a \code{SimInf_abc} object
 ##'
-##' @param object The \code{SimInf_abc} object
+##' Display a detailed summary of an approximate Bayesian computation
+##' (ABC) analysis, including the number of particles per generation,
+##' the number of generations, and—for each generation—the acceptance
+##' rate, effective sample size (ESS), and summary statistics
+##' (minimum, first quartile, median, mean, third quartile, and
+##' maximum) for each parameter in the posterior distribution.
+##'
+##' Compared to \code{\link[=show,SimInf_abc-method]{show}}, the
+##' summary additionally displays posterior statistics for all
+##' generations, not just the final one.
+##'
+##' @param object The \code{\linkS4class{SimInf_abc}} object to
+##'     summarize.
 ##' @param ... Additional arguments affecting the summary produced.
-##' @return None (invisible 'NULL').
+##'     Currently ignored.
+##' @return \code{NULL}, returned invisibly.
+##' @seealso \code{\link{abc}} for running an ABC analysis,
+##'     \code{\link{continue_abc}} for continuing an existing ABC
+##'     chain, \code{\linkS4class{SimInf_abc}} for the class
+##'     definition, \code{\link[=show,SimInf_abc-method]{show}} for a
+##'     brief summary.
 ##' @include SimInf_model.R
 ##' @export
 setMethod(
@@ -791,6 +844,26 @@ abc_internal <- function(object,
 
 ##' Approximate Bayesian computation
 ##'
+##' Fit a model to data using the approximate Bayesian computation
+##' sequential Monte Carlo (ABC SMC) algorithm of Toni and others
+##' (2009). Each generation of the algorithm propagates a population
+##' of candidate parameter sets (particles), drawn from the priors in
+##' the first generation and from perturbed particles of the previous
+##' generation thereafter, with the latter weighted by the ratio of
+##' their prior to proposal densities. A particle is simulated by
+##' applying it to the model and generating a stochastic trajectory
+##' with \code{\link[=run,SimInf_model-method]{run}}. The particle is
+##' retained if the distance between the summary statistics of the
+##' simulated trajectory and the observed \code{data} is less than or
+##' equal to the tolerance for the generation. As generations progress
+##' and the tolerances decrease, the population of particles converges
+##' towards an approximation of the posterior distribution.
+##'
+##' The tolerances can either be supplied explicitly through the
+##' \code{tolerance} argument, or determined adaptively using the
+##' algorithm of Simola and others (2021), see \code{n_init}. The
+##' returned \code{\linkS4class{SimInf_abc}} object holds the accepted
+##' particles for each generation together with their weights.
 ##'
 ##' @param model The \code{SimInf_model} object to generate data from.
 ##' @template priors-param
@@ -813,23 +886,23 @@ abc_internal <- function(object,
 ##'     trajectory attached to it. The second argument,
 ##'     \code{generation}, to \code{distance} is an integer with the
 ##'     generation of the particle(s). Further arguments that can
-##'     passed to the \code{distance} function comes from \code{...}
-##'     in the \code{abc} function. Depending on the underlying model
-##'     structure, data for one or more particles have been generated
-##'     in each call to \code{distance}. If the \code{model} only
-##'     contains one node and all the parameters to fit are in
-##'     \code{ldata}, then that node will be replicated and each of
-##'     the replicated nodes represent one particle in the trajectory
-##'     (see \sQuote{Examples}). On the other hand if the model
-##'     contains multiple nodes or the parameters to fit are contained
-##'     in \code{gdata}, then the trajectory in the \code{result}
-##'     argument represents one particle. The function can return a
-##'     numeric matrix (number of particles \eqn{\times} number of
-##'     summary statistics). Or, if the distance contains one summary
-##'     statistic, a numeric vector with the length equal to the
-##'     number of particles. Note that when using adaptive tolerance
-##'     selection, only one summary statistic can be used, i.e., the
-##'     function must return a matrix (number of particles
+##'     passed to the \code{distance} function comes from the
+##'     \code{data} argument in the \code{abc} function. Depending on
+##'     the underlying model structure, data for one or more particles
+##'     have been generated in each call to \code{distance}. If the
+##'     \code{model} only contains one node and all the parameters to
+##'     fit are in \code{ldata}, then that node will be replicated and
+##'     each of the replicated nodes represent one particle in the
+##'     trajectory (see \sQuote{Examples}). On the other hand if the
+##'     model contains multiple nodes or the parameters to fit are
+##'     contained in \code{gdata}, then the trajectory in the
+##'     \code{result} argument represents one particle. The function
+##'     can return a numeric matrix (number of particles \eqn{\times}
+##'     number of summary statistics). Or, if the distance contains
+##'     one summary statistic, a numeric vector with the length equal
+##'     to the number of particles. Note that when using adaptive
+##'     tolerance selection, only one summary statistic can be used,
+##'     i.e., the function must return a matrix (number of particles
 ##'     \eqn{\times} 1) or a numeric vector.
 ##' @param tolerance A numeric matrix (number of summary statistics
 ##'     \eqn{\times} number of generations) where each column contains
@@ -845,6 +918,13 @@ abc_internal <- function(object,
 ##' @template post_gen-param
 ##' @template init_model-param
 ##' @return A \code{SimInf_abc} object.
+##' @seealso \code{\link[=plot,SimInf_abc-method]{plot}},
+##'     \code{\link[=summary,SimInf_abc-method]{summary}} and
+##'     \code{\link[=as.data.frame.SimInf_abc]{as.data.frame}} to
+##'     inspect the fitted object, \code{\link{continue_abc}} to
+##'     refine the fit with additional generations, and
+##'     \code{\link[=run,SimInf_model-method]{run}} to generate
+##'     trajectories from the posterior.
 ##' @references
 ##'
 ##' \Toni2009
@@ -853,7 +933,84 @@ abc_internal <- function(object,
 ##' @include density_ratio.R
 ##' @export
 ##' @seealso \code{\link{continue_abc}}.
-##' @example man/examples/abc.R
+##' @examples
+##' ## For reproducibility, specify a seed and the number of threads to
+##' ## use.
+##' set.seed(22)
+##' set_num_threads(1)
+##'
+##' ## Let us consider an SIR model in a closed population with N = 100
+##' ## individuals of whom one is initially infectious and the rest are
+##' ## susceptible. First, generate one realisation (with a specified
+##' ## seed) from the model with known parameters beta=0.16 and
+##' ## gamma=0.077. Then, use abc to infer the (known) parameters from the
+##' ## simulated data.
+##' model <- SIR(
+##'   u0 = data.frame(
+##'     S = 99,
+##'     I = 1,
+##'     R = 0),
+##'   tspan = 1:100,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Run the SIR model and plot the number of infectious.
+##' infectious <- trajectory(run(model), "I")$I
+##' plot(infectious, type = "s")
+##'
+##' ## The distance function to accept or reject a proposal. Each node in
+##' ## the simulated trajectory (contained in the 'result' object)
+##' ## represents one proposal.
+##' distance <- function(result, generation, data) {
+##'     ## Extract the time-series of infectious in each node as a
+##'     ## data.frame, ordered so that time-points for the same node are
+##'     ## contiguous.
+##'     sim <- trajectory(result, "I")
+##'     sim <- sim[order(sim$node, sim$time), ]
+##'
+##'     ## One column per node: subtract the observed series row-wise
+##'     ## ('data' is recycled once per node). The residuals are squared
+##'     ## and summed within each column, giving the sum of squared
+##'     ## errors: larger deviations from the observed trajectory count
+##'     ## proportionally more against a proposal.
+##'     residuals <- matrix(
+##'         sim$I - data,
+##'         nrow = length(data),
+##'         ncol = n_nodes(result)
+##'     )
+##'
+##'     ## Return the sum of squared errors for each node, i.e. one
+##'     ## distance per proposal. Each proposal will be accepted or
+##'     ## rejected depending on whether the distance is at most the
+##'     ## tolerance for the current generation. The length of the
+##'     ## returned vector must match the number of nodes in 'result'.
+##'     colSums(residuals^2)
+##' }
+##'
+##' ## Fit the model parameters using ABC-SMC and adaptive tolerance
+##' ## selection. The priors for the parameters are specified using a
+##' ## formula notation. Here we use a uniform distribution for each
+##' ## parameter with lower bound = 0 and upper bound = 1. Note that we
+##' ## use a low number of particles here to keep the run-time of the
+##' ## example short. In practice you would want to use many more to
+##' ## ensure better approximations.
+##' fit <- abc(
+##'   model = model,
+##'   priors = c(
+##'     beta ~ uniform(0, 1),
+##'     gamma ~ uniform(0, 1)),
+##'   n_particles = 100,
+##'   n_init = 1000,
+##'   distance = distance,
+##'   data = infectious
+##' )
+##'
+##' ## Print a brief summary.
+##' fit
+##'
+##' ## Display the ABC posterior distribution.
+##' plot(fit)
 ## nolint start: brace_linter
 setGeneric(
     "abc",

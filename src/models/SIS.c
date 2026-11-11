@@ -2,7 +2,7 @@
  * This file is part of SimInf, a framework for stochastic
  * disease spread simulations.
  *
- * Copyright (C) 2015 -- 2025 Stefan Widgren
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,15 +123,15 @@ SIS_post_time_step(
  * Run simulation with the SIS model
  *
  * @param model The SIS model.
- * @param solver The numerical solver.
+ * @param options Options for running the numerical solver.
  * @return The simulated trajectory.
  */
 attribute_hidden SEXP
 SIS_run(
     SEXP model,
-    SEXP solver)
+    SEXP options)
 {
     TRFun tr_fun[] = { &SIS_S_to_I, &SIS_I_to_R };
 
-    return SimInf_run(model, solver, tr_fun, &SIS_post_time_step);
+    return SimInf_run(model, options, tr_fun, &SIS_post_time_step);
 }

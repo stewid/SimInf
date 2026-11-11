@@ -315,28 +315,36 @@ init_events <- function(events, t0) {
 ##' ## individuals from one node to another.  Use the built-in SIR
 ##' ## model and start with 2 nodes where all individuals are in the
 ##' ## first node (100 per compartment).
-##' u0 <- data.frame(S = c(100, 0), I = c(100, 0), R = c(100, 0))
+##' u0 <- data.frame(
+##'   S = c(100, 0),
+##'   I = c(100, 0),
+##'   R = c(100, 0)
+##' )
 ##'
 ##' ## Then create 300 movement events to transfer all individuals,
 ##' ## one per day, from the first node to the second node. Use the
 ##' ## fourth column in the select matrix where all compartments
 ##' ## can be sampled with equal weight.
-##' events <- data.frame(event      = rep("extTrans", 300),
-##'                      time       = 1:300,
-##'                      node       = 1,
-##'                      dest       = 2,
-##'                      n          = 1,
-##'                      proportion = 0,
-##'                      select     = 4,
-##'                      shift      = 0)
+##' events <- data.frame(
+##'   event      = rep("extTrans", 300),
+##'   time       = 1:300,
+##'   node       = 1,
+##'   dest       = 2,
+##'   n          = 1,
+##'   proportion = 0,
+##'   select     = 4,
+##'   shift      = 0
+##' )
 ##'
 ##' ## Create an SIR model without disease transmission to
 ##' ## demonstrate the events.
-##' model <- SIR(u0      = u0,
-##'              tspan  = 1:300,
-##'              events = events,
-##'              beta   = 0,
-##'              gamma  = 0)
+##' model <- SIR(
+##'   u0      = u0,
+##'   tspan  = 1:300,
+##'   events = events,
+##'   beta   = 0,
+##'   gamma  = 0
+##' )
 ##'
 ##' ## Run the model and plot the number of individuals in
 ##' ## the second node.  As can be seen in the figure, all
@@ -431,11 +439,58 @@ setAs(
     }
 )
 
-##' Coerce events to a data frame
+##' Coerce a \code{SimInf_events} object to a \code{data.frame}
 ##'
+##' Convert the scheduled events stored in a \code{SimInf_events}
+##' object into a \code{data.frame}. This function extracts the event
+##' type, time, source node, destination node, number of individuals,
+##' proportion, and the specific columns from the select (\code{E})
+##' and shift (\code{N}) matrices that define how each event modifies
+##' the compartment state.  The resulting \code{data.frame} has one
+##' row per scheduled event.
+##'
+##' @param x A \code{SimInf_events} object.
+##' @param ... Additional arguments (currently ignored).
+##' @return A \code{data.frame} with columns:
+##'   \itemize{
+##'     \item \code{event}: Event type (integer or character,
+##'     depending on input).
+##'     \item \code{time}: Time of the event (integer or \code{Date},
+##'     depending on input).
+##'     \item \code{node}: Source node identifier.
+##'     \item \code{dest}: Destination node identifier (may be
+##'     \code{NA}).
+##'     \item \code{n}: Number of individuals affected.
+##'     \item \code{proportion}: Proportion of the population affected
+##'     (if applicable).
+##'     \item \code{select}: The column vector from the select matrix
+##'       (\code{E}) that defines how the event modifies the
+##'       compartment state.
+##'     \item \code{shift}: The column vector from the shift matrix
+##'       (\code{N}) that defines how the event modifies the
+##'       compartment state.
+##'   }
+##' @seealso \code{\linkS4class{SimInf_events}} for the class
+##'     definition and \code{\link{events}} for extracting events from
+##'     a model.
 ##' @method as.data.frame SimInf_events
-##' @inheritParams base::as.data.frame
 ##' @export
+##' @examples
+##' ## Create an 'SIR' model with 1600 cattle herds (nodes) and
+##' ## initialize it to run over 4*365 days. Define 'tspan' to record
+##' ## the state of the system at daily time-points. Load scheduled
+##' ## events for the population of nodes with births, deaths and
+##' ## between-node movements of individuals.
+##' model <- SIR(
+##'   u0     = u0_SIR(),
+##'   tspan  = seq(from = 1, to = 4*365, by = 1),
+##'   events = events_SIR(),
+##'   beta   = 0.16,
+##'   gamma  = 0.01
+##' )
+##'
+##' ## Extract the events from the model and convert to a data frame.
+##' head(as.data.frame(events(model)))
 as.data.frame.SimInf_events <- function(x, ...) {
     methods::as(x, "data.frame")
 }
@@ -514,12 +569,37 @@ setMethod(
     }
 )
 
-##' Brief summary of \code{SimInf_events}
+##' Brief summary of a \code{SimInf_events} object
 ##'
-##' Shows the number of scheduled events.
-##' @param object The SimInf_events \code{object}
-##' @return None (invisible 'NULL').
+##' Display the number of scheduled events in a
+##' \code{\linkS4class{SimInf_events}} object. The count reflects the
+##' total number of event entries in the event schedule, including
+##' both internal (E1) and external (E2) events.
+##'
+##' @param object The \code{\linkS4class{SimInf_events}} object to
+##'     display.
+##' @return The \code{object}, returned invisibly.
+##' @seealso \code{\link{SimInf_events}} for creating event objects,
+##'     \code{\linkS4class{SimInf_events}} for the class definition,
+##'     \code{\linkS4class{SimInf_model}} for how events are attached
+##'     to a model.
 ##' @export
+##' @examples
+##' ## Create an 'SIR' model with 1600 cattle herds (nodes) and
+##' ## scheduled events for the population of nodes with births,
+##' ## deaths and between-node movements of individuals. Define
+##' ## 'tspan' to record the state of the system at daily time
+##' ## points over 4*365 days.
+##' model <- SIR(
+##'   u0     = u0_SIR(),
+##'   tspan  = 1:(4 * 365),
+##'   events = events_SIR(),
+##'   beta   = 0.16,
+##'   gamma  = 0.077
+##' )
+##'
+##' ## Brief summary of the events
+##' events(model)
 setMethod(
     "show",
     signature(object = "SimInf_events"),
@@ -532,12 +612,51 @@ setMethod(
 
 ##' Detailed summary of a \code{SimInf_events} object
 ##'
-##' Shows the number of scheduled events and the number of scheduled
-##' events per event type.
-##' @param object The \code{SimInf_events} object
+##' Display a summary of the scheduled events in a
+##' \code{\linkS4class{SimInf_events}} object. The output includes the
+##' total number of events and summary statistics (count, minimum,
+##' maximum, and average number of individuals affected by each
+##' event).
+##'
+##' Four event types are reported:
+##' \itemize{
+##'   \item \strong{Exit}: Events where individuals are removed from a
+##'   node (e.g., deaths).
+##'   \item \strong{Enter}: Events where individuals are added to a
+##'   node (e.g., births).
+##'   \item \strong{Internal transfer}: Events moving individuals
+##'   between compartments within a node (e.g., vaccination, ageing).
+##'   \item \strong{External transfer}: Events moving individuals
+##'   between different nodes (e.g., livestock movements).
+##' }
+##'
+##' @param object The \code{\linkS4class{SimInf_events}} object to
+##'     summarize.
 ##' @param ... Additional arguments affecting the summary produced.
-##' @return None (invisible 'NULL').
+##'     Currently ignored.
+##' @return \code{NULL}, returned invisibly.
+##' @seealso \code{\link{SimInf_events}} for creating event objects,
+##'     \code{\linkS4class{SimInf_events}} for the class definition,
+##'     \code{\linkS4class{SimInf_model}} for how events are attached
+##'     to a model, \code{\link{events}} for extracting events from a
+##'     model.
 ##' @export
+##' @examples
+##' ## Create an 'SIR' model with 1600 cattle herds (nodes) and
+##' ## scheduled events for the population of nodes with births,
+##' ## deaths and between-node movements of individuals. Define
+##' ## 'tspan' to record the state of the system at daily time
+##' ## points over 4*365 days.
+##' model <- SIR(
+##'   u0     = u0_SIR(),
+##'   tspan  = 1:(4 * 365),
+##'   events = events_SIR(),
+##'   beta   = 0.16,
+##'   gamma  = 0.077
+##' )
+##'
+##' ## Detailed summary of the events
+##' summary(events(model))
 setMethod(
     "summary",
     signature(object = "SimInf_events"),
@@ -563,6 +682,8 @@ setMethod(
                 cat("0\n")
             }
         }
+
+        invisible(NULL)
     }
 )
 
@@ -630,19 +751,53 @@ setMethod(
 
 ##' Extract the shift matrix from a \code{SimInf_model} object
 ##'
-##' Utility function to extract the shift matrix \code{events@@N} from
-##' a \code{SimInf_model} object, see
-##' \code{\linkS4class{SimInf_events}}
-##' @param model The \code{model} to extract the shift matrix
-##'     \code{events@@N} from.
-##' @return A mtrix.
-##' @export
-##' @examples
-##' ## Create an SIR model
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##' Get the shift matrix \code{events@@N} that determines how
+##' individuals are shifted between compartments when processing
+##' \emph{enter}, \emph{internal transfer} and \emph{external
+##' transfer} events. Each row in the shift matrix corresponds to one
+##' compartment in the model, and each column defines a transfer
+##' pattern. The \code{shift} value of an event selects which column
+##' to use, and the value \eqn{N[p, q]} indicates how many
+##' compartments to move (or place, for enter events) individuals from
+##' compartment \eqn{p}. See \code{\linkS4class{SimInf_events}} for
+##' details on the event processing.
 ##'
-##' ## Extract the shift matrix from the model
+##' @param model The \code{\linkS4class{SimInf_model}} object to
+##'     extract the shift matrix from.
+##' @return The integer shift matrix \code{events@N} where each row
+##'     corresponds to one compartment in the model.
+##' @seealso
+##'     \code{\link[=shift_matrix<-,SimInf_model-method]{shift_matrix<-}}
+##'     to set the shift matrix, and
+##'     \code{\link[=select_matrix,SimInf_model-method]{select_matrix}}
+##'     to extract the select matrix. The vignette "Scheduled events"
+##'     for a tutorial on scheduled events, see
+##'     \code{vignette("Scheduled events", package = "SimInf")}.
+##' @examples
+##' ## Create an 'SIR' model.
+##' model <- SIR(
+##'   u0 = data.frame(
+##'     S = 100,
+##'     I = 10,
+##'     R = 0),
+##'   tspan = 1:5,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Extract the shift matrix from the model.
+##' shift_matrix(model)
+##'
+##' ## Change the shift matrix so that susceptible individuals are
+##' ## moved to the 'R' compartment (compartment 1 + 2 = 3) when
+##' ## processing an event with 'shift' = 1.
+##' shift_matrix(model) <- data.frame(
+##'   compartment = "S",
+##'   shift = 1,
+##'   value = 2
+##' )
+##'
+##' ## Extract the updated shift matrix from the model.
 ##' shift_matrix(model)
 ## nolint start: brace_linter
 setGeneric(
@@ -665,9 +820,15 @@ setMethod(
 
 ##' Set the shift matrix for a \code{SimInf_model} object
 ##'
-##' Utility function to set \code{events@N} in a \code{SimInf_model}
-##' object, see \code{\linkS4class{SimInf_events}}.
-##'
+##' Replace the shift matrix \code{events@@N} that determines how
+##' individuals are shifted between compartments when processing
+##' \emph{enter}, \emph{internal transfer} and \emph{external
+##' transfer} events. The shift matrix can be specified as a
+##' \code{matrix}, or as a \code{data.frame} with the columns
+##' \code{compartment}, \code{shift}, and \code{value}; see
+##' \sQuote{Arguments} for details, and
+##' \code{\linkS4class{SimInf_events}} for how the shift matrix is
+##' used when processing events.
 ##' @param model The \code{SimInf_model} object to set the shift
 ##'     matrix for.
 ##' @param value The new value for \code{N} in the model. \code{N} is
@@ -676,11 +837,11 @@ setMethod(
 ##'     corresponds to one compartment in the model. The values in a
 ##'     column define how to move sampled individuals before adding
 ##'     them to the destination. Let \code{q <- shift}, then each
-##'     non-zero entry in \code{N[, q]} defines the number of rows to
-##'     move sampled individuals from that compartment i.e., sampled
-##'     individuals from compartment \code{p} are moved to compartment
-##'     \code{N[p, q] + p}, where \code{1 <= N[p, q] + p <=
-##'     N_compartments}. This matrix is used for \emph{enter},
+##'     non-zero entry in \code{N[, q]} defines the number of
+##'     compartments to move sampled individuals from that compartment
+##'     i.e., sampled individuals from compartment \code{p} are moved
+##'     to compartment \code{N[p, q] + p}, where \code{1 <= N[p, q] +
+##'     p <= N_compartments}. This matrix is used for \emph{enter},
 ##'     \emph{internal transfer} and \emph{external transfer} events.
 ##'     The shift matrix \code{N} can either be specified as a
 ##'     \code{matrix}, or as a \code{data.frame}.  When \code{N} is
@@ -691,26 +852,47 @@ setMethod(
 ##'     contain a column named \code{value} with the integer value in
 ##'     \code{N}.
 ##' @return \code{SimInf_model} object
-##' @export
+##' @seealso
+##'     \code{\link[=shift_matrix,SimInf_model-method]{shift_matrix}}
+##'     to extract the shift matrix, and
+##'     \code{\link[=select_matrix,SimInf_model-method]{select_matrix}}
+##'     to extract the select matrix. The vignette "Scheduled events"
+##'     for a tutorial on scheduled events, see
+##'     \code{vignette("Scheduled events", package = "SimInf")}.
 ##' @examples
-##' ## Create an SIR model
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##' ## Create an 'SIR' model and turn off the disease dynamics to
+##' ## focus on the scheduled event.
+##' model <- SIR(
+##'   u0 = data.frame(
+##'     S = 100,
+##'     I = 10,
+##'     R = 0),
+##'   tspan = 1:20,
+##'   beta = 0,
+##'   gamma = 0,
+##'   events = data.frame(
+##'     event = "intTrans",
+##'     time = 10,
+##'     node = 1,
+##'     dest = 0,
+##'     n = 30,
+##'     proportion = 0,
+##'     select = 1,
+##'     shift = 1
+##'   )
+##' )
 ##'
-##' ## Set the shift matrix.
-##' shift_matrix(model) <- matrix(c(2, 1, 0), nrow = 3)
-##'
-##' ## Extract the shift matrix from the model.
-##' shift_matrix(model)
-##'
-##' ## Set the shift matrix using a data.frame instead.
+##' ## Vaccinate 30 susceptible individuals at t = 10 by moving
+##' ## them to the 'R' compartment (compartment 1 + 2 = 3).
 ##' shift_matrix(model) <- data.frame(
-##'     compartment = c("S", "I", "R"),
-##'     shift = c(1, 1, 1),
-##'     value = c(2, 1, 0))
+##'   compartment = "S",
+##'   shift = 1,
+##'   value = 2
+##' )
 ##'
-##' ## Extract the shift matrix from the model.
-##' shift_matrix(model)
+##' ## Run the model and extract the trajectory.
+##' result <- run(model)
+##' trajectory(result)
 ## nolint start: brace_linter
 setGeneric(
     "shift_matrix<-",
@@ -745,18 +927,57 @@ setMethod(
 
 ##' Extract the select matrix from a \code{SimInf_model} object
 ##'
-##' Utility function to extract \code{events@@E} from a
-##' \code{SimInf_model} object, see \code{\linkS4class{SimInf_events}}
-##' @param model The \code{model} to extract the select matrix
-##'     \code{E} from.
-##' @return \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}} object.
-##' @export
-##' @examples
-##' ## Create an SIR model
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##' Get the select matrix \code{events@E} that determines which
+##' compartments an event samples individuals from when processing
+##' \emph{exit}, \emph{enter}, \emph{internal transfer} and
+##' \emph{external transfer} events. Each row in the select matrix
+##' corresponds to one compartment in the model, and each column
+##' defines a sampling pattern. The \code{select} value of an event
+##' determines which column to use, and the values in the selected
+##' column \eqn{E[, s]} are used as weights when sampling individuals
+##' from the compartments with non-zero entries. See
+##' \code{\linkS4class{SimInf_events}} for details on the event
+##' processing.
 ##'
-##' ## Extract the select matrix from the model
+##' @param model The \code{\linkS4class{SimInf_model}} object to
+##'     extract the select matrix from.
+##' @return The sparse select matrix \code{events@E} (of class
+##'     \code{\link[Matrix:dgCMatrix-class]{dgCMatrix}}) where each
+##'     row corresponds to one compartment in the model.
+##' @seealso
+##'     \code{\link[=select_matrix<-,SimInf_model-method]{select_matrix<-}}
+##'     to set the select matrix, and
+##'     \code{\link[=shift_matrix,SimInf_model-method]{shift_matrix}}
+##'     to extract the shift matrix. The vignette "Scheduled events"
+##'     for a tutorial on scheduled events, see
+##'     \code{vignette("Scheduled events", package = "SimInf")}.
+##' @examples
+##' ## Create an 'SIR' model.
+##' model <- SIR(
+##'   u0 = data.frame(
+##'     S = 100,
+##'     I = 10,
+##'     R = 0),
+##'   tspan = 1:5,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Extract the select matrix from the model.
+##' select_matrix(model)
+##'
+##' ## Change the select matrix so that individuals in the 'I'
+##' ## compartment are twice as likely to be selected when
+##' ## processing an event with 'select' = 4. Note that the
+##' ## data.frame replaces the entire select matrix, so the entries
+##' ## in columns 1, 2 and 3 must also be specified.
+##' select_matrix(model) <- data.frame(
+##'   compartment = c("S", "I", "R", "S", "I", "R"),
+##'   select = c(1, 2, 3, 4, 4, 4),
+##'   value = c(1, 1, 1, 1, 2, 1)
+##' )
+##'
+##' ## Extract the updated select matrix from the model.
 ##' select_matrix(model)
 ## nolint start: brace_linter
 setGeneric(
@@ -779,52 +1000,77 @@ setMethod(
 
 ##' Set the select matrix for a \code{SimInf_model} object
 ##'
-##' Utility function to set \code{events@@E} in a \code{SimInf_model}
-##' object, see \code{\linkS4class{SimInf_events}}.
+##' Replace the select matrix \code{events@E} that determines which
+##' compartments an event samples individuals from when processing
+##' \emph{exit}, \emph{enter}, \emph{internal transfer} and
+##' \emph{external transfer} events. The values in the selected
+##' column are used as weights when sampling individuals from the
+##' compartments with non-zero entries. The select matrix can be
+##' specified as a \code{matrix}, or as a \code{data.frame} with the
+##' columns \code{compartment} and \code{select}, and an optional
+##' column \code{value} (default \code{1}); see \sQuote{Arguments}
+##' for details, and \code{\linkS4class{SimInf_events}} for how the
+##' select matrix is used when processing events.
 ##'
-##' @param model The \code{SimInf_model} object to set the select
-##'     matrix for.
+##' @param model The \code{\linkS4class{SimInf_model}} object to set
+##'     the select matrix for.
 ##' @param value The new value for \code{E} in the model. \code{E} is
 ##'     a matrix to handle scheduled events, see
 ##'     \code{\linkS4class{SimInf_events}}. Each row in \code{E}
-##'     corresponds to one compartment in the model. The non-zero
-##'     entries in a column indicate the compartments to include in an
-##'     event. For the \emph{exit}, \emph{internal transfer} and
-##'     \emph{external transfer} events, the values in \code{E[,
-##'     select]} are used as weights when sampling individuals without
-##'     replacement, with probability proportional to the weight. For
-##'     the \emph{enter} event, the values in \code{E[, select]} are
-##'     used as weights when determining which compartment to add
-##'     individuals to. If the column \code{E[, select]} contains
-##'     several non-zero entries, the compartment is sampled with
-##'     probability proportional to the weight in \code{E[, select]}.
-##'     The select matrix \code{E} can either be specified as a
-##'     \code{matrix}, or as a \code{data.frame}.  When \code{E} is
-##'     specified as a \code{data.frame}, it must have one column
-##'     named \code{compartment} that defines which compartment is
-##'     referred to, and one column \code{select} that defines the
-##'     column in \code{E}.  In addition, the \code{data.frame} can
-##'     contain an optional column named \code{value} with the value
-##'     in \code{E}.  When the \code{value} column is missing,
-##'     \code{1} is used as the default value.
-##' @export
+##'     corresponds to one compartment in the model. The values in a
+##'     column are used as weights when sampling individuals from the
+##'     compartments with non-zero entries when processing an event.
+##'     Let \code{s <- select}, then the non-zero entries in
+##'     \code{E[, s]} determine which compartments to sample
+##'     individuals from. This matrix is used for \emph{exit},
+##'     \emph{enter}, \emph{internal transfer} and \emph{external
+##'     transfer} events. The select matrix \code{E} can either be
+##'     specified as a \code{matrix}, or as a \code{data.frame}.
+##'     When \code{E} is specified as a \code{data.frame}, it must
+##'     have one column named \code{compartment} that defines which
+##'     compartment is referred to, and one column \code{select} that
+##'     defines the column in \code{E}. In addition, the
+##'     \code{data.frame} may contain a column named \code{value}
+##'     with the weight in \code{E} (\code{1} if the column is
+##'     omitted). Note that the \code{data.frame} replaces the entire
+##'     select matrix: entries not included are set to zero, so all
+##'     columns that the scheduled events refer to must be specified.
+##' @return The \code{\linkS4class{SimInf_model}} object with the
+##'     updated select matrix.
+##' @seealso
+##'     \code{\link[=select_matrix,SimInf_model-method]{select_matrix}}
+##'     to extract the select matrix, and
+##'     \code{\link[=shift_matrix,SimInf_model-method]{shift_matrix}}
+##'     to extract the shift matrix. The vignette "Scheduled events"
+##'     for a tutorial on scheduled events, see
+##'     \code{vignette("Scheduled events", package = "SimInf")}.
 ##' @examples
-##' ## Create an SIR model.
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
-##'
-##' ## Set the select matrix.
-##' select_matrix(model) <- matrix(c(1, 0, 0, 1, 1, 1, 0, 0, 1), nrow = 3)
+##' ## Create an 'SIR' model.
+##' model <- SIR(
+##'   u0 = data.frame(
+##'     S = 100,
+##'     I = 10,
+##'     R = 0),
+##'   tspan = 1:5,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
 ##'
 ##' ## Extract the select matrix from the model.
 ##' select_matrix(model)
 ##'
-##' ## Set the select matrix using a data.frame instead.
+##' ## Change the select matrix so that individuals in the 'I'
+##' ## compartment are twice as likely to be selected when
+##' ## processing an event with 'select' = 4. Note that the
+##' ## data.frame replaces the entire select matrix, so the entries
+##' ## in columns 1, 2 and 3 must also be specified.
 ##' select_matrix(model) <- data.frame(
-##'     compartment = c("S", "S", "I", "R", "R"),
-##'     select      = c( 1,   2,   2,   2,   3))
+##'   compartment = c("S", "I", "R", "S", "I", "R"),
+##'   select = c(1, 2, 3, 4, 4, 4),
+##'   value = c(1, 1, 1, 1, 2, 1)
+##' )
 ##'
-##' ## Extract the select matrix from the model.
+##' ## Extract the updated select matrix from the model.
 ##' select_matrix(model)
 ## nolint start: brace_linter
 setGeneric(

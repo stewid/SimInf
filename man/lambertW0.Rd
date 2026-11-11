@@ -7,12 +7,18 @@
 lambertW0(x)
 }
 \arguments{
-\item{x}{numeric vector of values.}
+\item{x}{A numeric vector of values.}
+}
+\value{
+A numeric vector of the same length as \code{x} containing
+    the principal branch of the Lambert W function evaluated at
+    each element.
 }
 \description{
-W0(x) is the principal branch of the solution of the function
-defined by \eqn{We^W = x}{W * exp(W)} for \eqn{x >= -1/e}. The
-value is calculated using GNU Scientific Library (GSL).
+The principal branch of the Lambert W function, which solves
+\eqn{W e^W = x}{W * exp(W) = x}. Defined for \eqn{x >= -1/e}, with
+output in the range \eqn{[-1, \infty)}{[-1, Inf)}. The value is
+calculated using the GNU Scientific Library (GSL).
 }
 \examples{
 ## Should equal 1, as 1 * exp(1) = e.

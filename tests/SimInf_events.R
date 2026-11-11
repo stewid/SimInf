@@ -543,7 +543,7 @@ events <- data.frame(event = 3, time = 2, node = 1, dest = 2,
 model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16,
              gamma = 0.077)
 model@events@node <- -1L
-res <- assertError(.Call(SimInf:::SIR_run, model, NULL))
+res <- assertError(.Call(SimInf:::SIR_run, model, list()))
 check_error(res, "'node' is out of bounds.")
 
 ## Check that it fails for an invalid event type.
@@ -553,7 +553,7 @@ events <- data.frame(event = 0, time = 2, node = 1, dest = 0,
 model <- SIR(u0, tspan = seq_len(3), events = events, beta = 0.16,
              gamma = 0.077)
 model@events@event <- 4L
-res <- assertError(.Call(SimInf:::SIR_run, model, NULL))
+res <- assertError(.Call(SimInf:::SIR_run, model, list()))
 check_error(res, "Undefined event type.")
 
 ## Check get/set select_matrix
@@ -596,8 +596,8 @@ model <- SIR(cbind(S = 100, I = 10, R = 0), tspan = 1:10, beta = 1, gamma = 1)
 ## Set the shift matrix using a matrix
 shift_matrix(model) <- matrix(c(2, 1, 0), nrow = 3)
 
-N_expected <- structure(c(2L, 1L, 0L), .Dim = c(3L, 1L),
-                        .Dimnames = list(c("S", "I", "R"), "1"))
+N_expected <- structure(c(2L, 1L, 0L), dim = c(3L, 1L),
+                        dimnames = list(c("S", "I", "R"), "1"))
 
 ## Extract the shift matrix from the model
 N_observed <- shift_matrix(model)
@@ -675,5 +675,5 @@ model@events@N <- matrix(c(0L, 0L, 0L),
                          nrow = 3,
                          dimnames = list(c("S", "I", "R"), NULL))
 model@events@shift <- -1L
-res <- assertError(.Call(SimInf:::SIR_run, model, "ssm"))
+res <- assertError(.Call(SimInf:::SIR_run, model, list(solver = "ssm")))
 check_error(res, "'shift' is invalid.")

@@ -137,6 +137,8 @@ setValidity("SimInf_model", valid_SimInf_model_object)
 ##'     }
 ##'     See \code{\linkS4class{SimInf_events}} for usage details.
 ##'
+##' @template replicates-param
+##'
 ##' @param C_code \strong{C Source Code} (character vector).  Optional
 ##'     C code for custom transition rates. If provided, it is
 ##'     compiled and loaded when \code{run()} is called.
@@ -165,6 +167,7 @@ SimInf_model <- function(G,
                          V      = NULL,
                          E      = NULL,
                          N      = NULL,
+                         replicates = NULL,
                          C_code = NULL) {
     u0 <- init_x0(u0)
     G <- init_sparse_matrix(G)
@@ -176,6 +179,7 @@ SimInf_model <- function(G,
     V <- init_output_matrix(V, "double")
     C_code <- init_C_code(C_code)
     tspan <- init_tspan(tspan)
+    replicates <- init_replicates(replicates)
 
     ## Check events
     if (!any(is.null(events), is.data.frame(events)))
@@ -197,7 +201,7 @@ SimInf_model <- function(G,
                  v0         = v0,
                  V          = V,
                  events     = events,
-                 replicates = 1L,
+                 replicates = replicates,
                  C_code     = C_code)
 }
 
@@ -208,11 +212,18 @@ SimInf_model <- function(G,
 ##' rate functions and the post time step function.
 ##' @param model The \code{model} to get global data from.
 ##' @return a numeric vector
+##' @seealso \code{\link{ldata}} for retrieving local data
+##'     (node-specific), and \code{\linkS4class{SimInf_model}} for the
+##'     class definition and overview of model structure.
 ##' @export
 ##' @examples
 ##' ## Create an SIR model
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##' model <- SIR(
+##'   u0 = data.frame(S = 99, I = 1, R = 0),
+##'   tspan = 1:5,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
 ##'
 ##' ## Set 'beta' to a new value
 ##' gdata(model, "beta") <- 2
@@ -247,11 +258,18 @@ setMethod(
 ##' @param parameter The name of the parameter to set.
 ##' @param value A numeric value.
 ##' @return a \code{SimInf_model} object
+##' @seealso \code{\link{ldata}} for retrieving local data
+##'     (node-specific), and \code{\linkS4class{SimInf_model}} for the
+##'     class definition and overview of model structure.
 ##' @export
 ##' @examples
 ##' ## Create an SIR model
-##' model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-##'              tspan = 1:5, beta = 0.16, gamma = 0.077)
+##' model <- SIR(
+##'   u0 = data.frame(S = 99, I = 1, R = 0),
+##'   tspan = 1:5,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
 ##'
 ##' ## Set 'beta' to a new value
 ##' gdata(model, "beta") <- 2
@@ -302,6 +320,9 @@ setMethod(
 ##' @param model The \code{model} to get local data from.
 ##' @param node index to node to extract local data from.
 ##' @return a numeric vector
+##' @seealso \code{\link{gdata}} for retrieving global data (common to
+##'     all nodes), and \code{\linkS4class{SimInf_model}} for the
+##'     class definition and overview of model structure.
 ##' @export
 ##' @examples
 ##' ## Create an 'SISe' model with 1600 nodes.

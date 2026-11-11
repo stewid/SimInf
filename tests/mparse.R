@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ res <- assertError(
            u0 = matrix(c(10, 10), nrow = 1, ncol = 2,
                        dimnames = list(NULL, c("A", "W"))),
            tspan = 1:5))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(
     mparse(transitions = c("@->c1->D", "D->c2*D->D+D",
@@ -360,10 +360,10 @@ C_code <- c(
     " * Run a trajectory of the model.",
     " *",
     " * @param model The model.",
-    " * @param solver The name of the numerical solver.",
+    " * @param options Options for running the numerical solver.",
     " * @return A model with a trajectory attached to it.",
     " */",
-    "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP solver)",
+    "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP options)",
     "{",
     "    static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;",
     "    TRFun tr_fun[] = {&trFun1, &trFun2, &trFun3, &trFun4};",
@@ -377,7 +377,7 @@ C_code <- c(
     "        }",
     "    }",
     "",
-    "    return SimInf_run(model, solver, tr_fun, &ptsFun);",
+    "    return SimInf_run(model, options, tr_fun, &ptsFun);",
     "}",
     "",
     "/**",
@@ -550,10 +550,10 @@ C_code <- c(
     " * Run a trajectory of the model.",
     " *",
     " * @param model The model.",
-    " * @param solver The name of the numerical solver.",
+    " * @param options Options for running the numerical solver.",
     " * @return A model with a trajectory attached to it.",
     " */",
-    "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP solver)",
+    "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP options)",
     "{",
     "    static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;",
     "    TRFun tr_fun[] = {&trFun1, &trFun2, &trFun3, &trFun4};",
@@ -567,7 +567,7 @@ C_code <- c(
     "        }",
     "    }",
     "",
-    "    return SimInf_run(model, solver, tr_fun, &ptsFun);",
+    "    return SimInf_run(model, options, tr_fun, &ptsFun);",
     "}",
     "",
     "/**",
@@ -618,13 +618,20 @@ stopifnot(
                    G_rowname = "beta*S*I/(S+I+R)",
                    variables = character(0))))
 
-## Check init function
-model <- mparse(transitions = c("S -> b*S*I/(S+I+R) -> I",
+## Check init function and optional code
+model <- mparse(transitions = c("S -> rate(S, I, S+I+R, b) -> I",
                                 "I -> g*I -> R"),
                 compartments = c("S", "I", "R"),
                 gdata = c(b = 0.16, g = 0.077),
                 u0 = data.frame(S = 100, I = 1, R = 0),
-                tspan = 1:10)
+                tspan = 1:10,
+                pre_code = c(
+                    "double rate(double S, double I, double N, double beta) {",
+                    "    if (N == 0)",
+                    "        return 0;",
+                    "    return beta * S * I / N;",
+                    "}"))
+
 C_code <- c(
     "",
     "#include <R_ext/Rdynload.h>",
@@ -655,6 +662,13 @@ C_code <- c(
     "#  error Definition for 'SIMINF_FORCE_SYMBOLS' is missing.",
     "#endif",
     "",
+    "/* User defined code. */",
+    "double rate(double S, double I, double N, double beta) {",
+    "    if (N == 0)",
+    "        return 0;",
+    "    return beta * S * I / N;",
+    "}",
+    "",
     "/**",
     " * @param u The compartment state vector in the node.",
     " * @param v The continuous state vector in the node.",
@@ -670,7 +684,7 @@ C_code <- c(
     "    const double *gdata,",
     "    double t)",
     "{",
-    "    return gdata[0]*u[0]*u[1]/(u[0]+u[1]+u[2]);",
+    "    return rate(u[0],u[1],u[0]+u[1]+u[2],gdata[0]);",
     "}",
     "",
     "/**",
@@ -724,10 +738,10 @@ C_code <- c(
     " * Run a trajectory of the model.",
     " *",
     " * @param model The model.",
-    " * @param solver The name of the numerical solver.",
+    " * @param options Options for running the numerical solver.",
     " * @return A model with a trajectory attached to it.",
     " */",
-    "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP solver)",
+    "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP options)",
     "{",
     "    static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;",
     "    TRFun tr_fun[] = {&trFun1, &trFun2};",
@@ -741,7 +755,7 @@ C_code <- c(
     "        }",
     "    }",
     "",
-    "    return SimInf_run(model, solver, tr_fun, &ptsFun);",
+    "    return SimInf_run(model, options, tr_fun, &ptsFun);",
     "}",
     "",
     "/**",
@@ -771,8 +785,8 @@ C_code <- c(
 stopifnot(identical(model@C_code[-1], C_code))
 
 u0 <- structure(c(100L, 1L, 0L),
-                .Dim = c(3L, 1L),
-                .Dimnames = list(c("S", "I", "R"), NULL))
+                dim = c(3L, 1L),
+                dimnames = list(c("S", "I", "R"), NULL))
 stopifnot(identical(model@u0, u0))
 
 ## Check mparse with ldata and gdata as data.frames
@@ -1239,3 +1253,10 @@ stopifnot(identical(show_observed, show_expected))
 stopifnot(identical(
     SimInf:::C_enumeration_constants("ldata", character(0)),
     character(0)))
+
+stopifnot(identical(
+    SimInf:::C_pre_code(NULL),
+    character(0)))
+
+res <- assertError(SimInf:::C_pre_code(5))
+check_error(res, "'pre_code' must be a character vector.")

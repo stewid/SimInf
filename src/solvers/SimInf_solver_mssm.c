@@ -30,11 +30,52 @@
 #ifdef _OPENMP
 #  include <omp.h>
 #endif
+#include <stdbool.h>
 #include <string.h>
 
 /**
- * SimInf multi-model solver
+ * SimInf split-step method (ssm) solver for multiple replicates per
+ * thread (mssm).
  *
+ * Advances the simulation by running multiple model replicates in
+ * sequence within each thread. Each replicate is a complete
+ * independent simulation of the epidemiological model, using its own
+ * initial state from u0 but sharing the same model structure
+ * (transitions, compartments), parameters (gdata, ldata), and
+ * scheduled events.
+ *
+ * The algorithm follows the same split-step method as
+ * SimInf_solver_ssm but iterates over replicates within each thread:
+ *
+ * 1. For each replicate, integrate the internal epidemiological model
+ *    as a continuous-time Markov chain using direct SSA (Gillespie's
+ *    algorithm). Within each node, transition times are sampled from an
+ *    exponential distribution and the firing transition is selected
+ *    proportionally to its rate.
+ * 2. Incorporate all scheduled E1 events (internal events, such as
+ *    individuals moving between compartments within a node).
+ * 3. Incorporate all scheduled E2 events (external events, such as
+ *    individuals transferring between nodes).
+ * 4. Call the post time step function to perform model-specific actions
+ *    after each unit of time (e.g., update the infectious pressure).
+ *    Transition rates are recalculated in nodes flagged for update.
+ * 5. Advance the global time to the next unit of time.
+ * 6. Store the solution if the current time has reached or passed the
+ *    next time point in tspan. The solution is stored in a dense matrix
+ *    or, optionally, in a sparse matrix.
+ *
+ * Unlike SimInf_solver_ssm, which distributes nodes across threads,
+ * the mssm solver runs multiple full model replicates per
+ * thread. Steps 1-6 are executed per thread in parallel for each
+ * replicate.  This solver uses a single random number stream per
+ * thread, shared across all nodes assigned to that thread.
+ *
+ * @param model Array of compartment model structures, one per
+ *     thread, holding the node state, transition rates, and solution
+ *     buffers.
+ * @param events Array of scheduled event structures, one per thread,
+ *     holding the event queues and RNG state.
+ * @param Nthread Number of threads.
  * @return 0 if Ok, else error code.
  */
 static int
@@ -55,11 +96,11 @@ SimInf_solver_mssm(
             SimInf_compartment_model m = *&model[i];
 
             /* Store original pointers to the model state. */
-            int *u = m.u;
-            int *U = m.U;
-            double *v = m.v;
-            double *v_new = m.v_new;
-            double *V = m.V;
+            int * const u = m.u;
+            int * const U = m.U;
+            double * const v = m.v;
+            double * const v_new = m.v_new;
+            double * const V = m.V;
 
             for (ptrdiff_t replicate = 0; replicate < m.Nrep && !m.error;
                  replicate++) {
@@ -69,10 +110,12 @@ SimInf_solver_mssm(
                 /* Move to the initial state of the model
                  * replicate. */
                 m.u = &u[replicate * m.Nn * m.Nc];
-                m.U = &U[replicate * m.tlen * m.Nn * m.Nc];
+                if (U)
+                    m.U = &U[replicate * m.tlen * m.Nn * m.Nc];
                 m.v = &v[replicate * m.Nn * m.Nd];
                 m.v_new = &v_new[replicate * m.Nn * m.Nd];
-                m.V = &V[replicate * m.tlen * m.Nn * m.Nd];
+                if (V)
+                    m.V = &V[replicate * m.tlen * m.Nn * m.Nd];
 
                 /* Initialize global time. */
                 m.tt = m.tspan[0];
@@ -154,10 +197,10 @@ SimInf_solver_mssm(
                                      tr--);
 
                                 /* No nonzero rate found, but a
-                                   transition was sampled. This can
-                                   happen due to floating point errors
-                                   in the iterated recalculated
-                                   rates. */
+                                 * transition was sampled. This can
+                                 * happen due to floating point errors
+                                 * in the iterated recalculated
+                                 * rates. */
                                 if (m.t_rate[node * m.Nt + tr] == 0.0) {
                                     /* nil event: zero out and move on */
                                     m.sum_t_rate[node] = 0.0;
@@ -276,26 +319,55 @@ SimInf_solver_mssm(
 
                     /* (6) Store solution if tt has passed the next
                      * time in tspan. Report solution up to, but not
-                     * including tt. The mssm solver always stores the
-                     * solution in a dense matrix (U and/or V non-null
-                     * pointers).  Copy compartment state to U */
-                    while (m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
-                        memcpy(&m.U[(ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
-                                    m.U_it++], m.u,
-                               (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
-                               sizeof(int));
+                     * including tt. */
+                    if (m.U) {
+                        /* 6a) Dense matrix: copy compartment state to
+                         * U. */
+                        while (m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
+                            memcpy(&m.U[(ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
+                                        m.U_it++], m.u,
+                                   (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nc *
+                                   sizeof(int));
+                        }
+                    } else {
+                        /* 6b) Sparse matrix: copy compartment state
+                         * to U_sparse. */
+                        while (m.U_it < m.tlen && m.tt > m.tspan[m.U_it]) {
+                            const ptrdiff_t col_offset = replicate * m.tlen;
+                            for (int j = m.jcU[m.U_it + col_offset];
+                                 j < m.jcU[m.U_it + col_offset + 1];
+                                 j++) {
+                                m.prU[j] = m.u[m.irU[j]];
+                            }
+                            m.U_it++;
+                        }
                     }
 
-                    /* Copy continuous state to V */
-                    while (m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
-                        const ptrdiff_t v_len = (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nd *
-                            sizeof(double);
-                        if (v_len > 0) {
-                            memcpy(&m.V[(ptrdiff_t) m.Nd * (ptrdiff_t) m.Ntot * m.V_it],
-                                   m.v_new,
-                                   v_len);
+                    if (m.V) {
+                        /* 6a) Dense matrix: copy continuous state to
+                         * V. */
+                        while (m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
+                            const ptrdiff_t v_len = (ptrdiff_t) m.Nn * (ptrdiff_t) m.Nd *
+                                sizeof(double);
+                            if (v_len > 0) {
+                                memcpy(&m.V[(ptrdiff_t) m.Nd * (ptrdiff_t) m.Ntot * m.V_it],
+                                       m.v_new,
+                                       v_len);
+                            }
+                            m.V_it++;
                         }
-                        m.V_it++;
+                    } else {
+                        /* 6b) Sparse matrix: copy continuous state to
+                         * V_sparse. */
+                        while (m.V_it < m.tlen && m.tt > m.tspan[m.V_it]) {
+                            const ptrdiff_t col_offset = replicate * m.tlen;
+                            for (int j = m.jcV[m.V_it + col_offset];
+                                 j < m.jcV[m.V_it + col_offset + 1];
+                                 j++) {
+                                m.prV[j] = m.v_new[m.irV[j]];
+                            }
+                            m.V_it++;
+                        }
                     }
 
                     /* Swap the pointers to the continuous state
@@ -343,6 +415,7 @@ SimInf_run_solver_mssm(
     gsl_rng *rng = NULL;
     SimInf_scheduled_events *events = NULL;
     SimInf_compartment_model *model = NULL;
+    const gsl_rng_type *rng_type = SimInf_rng_type(args->rng_type);
 
     rng = gsl_rng_alloc(gsl_rng_mt19937);
     if (!rng) {
@@ -355,7 +428,7 @@ SimInf_run_solver_mssm(
     if (err)
         goto cleanup;           /* #nocov */
 
-    err = SimInf_scheduled_events_create(&events, args, rng);
+    err = SimInf_scheduled_events_create(&events, args, rng, rng_type);
     if (err)
         goto cleanup;           /* #nocov */
 

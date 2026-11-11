@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -18,10 +18,14 @@
 
 ##' Lambert W0 function
 ##'
-##' W0(x) is the principal branch of the solution of the function
-##' defined by \eqn{We^W = x}{W * exp(W)} for \eqn{x >= -1/e}. The
-##' value is calculated using GNU Scientific Library (GSL).
-##' @param x numeric vector of values.
+##' The principal branch of the Lambert W function, which solves
+##' \eqn{W e^W = x}{W * exp(W) = x}. Defined for \eqn{x >= -1/e}, with
+##' output in the range \eqn{[-1, \infty)}{[-1, Inf)}. The value is
+##' calculated using the GNU Scientific Library (GSL).
+##' @param x A numeric vector of values.
+##' @return A numeric vector of the same length as \code{x} containing
+##'     the principal branch of the Lambert W function evaluated at
+##'     each element.
 ##' @references
 ##'
 ##' GNU Scientific Library <https://www.gnu.org/software/gsl/>

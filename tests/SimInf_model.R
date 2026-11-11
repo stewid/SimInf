@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ G <- SimInf:::init_sparse_matrix(Matrix(c(1, 0, 0,
 
 u0 <- structure(c(0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 2, 0, 2, 0, 2,
                   0, 3, 0, 3, 0, 3, 0, 4, 0, 4, 0, 4, 0, 5, 0, 5, 0, 5, 0),
-                .Dim = c(6L, 6L))
+                dim = c(6L, 6L))
 storage.mode(u0) <- "integer"
 
 U <- matrix(nrow = 0, ncol = 0)
@@ -257,10 +257,7 @@ res <- SimInf_model(G     = G,
                                       "2017-01-03")),
                     u0    = u0)
 stopifnot(identical(res@tspan,
-                    structure(c(1, 2, 3),
-                              .Names = c("2017-01-01",
-                                         "2017-01-02",
-                                         "2017-01-03"))))
+                    c("2017-01-01" = 1, "2017-01-02" = 2, "2017-01-03" = 3)))
 
 ## Check u0
 res <- assertError(new("SimInf_model",
@@ -538,7 +535,7 @@ U <- structure(c(
     0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 9L, 6L, 2L, 13L, 6L, 9L, 0L,
     0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
     0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-    .Dim = c(36L, 11L))
+    dim = c(36L, 11L))
 
 U_double <- U
 storage.mode(U_double) <- "double"
@@ -587,7 +584,7 @@ V <- structure(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                  1, 1, 1, 1, 1, 1, 1, 1, 1),
-               .Dim = c(6L, 10L))
+               dim = c(6L, 10L))
 
 V_integer <- V
 storage.mode(V) <- "integer"

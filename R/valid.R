@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -26,12 +26,20 @@ valid_replicates <- function(object) {
         return("'replicates' must be a positive integer.")
     }
 
-    if (object@replicates > 1L) {
-        if (any(isFALSE(identical(dim(object@U_sparse), c(0L, 0L))),
-                isFALSE(identical(dim(object@V_sparse), c(0L, 0L))))) {
-        stop("'replicates' must equal one when a sparse result matrix.",
-             call. = FALSE)
-        }
+    ## If the result is written to a sparse matrix, ensure the column
+    ## dimension is correct.
+    expected_cols <- length(object@tspan) * object@replicates
+
+    if (ncol(object@U_sparse) > 0L &&
+        ncol(object@U_sparse) != expected_cols) {
+        return(paste("The number of columns in 'U_sparse' must equal",
+                     "length(tspan) * replicates."))
+    }
+
+    if (ncol(object@V_sparse) > 0L &&
+        ncol(object@V_sparse) != expected_cols) {
+        return(paste("The number of columns in 'V_sparse' must equal",
+                     "length(tspan) * replicates."))
     }
 
     character(0)

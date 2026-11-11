@@ -16,18 +16,40 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_pfilter"}
+##' Class \code{SimInf_pfilter}
 ##'
-##' @slot model A \code{SimInf_model} object with one filtered
-##'     trajectory attached.
+##' Storage class for the result of a bootstrap particle filter
+##' analysis. The class holds the model with a sampled trajectory
+##' attached, the number of particles used, the estimated
+##' log-likelihood, and the effective sample size (ESS) at each
+##' time-point.
+##'
+##' @slot model A \code{\linkS4class{SimInf_model}} object with one
+##'     complete sampled trajectory attached. At the end of the
+##'     filtering, a single particle is drawn from the ensemble at the
+##'     final time-point, and its full state evolution across all
+##'     time-points is reconstructed.
 ##' @slot n_particles An integer with the number of particles that was
-##'     used at each timestep.
-##' @slot loglik The estimated log likelihood.
-##' @slot ess A numeric vector with the effective sample size (ESS).
-##'     The effective sample size is computed as
+##'     used at each time-point.
+##' @slot loglik The estimated log-likelihood of the observed data.
+##' @slot ess A numeric vector with the effective sample size (ESS) at
+##'     each time-point, computed from the normalized particle weights
+##'     before resampling. A small ESS indicates that few particles
+##'     carry most of the weight, and that more particles may be
+##'     needed. The effective sample size is computed as
 ##'     \deqn{\left(\sum_{i=1}^N\!(w_{t}^{i})^2\right)^{-1},}{1 /
 ##'     (sum(w_it^2)),} where \eqn{w_{t}^{i}}{w_it} is the normalized
 ##'     weight of particle \eqn{i} at time \eqn{t}.
+##' @seealso \code{\link{pfilter}} for running a bootstrap particle
+##'     filter and creating objects of this class,
+##'     \code{\link[=logLik,SimInf_pfilter-method]{logLik}} for
+##'     extracting the log-likelihood,
+##'     \code{\link[=trajectory,SimInf_pfilter-method]{trajectory}}
+##'     for extracting the filtered trajectory,
+##'     \code{\link[=prevalence,SimInf_pfilter-method]{prevalence}}
+##'     for computing prevalence from the filtered trajectory,
+##'     \code{\linkS4class{SimInf_model}} for the underlying model
+##'     class.
 ##' @export
 setClass(
     "SimInf_pfilter",
@@ -39,8 +61,16 @@ setClass(
 
 ##' Brief summary of a \code{SimInf_pfilter} object
 ##'
-##' @param object The \code{SimInf_pfilter} object.
-##' @return \code{invisible(object)}.
+##' Display a brief summary of a bootstrap particle filter analysis,
+##' including the number of particles used and the estimated
+##' log-likelihood.
+##'
+##' @param object The \code{\linkS4class{SimInf_pfilter}} object to
+##'     display.
+##' @return The \code{object}, returned invisibly.
+##' @seealso \code{\link{pfilter}} for running a particle filter,
+##'     \code{\link{logLik}} for extracting the log-likelihood,
+##'     \code{\linkS4class{SimInf_pfilter}} for the class definition.
 ##' @export
 setMethod(
     "show",
@@ -55,9 +85,27 @@ setMethod(
 
 ##' Detailed summary of a \code{SimInf_pfilter} object
 ##'
-##' @param object The \code{SimInf_pfilter} object.
-##' @param ... Unused additional arguments.
-##' @return \code{invisible(NULL)}.
+##' Display a detailed summary of a bootstrap particle filter
+##' analysis, including the number of particles, log-likelihood
+##' estimate, and model characteristics (model name, number of nodes,
+##' scheduled events, transitions, global data, local data, continuous
+##' state variables, and compartments).
+##'
+##' Compared to \code{\link[=show,SimInf_pfilter-method]{show}}, the
+##' summary additionally displays full model characteristics from the
+##' underlying \code{\linkS4class{SimInf_model}} object.
+##'
+##' @param object The \code{\linkS4class{SimInf_pfilter}} object to
+##'     summarize.
+##' @param ... Additional arguments affecting the summary
+##'     produced. Currently ignored.
+##' @return \code{NULL}, returned invisibly.
+##' @seealso \code{\link{pfilter}} for running a particle filter,
+##'     \code{\link{logLik}} for extracting the log-likelihood,
+##'     \code{\linkS4class{SimInf_pfilter}} for the class definition,
+##'     \code{\linkS4class{SimInf_model}} for the model class embedded
+##'     in the filter, \code{\link[=show,SimInf_pfilter-method]{show}}
+##'     for a brief summary.
 ##' @export
 setMethod(
     "summary",
@@ -364,7 +412,9 @@ pfilter_internal <- function(model,
             x@V <- x@V[, j, drop = FALSE]
         }
 
-        ## Save states.
+        ## Save states. Keep the full history of all particles, so
+        ## that a trajectory can be traced backward through the
+        ## ancestors after the final observation.
         U[, i + 1L] <- x@U
         V[, i + 1L] <- x@V
 
@@ -403,7 +453,8 @@ pfilter_internal <- function(model,
         w <- w / sum_w
         ess[i] <- 1 / sum(w^2)
 
-        ## Resampling
+        ## Systematic resampling. Sample the ancestor indices for the
+        ## next generation of particles from the normalised weights.
         a[, i + 1L] <- .Call(SimInf_systematic_resampling, w)
     }
 
@@ -415,6 +466,14 @@ pfilter_internal <- function(model,
                       nrow = n_nodes(model) * Nd,
                       ncol = Ntspan)
 
+    ## Sample a trajectory. Sample one particle uniformly from the
+    ## final particle system. The weights are already incorporated in
+    ## the last resampling step, which equalised the weights, so
+    ## sampling uniformly from the particles after resampling is
+    ## equivalent to sampling proportionally to the weights.  Trace
+    ## the sampled particle backward through the ancestor indices 'a'
+    ## to recover a full trajectory that is consistent with the
+    ## resampling performed at each time-step.
     i <- sample.int(n_particles, 1)
     for (j in rev(seq_len(Ntspan))) {
         u_i <- seq.int(
@@ -441,7 +500,7 @@ pfilter_internal <- function(model,
     v_i <- seq.int(
         from = (i - 1L) * n_nodes(model) * Nd + 1L,
         length.out = n_nodes(model) * Nd)
-    m@v0 <- matrix(
+    model@v0 <- matrix(
         data = V[v_i, 1L],
         nrow = nrow(model@v0),
         dimnames = dimnames(model@v0))
@@ -455,15 +514,38 @@ pfilter_internal <- function(model,
 
 ##' Bootstrap particle filter
 ##'
-##' The bootstrap filtering algorithm. Systematic resampling is
-##' performed at each observation.
+##' Estimate the hidden trajectory of a stochastic model from
+##' observations using the bootstrap particle filter (Gordon et al.,
+##' 1993).
 ##'
+##' @details The particle filter approximates the distribution of the
+##'     latent state conditional on the observed data. A large number
+##'     of independent trajectories ('particles') of the model are
+##'     simulated forward in time. At each observation, every particle
+##'     is assigned a weight given by the likelihood of the
+##'     observation under that particle. Particles with a poor fit to
+##'     the data therefore receive a low weight. Particles are
+##'     resampled proportionally to their weights using systematic
+##'     resampling, and the resulting particles are propagated forward
+##'     to the next observation. This focuses the computational effort
+##'     on trajectories that are consistent with the data and yields a
+##'     weighted approximation of the filtered state distribution at
+##'     each observation time. The accuracy of the approximation
+##'     improves as the number of particles increases.  After the
+##'     final observation, a single trajectory is sampled from the
+##'     particle system and traced backward through the ancestral
+##'     lineages.
 ##' @param model The \code{SimInf_model} object to simulate data from.
 ##' @template obs_process-param
 ##' @template data-param
 ##' @template n_particles-param
 ##' @template init_model-param
-##' @return A \code{SimInf_pfilter} object.
+##' @return A \code{SimInf_pfilter} object with the filtered
+##'     trajectory: a single trajectory sampled from the particle
+##'     system (traced backward through the particle genealogy),
+##'     together with the estimated log-likelihood of the data and the
+##'     effective sample size at each time-step. See
+##'     \code{\link{SimInf_pfilter-class}} for details.
 ##' @references
 ##'
 ##' \Gordon1993
@@ -525,8 +607,8 @@ setMethod(
 ##'     displayed. If \code{y} is a character vector or a formula, the
 ##'     plot function for a \code{SimInf_model} object is called with
 ##'     the filtered trajectory, see
-##'     \code{\link{plot,SimInf_model-method}} for more details about
-##'     the specification a plot.
+##'     \code{\link[=plot,SimInf_model-method]{plot}} for more details
+##'     about the specification a plot.
 ##' @param ... Other graphical parameters that are passed on to the
 ##'     plot function.
 ##' @aliases plot,SimInf_pfilter-method
@@ -563,13 +645,17 @@ setMethod(
     }
 )
 
-##' Log likelihood
+##' Extract Log-Likelihood
 ##'
-##' Extract the estimated log likelihood from a \code{SimInf_pfilter}
+##' Extract the estimated log-likelihood from a \code{SimInf_pfilter}
 ##' object.
 ##'
-##' @param object The \code{SimInf_pfilter} object.
-##' @return the estimated log likelihood.
+##' @param object The \code{\linkS4class{SimInf_pfilter}} object.
+##' @return The estimated log-likelihood, returned as a numeric
+##'     scalar.
+##' @seealso \code{\link{pfilter}} for running a particle filter and
+##'     creating \code{SimInf_pfilter} objects,
+##'     \code{\linkS4class{SimInf_pfilter}} for the class definition.
 ##' @export
 setMethod(
     "logLik",

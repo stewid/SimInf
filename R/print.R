@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -167,29 +167,53 @@ summary_transitions <- function(object) {
     cat(paste0(" ", rownames(object@G), collapse = "\n"), sep = "\n")
 }
 
-##' Brief summary of \code{SimInf_model}
+##' Brief summary of a \code{SimInf_model} object
 ##'
-##' @param object The SimInf_model \code{object}
-##' @return None (invisible 'NULL').
+##' Display key characteristics of a \code{\linkS4class{SimInf_model}}
+##' object, including the model name, number of nodes, number of
+##' replicates (if greater than one), number of transitions, scheduled
+##' events, global data, local data, continuous state variables, and
+##' compartments.
+##'
+##' The output differs depending on whether the model has been run:
+##' before running, the result matrices
+##' (\code{\link[=SimInf_model-class]{U}} and
+##' \code{\link[=SimInf_model-class]{V}}) are empty; after calling
+##' \code{\link{run}}, they contain the simulated trajectory data and
+##' the summary reflects the computed results.
+##'
+##' @param object The \code{\linkS4class{SimInf_model}} object to
+##'     display.
+##' @return The \code{object}, returned invisibly.
+##' @seealso \code{\link{SimInf_model}} for creating model objects,
+##'     \code{\link{run}} for simulating a trajectory from a model,
+##'     \code{\linkS4class{SimInf_model}} for the class definition.
 ##' @include SimInf_model.R
 ##' @export
 ##' @examples
+##' ## For reproducibility, specify the number of threads.
+##' set_num_threads(1)
+##'
 ##' ## Create an 'SIR' model with 10 nodes and initialise
 ##' ## it to run over 100 days.
-##' model <- SIR(u0 = data.frame(S = rep(99, 10),
-##'                              I = rep(1, 10),
-##'                              R = rep(0, 10)),
-##'              tspan = 1:100,
-##'              beta = 0.16,
-##'              gamma = 0.077)
+##' model <- SIR(
+##'   u0 = data.frame(
+##'     S = rep(99, 10),
+##'     I = rep(1, 10),
+##'     R = rep(0, 10)
+##'   ),
+##'   tspan = 1:100,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
 ##'
 ##' ## Brief summary of the model
 ##' model
 ##'
-##' ## Run the model and save the result
-##' result <- run(model)
+##' ## Run the model with a fixed seed for reproducibility.
+##' result <- run(model, seed = 22)
 ##'
-##' ## Brief summary of the result. Note that 'U' and 'V' are
+##' ## Brief summary of the result. Note that the trajectory is
 ##' ## non-empty after running the model.
 ##' result
 setMethod(
@@ -219,11 +243,60 @@ setMethod(
 
 ##' Detailed summary of a \code{SimInf_model} object
 ##'
-##' @param object The \code{SimInf_model} object
-##' @param ... Additional arguments affecting the summary produced.
-##' @return None (invisible 'NULL').
+##' Display a summary of a \code{\linkS4class{SimInf_model}} object,
+##' including the model name, number of nodes, number of replicates
+##' (if greater than one), transitions, global data, local data,
+##' scheduled events, continuous state variables, and
+##' compartments. Compared to
+##' \code{\link[=show,SimInf_model-method]{show}}, the summary
+##' additionally displays transition details, global and local data
+##' summaries, and scheduled events overview.
+##'
+##' As with the \code{\link[=show,SimInf_model-method]{show}} method,
+##' the output differs depending on whether the model has been run:
+##' before running, the result matrices
+##' (\code{\link[=SimInf_model-class]{U}} and
+##' \code{\link[=SimInf_model-class]{V}}) are empty; after calling
+##' \code{\link{run}}, they contain the simulated trajectory data.
+##'
+##' @param object The \code{\linkS4class{SimInf_model}} object to
+##'     summarize.
+##' @param ... Additional arguments affecting the summary
+##'     produced. Currently ignored.
+##' @return \code{NULL}, returned invisibly.
+##' @seealso \code{\link{SimInf_model}} for creating model objects,
+##'     \code{\link{run}} for simulating a trajectory from a model,
+##'     \code{\linkS4class{SimInf_model}} for the class definition,
+##'     \code{\link[=show,SimInf_model-method]{show}} for a brief
+##'     summary.
 ##' @include SimInf_model.R
 ##' @export
+##' @examples
+##' ## For reproducibility, specify the number of threads.
+##' set_num_threads(1)
+##'
+##' ## Create an 'SIR' model with 10 nodes and initialise
+##' ## it to run over 100 days.
+##' model <- SIR(
+##'   u0 = data.frame(
+##'     S = rep(99, 10),
+##'     I = rep(1, 10),
+##'     R = rep(0, 10)
+##'   ),
+##'   tspan = 1:100,
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Detailed summary of the model
+##' model
+##'
+##' ## Run the model with a fixed seed for reproducibility.
+##' result <- run(model, seed = 22)
+##'
+##' ## Detailed summary of the result. Note that the trajectory is
+##' ## non-empty after running the model.
+##' result
 setMethod(
     "summary",
     signature(object = "SimInf_model"),

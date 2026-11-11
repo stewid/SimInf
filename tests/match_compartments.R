@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -30,11 +30,11 @@ stopifnot(identical(
          rhs = list(
              U = structure(
                  1:2,
-                 .Names = c("S", "I"),
+                 names = c("S", "I"),
                  available_compartments = c("S", "I", "R")),
              V = structure(
                  integer(0),
-                 .Names = character(0),
+                 names = character(0),
                  available_compartments = "phi")),
          condition = NULL)))
 
@@ -64,7 +64,7 @@ stopifnot(identical(
          rhs = list(
              U = structure(
                  1:2,
-                 .Names = c("S", "I"),
+                 names = c("S", "I"),
                  available_compartments = c("S", "I", "R")),
              V = structure(
                  c(phi = 1L),
@@ -91,16 +91,16 @@ stopifnot(identical(
                  available_compartments = c("S", "I", "R")),
              V = structure(
                  integer(0),
-                 .Names = character(0),
+                 names = character(0),
                  available_compartments = "phi")),
          rhs = list(
              U = structure(
                  1:3,
-                 .Names = c("S", "I", "R"),
+                 names = c("S", "I", "R"),
                  available_compartments = c("S", "I", "R")),
              V = structure(
                  integer(0),
-                 .Names = character(0),
+                 names = character(0),
                  available_compartments = "phi")),
          condition = NULL)))
 
@@ -116,16 +116,16 @@ stopifnot(identical(
                  available_compartments = c("S", "I", "R")),
              V = structure(
                  integer(0),
-                 .Names = character(0),
+                 names = character(0),
                  available_compartments = "phi")),
          rhs = list(
              U = structure(
                  1:2,
-                 .Names = c("S", "I"),
+                 names = c("S", "I"),
                  available_compartments = c("S", "I", "R")),
              V = structure(
                  integer(0),
-                 .Names = character(0),
+                 names = character(0),
                  available_compartments = "phi")),
          condition = "R == 0")))
 
@@ -153,7 +153,7 @@ stopifnot(identical(
          rhs = list(
              U = structure(
                  1:4,
-                 .Names = c("S", "E", "I", "R"),
+                 names = c("S", "E", "I", "R"),
                  available_compartments = c("S", "E", "I", "R")),
              V = integer(0)),
          condition = NULL)))
@@ -168,7 +168,7 @@ stopifnot(identical(
          rhs = list(
              U = structure(
                  1:4,
-                 .Names = c("S", "E", "I", "R"),
+                 names = c("S", "E", "I", "R"),
                  available_compartments = c("S", "E", "I", "R")),
              V = integer(0)),
          condition = NULL)))
@@ -183,11 +183,11 @@ stopifnot(identical(
          rhs = list(
              U = structure(
                  1:3,
-                 .Names = c("S", "I", "R"),
+                 names = c("S", "I", "R"),
                  available_compartments = c("S", "I", "R")),
              V = structure(
                  integer(0),
-                 .Names = character(0),
+                 names = character(0),
                  available_compartments = "phi")),
          condition = NULL)))
 
@@ -201,7 +201,7 @@ stopifnot(identical(
          rhs = list(
              U = structure(
                  1:3,
-                 .Names = c("S", "I", "R"),
+                 names = c("S", "I", "R"),
                  available_compartments = c("S", "I", "R")),
              V = structure(
                  c(phi = 1L),
@@ -220,7 +220,7 @@ stopifnot(identical(
     list(lhs = list(
              U = structure(
                  integer(0),
-                 .Names = character(0),
+                 names = character(0),
                  available_compartments = c("A", "B", "C")),
              V = structure(
                  c(D = 1L),
@@ -228,11 +228,11 @@ stopifnot(identical(
          rhs = list(
              U = structure(
                  integer(0),
-                 .Names = character(0),
+                 names = character(0),
                  available_compartments = c("A", "B", "C")),
              V = structure(
                  1:3,
-                 .Names = c("D", "E", "F"),
+                 names = c("D", "E", "F"),
                  available_compartments = c("D", "E", "F"))),
          condition = NULL)))
 
@@ -245,16 +245,16 @@ stopifnot(identical(
     list(lhs = list(
              U = structure(
                  integer(0),
-                 .Names = character(0),
+                 names = character(0),
                  available_compartments = c("A", "B", "C")),
              V = structure(
                  1:3,
-                 .Names = c("D", "E", "F"),
+                 names = c("D", "E", "F"),
                  available_compartments = c("D", "E", "F"))),
          rhs = list(
              U = structure(
                  integer(0),
-                 .Names = character(0),
+                 names = character(0),
                  available_compartments = c("A", "B", "C")),
              V = structure(
                  c(D = 1L),
@@ -270,19 +270,19 @@ stopifnot(identical(
     list(lhs = list(
              U = structure(
                  1:3,
-                 .Names = c("A", "B", "C"),
+                 names = c("A", "B", "C"),
                  available_compartments = c("A", "B", "C")),
              V = structure(
                  integer(0),
-                 .Names = character(0),
+                 names = character(0),
                  available_compartments = c("D", "E", "F"))),
          rhs = list(
              U = structure(
                  1:3,
-                 .Names = c("A", "B", "C"),
+                 names = c("A", "B", "C"),
                  available_compartments = c("A", "B", "C")),
              V = structure(
                  integer(0),
-                 .Names = character(0),
+                 names = character(0),
                  available_compartments = c("D", "E", "F"))),
          condition = NULL)))

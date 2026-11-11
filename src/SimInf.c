@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2025 Stefan Widgren
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,6 +78,18 @@ SimInf_raise_error(
     case SIMINF_ERR_AEM_REPLICATED_MODEL:
         Rf_error("Cannot run the 'aem' solver on a replicated model.");
         break;
+    case SIMINF_ERR_SPARSE_MODEL:
+        Rf_error("Invalid sparse matrix in model.");
+        break;
+    case SIMINF_ERR_INVALID_OPTIONS:
+        Rf_error("Invalid options.");
+        break;
+    case SIMINF_ERR_INVALID_SEED:
+        Rf_error("Invalid 'seed' value.");
+    case SIMINF_ERR_INVALID_CRN:
+        Rf_error("Invalid 'crn' value.");
+    case SIMINF_ERR_INVALID_RNG_TYPE:
+        Rf_error("Invalid 'rng_type' value.");
     default:                   /* #nocov */
         Rf_error("Unknown error code: %i.", err);       /* #nocov */
         break;
@@ -85,16 +97,136 @@ SimInf_raise_error(
 }
 
 /**
+ * Get the list element named str (ASCII), or return NULL.
+ *
+ * From the 'Writing R Extensions' manual.
+ */
+static SEXP
+getListElement(
+    SEXP list,
+    const char *str)
+{
+    SEXP elmt = R_NilValue;
+    SEXP names = Rf_getAttrib(list, R_NamesSymbol);
+
+    for (int i = 0; i < Rf_length(list); i++) {
+        if(strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
+            /* ASCII only */
+            elmt = VECTOR_ELT(list, i);
+            break;
+        }
+    }
+
+    return elmt;
+}
+
+/**
+ * Parse solver options from an R list.
+ *
+ * Extracts solver, crn, rng_type, and seed from the options list and
+ * populates the corresponding fields in args. Fields that are not
+ * present in the options list retain their zero-initialized default
+ * values.  The seed field is parsed last to preserve R's RNG state if
+ * any other option validation fails.
+ *
+ * @param options R list with solver options.
+ * @param args Solver arguments structure to populate.
+ * @return 0 if OK, else error code.
+ */
+static int
+SimInf_parse_options(
+    SEXP options,
+    SimInf_solver_args *args)
+{
+    if (!Rf_isNewList(options))
+        return SIMINF_ERR_INVALID_OPTIONS;
+
+    /* Solver */
+    SEXP solver = getListElement(options, "solver");
+    if (!Rf_isNull(solver)) {
+        if (!Rf_isString(solver) ||
+            Rf_length(solver) != 1 ||
+            STRING_ELT(solver, 0) == NA_STRING)
+            return SIMINF_ERR_UNKNOWN_SOLVER;
+
+        const char *s = CHAR(STRING_ELT(solver, 0));
+        if (strcmp(s, "ssm") == 0)
+            args->solver = 0;
+        else if (strcmp(s, "aem") == 0)
+            args->solver = 1;
+        else
+            return SIMINF_ERR_UNKNOWN_SOLVER;
+    }
+
+    /* Common random numbers */
+    SEXP crn = getListElement(options, "crn");
+    if (!Rf_isNull(crn)) {
+        if (!Rf_isLogical(crn) || Rf_length(crn) != 1 ||
+            LOGICAL(crn)[0] == NA_LOGICAL)
+            return SIMINF_ERR_INVALID_CRN;
+        args->crn = LOGICAL(crn)[0];
+    }
+
+    /* RNG type */
+    SEXP rng_type = getListElement(options, "rng_type");
+    if (!Rf_isNull(rng_type)) {
+        if (!Rf_isString(rng_type) ||
+            Rf_length(rng_type) != 1 ||
+            STRING_ELT(rng_type, 0) == NA_STRING)
+            return SIMINF_ERR_INVALID_RNG_TYPE;
+
+        const char *r = CHAR(STRING_ELT(rng_type, 0));
+        if (strcmp(r, "mt19937") == 0)
+            args->rng_type = 0;
+        else if (strcmp(r, "taus2") == 0)
+            args->rng_type = 1;
+        else
+            return SIMINF_ERR_INVALID_RNG_TYPE;
+    }
+
+    /* Seed - parsed last to preserve R's RNG state */
+    SEXP seed = getListElement(options, "seed");
+    if (Rf_isNull(seed)) {
+        GetRNGstate();
+        args->seed = (unsigned long int)(unif_rand() * UINT_MAX);
+        PutRNGstate();
+    } else {
+        switch (TYPEOF(seed)) {
+        case INTSXP:
+            if (Rf_length(seed) != 1 ||
+                INTEGER(seed)[0] == NA_INTEGER)
+                return SIMINF_ERR_INVALID_SEED;
+            args->seed = (unsigned long int)INTEGER(seed)[0];
+            break;
+        case REALSXP:
+            if (Rf_length(seed) != 1 ||
+                !R_finite(REAL(seed)[0]))
+                return SIMINF_ERR_INVALID_SEED;
+            args->seed = (unsigned long int)REAL(seed)[0];
+            break;
+        default:
+            return SIMINF_ERR_INVALID_SEED;
+        }
+    }
+
+    return 0;
+}
+
+/**
  * Initiate and run the simulation
  *
  * @param model The SimInf_model
- * @param solver The numerical solver.
+ * @param options Options for running the numerical solver.
  * @param tr_fun Vector of function pointers to transition rate functions.
  * @param pts_fun Function pointer to callback after each time step
  *        e.g. update infectious pressure.
  */
-attribute_hidden
-    SEXP SimInf_run(SEXP model, SEXP solver, TRFun *tr_fun, PTSFun pts_fun)
+attribute_hidden SEXP
+SimInf_run(
+    SEXP model,
+    SEXP options,
+    TRFun *tr_fun,
+    PTSFun pts_fun)
 {
     int err = 0, nprotect = 0;
     SEXP result = R_NilValue;
@@ -111,28 +243,16 @@ attribute_hidden
      * functions. */
     const double ldata_tmp[1] = { INFINITY };
 
+    /* Parse solver options. */
+    err = SimInf_parse_options(options, &args);
+    if (err)
+        goto cleanup;
+
+    /* Check model validity. */
     if (SimInf_arg_check_model(model)) {
         err = SIMINF_ERR_INVALID_MODEL;
         goto cleanup;
     }
-
-    /* Check solver argument */
-    if (!Rf_isNull(solver)) {
-        if (!Rf_isString(solver)) {
-            err = SIMINF_ERR_UNKNOWN_SOLVER;
-            goto cleanup;
-        }
-
-        if (Rf_length(solver) != 1 || STRING_ELT(solver, 0) == NA_STRING) {
-            err = SIMINF_ERR_UNKNOWN_SOLVER;
-            goto cleanup;
-        }
-    }
-
-    /* seed */
-    GetRNGstate();
-    args.seed = (unsigned long int) (unif_rand() * UINT_MAX);
-    PutRNGstate();
 
     /* Duplicate model. */
     PROTECT(result = Rf_duplicate(model));
@@ -203,7 +323,7 @@ attribute_hidden
     PROTECT(U_sparse = R_do_slot(result, Rf_install("U_sparse")));
     nprotect++;
     if (SimInf_sparse
-        (U_sparse, (ptrdiff_t) args.Nn * (ptrdiff_t) args.Nc, args.tlen)) {
+        (U_sparse, (ptrdiff_t) args.Nn * (ptrdiff_t) args.Nc, args.Nrep * args.tlen)) {
         args.irU = INTEGER(R_do_slot(U_sparse, Rf_install("i")));
         args.jcU = INTEGER(R_do_slot(U_sparse, Rf_install("p")));
         args.prU = REAL(R_do_slot(U_sparse, Rf_install("x")));
@@ -220,7 +340,7 @@ attribute_hidden
     PROTECT(V_sparse = R_do_slot(result, Rf_install("V_sparse")));
     nprotect++;
     if (SimInf_sparse
-        (V_sparse, (ptrdiff_t) args.Nn * (ptrdiff_t) args.Nd, args.tlen)) {
+        (V_sparse, (ptrdiff_t) args.Nn * (ptrdiff_t) args.Nd, args.Nrep * args.tlen)) {
         args.irV = INTEGER(R_do_slot(V_sparse, Rf_install("i")));
         args.jcV = INTEGER(R_do_slot(V_sparse, Rf_install("p")));
         args.prV = REAL(R_do_slot(V_sparse, Rf_install("x")));
@@ -250,27 +370,32 @@ attribute_hidden
     args.tr_fun = tr_fun;
     args.pts_fun = pts_fun;
 
-    /* Specify the number of threads to use. Make sure to not use more
-     * threads than the number of nodes in the model. */
-    if (args.Nrep > 1)
+    /* Specify the number of threads to use. */
+    if (args.Nrep > 1) {
+        /* Limit threads to the number of replicates in the model. */
         args.Nthread = SimInf_set_num_threads(args.Nrep);
-    else
+    } else {
+        /* Limit threads to the number of nodes in the model. */
         args.Nthread = SimInf_set_num_threads(args.Nn);
+    }
 
     /* Run the simulation solver. */
-    if (Rf_isNull(solver)
-        || (strcmp(CHAR(STRING_ELT(solver, 0)), "ssm") == 0)) {
-        if (args.Nrep > 1)
-            err = SimInf_run_solver_mssm(&args);
-        else
+    if (args.solver == 0) {
+        /* ssm */
+        if (args.Nrep > 1) {
+            if (args.crn == 1)
+                err = SimInf_run_solver_mssm_crn(&args);
+            else
+                err = SimInf_run_solver_mssm(&args);
+        } else {
             err = SimInf_run_solver_ssm(&args);
-    } else if (strcmp(CHAR(STRING_ELT(solver, 0)), "aem") == 0) {
+        }
+    } else {
+        /* aem */
         if (args.Nrep > 1)
             err = SIMINF_ERR_AEM_REPLICATED_MODEL;
         else
             err = SimInf_run_solver_aem(&args);
-    } else {
-        err = SIMINF_ERR_UNKNOWN_SOLVER;
     }
 
 cleanup:

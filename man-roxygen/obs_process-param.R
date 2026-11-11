@@ -12,11 +12,10 @@
 ##'     function to evaluate the probability density of the
 ##'     observations given the simulated states. The first argument
 ##'     passed to the \code{obs_process} function is the result from a
-##'     run of the model and it contains one trajectory with simulated
-##'     data for a time-point, where the trajectory contains
-##'     \code{n_particles} replicates, see
+##'     run of the model for the current time interval: a trajectory
+##'     with one replicate per particle for that time-point, see
 ##'     \code{\link{trajectory,SimInf_model-method}}. The second
 ##'     argument to the \code{obs_process} function is a
-##'     \code{data.frame} containing the rows for the specific
+##'     \code{data.frame} containing the rows in \code{data} for the
 ##'     time-point that the function is called for. Note that the
 ##'     function must return the log of the density.

@@ -76,9 +76,6 @@ each node with the following columns:
 }
 }
 \examples{
-## For reproducibility, set the seed.
-set.seed(22)
-
 ## Create an SIR model object.
 model <- SIR(
   u0 = data.frame(S = 99, I = 1, R = 0),
@@ -87,17 +84,20 @@ model <- SIR(
   gamma = 0.077
 )
 
-## Run the SIR model and plot the result.
-result <- run(model)
+## Run the SIR model with a fixed seed for reproducibility.
+result <- run(model, seed = 22)
+
+## Plot the distribution of susceptible, infected and recovered
+## individuals.
 plot(result)
 }
 \seealso{
 \code{\linkS4class{SIR}} for the class definition.
-\code{\link{SEIR}}, \code{\link{SIS}}, \code{\link{SISe}},
-\code{\link{SISe3}} and \code{\link{SISe_sp}} for other predefined
-models.  \code{\link{mparse}} for creating custom models.
-\code{\link{run}} for running the simulation.
-\code{\link{trajectory}}, \code{\link{prevalence}} and
-\code{\link{plot,SimInf_model-method}} for post-processing and
-visualization.
+    \code{\link{SEIR}}, \code{\link{SIS}}, \code{\link{SISe}},
+    \code{\link{SISe3}} and \code{\link{SISe_sp}} for other
+    predefined models.  \code{\link{mparse}} for creating custom
+    models.  \code{\link{run}} for running the simulation.
+    \code{\link{trajectory}}, \code{\link{prevalence}} and
+    \code{\link[=plot,SimInf_model-method]{plot}} for
+    post-processing and visualization.
 }

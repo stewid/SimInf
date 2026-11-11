@@ -2,17 +2,23 @@
 % Please edit documentation in R/pfilter.R
 \name{logLik,SimInf_pfilter-method}
 \alias{logLik,SimInf_pfilter-method}
-\title{Log likelihood}
+\title{Extract Log-Likelihood}
 \usage{
 \S4method{logLik}{SimInf_pfilter}(object)
 }
 \arguments{
-\item{object}{The \code{SimInf_pfilter} object.}
+\item{object}{The \code{\linkS4class{SimInf_pfilter}} object.}
 }
 \value{
-the estimated log likelihood.
+The estimated log-likelihood, returned as a numeric
+    scalar.
 }
 \description{
-Extract the estimated log likelihood from a \code{SimInf_pfilter}
+Extract the estimated log-likelihood from a \code{SimInf_pfilter}
 object.
+}
+\seealso{
+\code{\link{pfilter}} for running a particle filter and
+    creating \code{SimInf_pfilter} objects,
+    \code{\linkS4class{SimInf_pfilter}} for the class definition.
 }

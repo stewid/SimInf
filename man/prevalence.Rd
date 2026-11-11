@@ -45,7 +45,7 @@ when extracting data. Default (\code{index = NULL}) is to
 extract data from all nodes.}
 
 \item{...}{Additional arguments, see
-\code{\link{prevalence,SimInf_model-method}}}
+\code{\link[=prevalence,SimInf_model-method]{prevalence}}}
 }
 \description{
 Calculate the proportion of \emph{cases} (specified on the

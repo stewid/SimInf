@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -120,6 +120,44 @@ C_enum <- function(compartments, ldata_names, gdata_names, v0_names,
      C_enumeration_constants("gdata", gdata_names))
 }
 
+##' Insert optional C code
+##'
+##' Formats a character vector of C code to be inserted into the
+##' generated model file. Adds comments and spacing for readability.
+##' The input is processed to ensure it is a character vector of
+##' lines.
+##'
+##' @param pre_code Optional character vector with C code to be
+##'     inserted into the generated model code, after the enumeration
+##'     constants and before the transition rate functions. This
+##'     allows users to define helper functions or include statements
+##'     that can be referenced from transition propensity
+##'     expressions. Include statements, if needed, should be placed
+##'     at the beginning of the vector. Default is \code{NULL}, i.e.,
+##'     no additional code is inserted.
+##'
+##' @return Character vector containing the formatted C code block, or
+##'     an empty character vector if \code{pre_code} is \code{NULL}.
+##'
+##' @noRd
+C_pre_code <- function(pre_code) {
+    if (is.null(pre_code))
+        return(character(0))
+
+    if (!is.character(pre_code))
+        stop("'pre_code' must be a character vector.", call. = FALSE)
+
+    ## Use textConnection to handle potential multi-line strings or
+    ## ensure consistent line splitting if pre_code is a single
+    ## string.
+    f <- textConnection(pre_code)
+    on.exit(close(f), add = TRUE)
+
+    c("/* User defined code. */",
+      readLines(f),
+      "")
+}
+
 ##' Generate C code for the variables
 ##'
 ##' Generate C code for the variables in the model transition rate
@@ -224,8 +262,8 @@ C_ptsFun <- function(pts_fun) {
         stop("'pts_fun' must be a character vector.", call. = FALSE)
 
     f <- textConnection(pts_fun)
+    on.exit(close(f), add = TRUE)
     lines <- readLines(f)
-    close(f)
 
     c("/**",
       " * Post time step function.",
@@ -270,10 +308,10 @@ C_run <- function(transitions) {
       " * Run a trajectory of the model.",
       " *",
       " * @param model The model.",
-      " * @param solver The name of the numerical solver.",
+      " * @param options Options for running the numerical solver.",
       " * @return A model with a trajectory attached to it.",
       " */",
-      "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP solver)",
+      "static SEXP SIMINF_MODEL_RUN(SEXP model, SEXP options)",
       "{",
       "    static SEXP(*SimInf_run)(SEXP, SEXP, TRFun*, PTSFun) = NULL;",
       sprintf("    TRFun tr_fun[] = {%s};",
@@ -288,7 +326,7 @@ C_run <- function(transitions) {
       "        }",
       "    }",
       "",
-      "    return SimInf_run(model, solver, tr_fun, &ptsFun);",
+      "    return SimInf_run(model, options, tr_fun, &ptsFun);",
       "}",
       "")
 }
@@ -336,16 +374,33 @@ C_R_init <- function() {
 ##'     time step function. The C code should contain only the body of
 ##'     the function i.e. the code between the opening and closing
 ##'     curly brackets.
+##' @param pre_code Optional character vector with C code to be
+##'     inserted into the generated model code, after the enumeration
+##'     constants and before the transition rate functions. This
+##'     allows users to define helper functions or include statements
+##'     that can be referenced from transition propensity
+##'     expressions. Include statements, if needed, should be placed
+##'     at the beginning of the vector. Default is \code{NULL}, i.e.,
+##'     no additional code is inserted.
 ##' @return character vector with C code.
 ##' @noRd
-C_code_mparse <- function(transitions, pts_fun, compartments,
-                          ldata_names, gdata_names, v0_names,
-                          use_enum) {
+C_code_mparse <- function(transitions,
+                          pts_fun,
+                          compartments,
+                          ldata_names,
+                          gdata_names,
+                          v0_names,
+                          use_enum,
+                          pre_code) {
     c(C_heading(),
       C_include(),
       C_define(),
-      C_enum(compartments, ldata_names, gdata_names, v0_names,
+      C_enum(compartments,
+             ldata_names,
+             gdata_names,
+             v0_names,
              use_enum),
+      C_pre_code(pre_code),
       C_trFun(transitions),
       C_ptsFun(pts_fun),
       C_run(transitions),
@@ -369,16 +424,19 @@ C_code_mparse <- function(transitions, pts_fun, compartments,
 ##' @export
 ##' @examples
 ##' ## Extract code from an mparse-generated SIR model.
+##' ## Using writeLines formats the character vector output for
+##' ## readability.
 ##' model <- mparse(
 ##'   transitions = c("S -> beta * S * I/(S + I + R) -> I",
 ##'                   "I -> gamma * I -> R"),
 ##'   compartments = c("S", "I", "R"),
 ##'   gdata = c(beta = 0.16, gamma = 0.077),
 ##'   u0 = data.frame(S = 99, I = 1, R = 0),
-##'   tspan = 1:10
+##'   tspan = 1:10,
+##'   use_enum = TRUE
 ##' )
 ##'
-##' C_code(model)
+##' writeLines(C_code(model))
 C_code <- function(model) {
     check_model_argument(model)
     model@C_code

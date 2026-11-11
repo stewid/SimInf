@@ -2,12 +2,34 @@
 % Please edit documentation in R/trajectory.R
 \name{trajectory}
 \alias{trajectory}
-\title{Generic function to extract data from a simulated trajectory}
+\alias{trajectory,SimInf_model-method}
+\alias{trajectory,SimInf_pfilter-method}
+\title{Extract data from a simulated trajectory}
 \usage{
-trajectory(model, compartments = NULL, index = NULL, ...)
+trajectory(
+  model,
+  compartments = NULL,
+  index = NULL,
+  format = c("data.frame", "matrix")
+)
+
+\S4method{trajectory}{SimInf_model}(
+  model,
+  compartments = NULL,
+  index = NULL,
+  format = c("data.frame", "matrix")
+)
+
+\S4method{trajectory}{SimInf_pfilter}(
+  model,
+  compartments = NULL,
+  index = NULL,
+  format = c("data.frame", "matrix")
+)
 }
 \arguments{
-\item{model}{the object to extract the trajectory from.}
+\item{model}{the \code{SimInf_model} object to extract the result
+from.}
 
 \item{compartments}{specify the names of the compartments to
 extract data from. The compartments can be specified as a
@@ -23,9 +45,124 @@ models that also have continuous state variables e.g. the
 when extracting data. Default (\code{index = NULL}) is to
 extract data from all nodes.}
 
-\item{...}{Additional arguments, see
-\code{\link{trajectory,SimInf_model-method}}}
+\item{format}{the default (\code{format = "data.frame"}) is to
+generate a \code{data.frame} with one row per node and
+time-step with the number of individuals in each
+compartment. When the model contains multiple replicates of
+each node, the \code{data.frame} also contains one column
+\code{replicate}. Using \code{format = "matrix"} returns the
+result as a matrix, which is the internal format (see
+\sQuote{Details}).}
+}
+\value{
+A \code{data.frame} if \code{format = "data.frame"}, else
+    a matrix.
 }
 \description{
-Generic function to extract data from a simulated trajectory
+Extract the number of individuals in each compartment in every
+node after generating a single stochastic trajectory with
+\code{\link{run}}. For a \code{\linkS4class{SimInf_pfilter}}
+object, extract the filtered trajectory from running a particle
+filter.
+}
+\section{Internal format of the discrete state variables}{
+ When
+    \code{format = "matrix"}, the result is the internal matrix
+    \code{U}. The column \code{U[, j]} contains the number of
+    individuals in each compartment at \code{tspan[j]}, where the
+    first \eqn{N_c} rows contain node 1, the next \eqn{N_c} rows
+    contain node 2, and so on, where \eqn{N_c} is the number of
+    compartments in the model. Consequently, the dimension of the
+    matrix is \eqn{N_n N_c \times} \code{length(tspan)}, where
+    \eqn{N_n} is the number of nodes. The internal format also
+    allows replicates of each node. Each replicate adds new
+    columns to \code{U}, so that the data for each replicate is in
+    blocks of \code{length(tspan)} columns.
+}
+
+\section{Internal format of the continuous state variables}{
+ When
+    \code{format = "matrix"}, the result is the internal matrix
+    \code{V}. The column \code{V[, j]} contains the real-valued
+    continuous state of the system at \code{tspan[j]}, where the
+    rows are grouped per node and the number of rows per node is
+    determined by the number of continuous state variables in the
+    model. Consequently, the dimension of the matrix is \eqn{N_n
+    N_d \times} \code{length(tspan)}, where \eqn{N_n} is the
+    number of nodes and \eqn{N_d} is the number of continuous
+    state variables. The internal format also allows replicates of
+    each node. Each replicate adds new columns to \code{V}, so
+    that the data for each replicate is in blocks of
+    \code{length(tspan)} columns.
+}
+
+\examples{
+## For reproducibility, specify the number of threads.
+set_num_threads(1)
+
+## Create an 'SIR' model with 6 nodes and initialize
+## it to run over 10 days.
+model <- SIR(
+  u0 = data.frame(
+    S = 100:105,
+    I = 1:6,
+    R = rep(0, 6)),
+  tspan = 1:10,
+  beta = 0.16,
+  gamma = 0.077
+)
+
+## Run the model with a fixed seed for reproducibility.
+result <- run(model, seed = 123)
+
+## Extract the number of individuals in each compartment at the
+## time-points in 'tspan'.
+trajectory(result)
+
+## Extract the number of recovered individuals in the first node
+## at the time-points in 'tspan'.
+trajectory(result, compartments = "R", index = 1)
+
+## Extract the number of recovered individuals in the first and
+## third node at the time-points in 'tspan'.
+trajectory(result, compartments = "R", index = c(1, 3))
+
+## Create an 'SISe' model with 6 nodes and initialize
+## it to run over 10 days.
+model <- SISe(
+  u0 = data.frame(
+    S = 100:105,
+    I = 1:6),
+  tspan = 1:10,
+  phi = rep(0, 6),
+  upsilon = 0.02,
+  gamma = 0.1,
+  alpha = 1,
+  epsilon = 1.1e-5,
+  beta_t1 = 0.15,
+  beta_t2 = 0.15,
+  beta_t3 = 0.15,
+  beta_t4 = 0.15,
+  end_t1 = 91,
+  end_t2 = 182,
+  end_t3 = 273,
+  end_t4 = 365
+)
+
+## Run the model with a fixed seed for reproducibility.
+result <- run(model, seed = 123)
+
+## Extract the continuous state variable 'phi' which represents
+## the environmental infectious pressure.
+trajectory(result, compartments = "phi")
+}
+\seealso{
+\code{\link[=run,SimInf_model-method]{run}} for
+    generating a trajectory, and
+    \code{\link[=prevalence,SimInf_model-method]{prevalence}} for
+    calculating prevalence from trajectory data.  The vignette
+    "Post-process data in a trajectory" for a tutorial on
+    post-processing, see
+    \code{vignette("Post-process data in a trajectory", package =
+    "SimInf")}.
 }

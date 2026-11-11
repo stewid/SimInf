@@ -5,7 +5,7 @@
  * Copyright (C) 2015 Pavol Bauer
  * Copyright (C) 2017 -- 2019 Robin Eriksson
  * Copyright (C) 2015 -- 2019 Stefan Engblom
- * Copyright (C) 2015 -- 2025 Stefan Widgren
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -258,18 +258,18 @@ SISe3_sp_post_time_step(
  * Run simulation with the SISe3_sp model
  *
  * @param model The SISe3_sp model.
- * @param solver The numerical solver.
+ * @param options Options for running the numerical solver.
  * @return The simulated trajectory.
  */
 attribute_hidden SEXP
 SISe3_sp_run(
     SEXP model,
-    SEXP solver)
+    SEXP options)
 {
     TRFun tr_fun[] = { &SISe3_sp_S_1_to_I_1, &SISe3_sp_I_1_to_S_1,
         &SISe3_sp_S_2_to_I_2, &SISe3_sp_I_2_to_S_2,
         &SISe3_sp_S_3_to_I_3, &SISe3_sp_I_3_to_S_3
     };
 
-    return SimInf_run(model, solver, tr_fun, &SISe3_sp_post_time_step);
+    return SimInf_run(model, options, tr_fun, &SISe3_sp_post_time_step);
 }

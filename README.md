@@ -50,9 +50,12 @@ population, the SIR model can be described as:
 ``` r
 library(SimInf)
 
-transitions <- c("S -> beta*S*I/N -> I",
-                 "I -> gamma*I -> R",
-                 "N <- S+I+R")
+transitions <- c(
+  "S -> beta*S*I/N -> I",
+  "I -> gamma*I -> R",
+  "N <- S+I+R"
+)
+
 compartments <- c("S", "I", "R")
 ```
 
@@ -67,13 +70,19 @@ starts with 99 susceptibles, 5 infected and 0 recovered individuals.
 
 ``` r
 n <- 1000
-u0 <- data.frame(S = rep(99, n), I = rep(5, n), R = rep(0, n))
+u0 <- data.frame(
+  S = rep(99, n),
+  I = rep(5, n),
+  R = rep(0, n)
+)
 
-model <- mparse(transitions = transitions,
-                compartments = compartments,
-                gdata = c(beta = 0.16, gamma = 0.077),
-                u0 = u0,
-                tspan = 1:150)
+model <- mparse(
+  transitions = transitions,
+  compartments = compartments,
+  gdata = c(beta = 0.16, gamma = 0.077),
+  u0 = u0,
+  tspan = 1:150
+)
 ```
 
 To generate data from the model and then print some basic information

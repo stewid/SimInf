@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2022 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -28,17 +28,17 @@ sessionInfo()
 
 ## Check invalid u0
 res <- assertError(SIS(u0 = "u0"))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 u0 <- data.frame(S  = c(0, 1, 2, 3, 4, 5),
                  I  = c(0, 0, 0, 0, 0, 0))
 
 ## Check missing columns in u0
 res <- assertError(SIS(u0 = u0[, "I", drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(SIS(u0 = u0[, "S", drop = FALSE]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 ## Check missing beta
 res <- assertError(SIS(u0     = u0,

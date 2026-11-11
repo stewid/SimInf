@@ -4,7 +4,7 @@
 ## Copyright (C) 2015 Pavol Bauer
 ## Copyright (C) 2017 -- 2019 Robin Eriksson
 ## Copyright (C) 2015 -- 2019 Stefan Engblom
-## Copyright (C) 2015 -- 2020 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ sessionInfo()
 
 ## Check invalid u0
 res <- assertError(SISe3_sp(u0 = "u0"))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 u0 <- data.frame(S_1 = c(0, 1, 2, 3, 4, 5, 6, 7, 8),
                  I_1 = c(0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -48,27 +48,27 @@ distance <- distance_matrix(distance$x, distance$y, 2)
 ## Check missing columns in u0
 res <- assertError(
     SISe3_sp(u0 = u0[, c("I_1", "S_2", "I_2", "S_3", "I_3")]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(
     SISe3_sp(u0 = u0[, c("S_1", "S_2", "I_2", "S_3", "I_3")]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(
     SISe3_sp(u0 = u0[, c("S_1", "I_1", "I_2", "S_3", "I_3")]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(
     SISe3_sp(u0 = u0[, c("S_1", "I_1", "S_2", "S_3", "I_3")]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(
     SISe3_sp(u0 = u0[, c("S_1", "I_1", "S_2", "I_2", "I_3")]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 res <- assertError(
     SISe3_sp(u0 = u0[, c("S_1", "I_1", "S_2", "I_2", "S_3")]))
-check_error(res, "Missing columns in u0.")
+check_error(res, "Missing columns in initial state.")
 
 ## Check default phi
 res <- SISe3_sp(u0        = u0,
@@ -93,8 +93,8 @@ res <- SISe3_sp(u0        = u0,
                 distance  = distance)
 stopifnot(identical(res@v0,
                     structure(c(0, 0, 0, 0, 0, 0, 0, 0, 0),
-                              .Dim = c(1L, 9L),
-                              .Dimnames = list("phi", NULL))))
+                              dim = c(1L, 9L),
+                              dimnames = list("phi", NULL))))
 
 ## Check missing upsilon_1
 res <- assertError(SISe3_sp(u0        = u0,
@@ -1501,7 +1501,7 @@ S_expected <- structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
                           0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L),
-                        .Dim = 9:10)
+                        dim =  9:10)
 S_observed <- trajectory(result, compartments = "S_1", format = "matrix")
 stopifnot(identical(S_observed, S_expected))
 
@@ -1515,7 +1515,7 @@ I_expected <- structure(c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L,
                           0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
-                        .Dim = 9:10)
+                        dim =  9:10)
 I_observed <- trajectory(result, compartments = "I_1", format = "matrix")
 stopifnot(identical(I_observed, I_expected))
 

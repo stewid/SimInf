@@ -2,16 +2,28 @@
 % Please edit documentation in R/abc.R
 \name{show,SimInf_abc-method}
 \alias{show,SimInf_abc-method}
-\title{Print summary of a \code{SimInf_abc} object}
+\title{Brief summary of a \code{SimInf_abc} object}
 \usage{
 \S4method{show}{SimInf_abc}(object)
 }
 \arguments{
-\item{object}{The \code{SimInf_abc} object.}
+\item{object}{The \code{\linkS4class{SimInf_abc}} object to
+display.}
 }
 \value{
-\code{invisible(object)}.
+The \code{object}, returned invisibly.
 }
 \description{
-Print summary of a \code{SimInf_abc} object
+Display a summary of an approximate Bayesian computation (ABC)
+analysis, including the number of particles per generation, the
+number of generations, and—for the final generation—the acceptance
+rate, effective sample size (ESS), and summary statistics
+(minimum, first quartile, median, mean, third quartile, and
+maximum) for each parameter in the posterior distribution.
+}
+\seealso{
+\code{\link{abc}} for running an ABC analysis,
+    \code{\link{continue_abc}} for continuing an existing ABC
+    chain, \code{\linkS4class{SimInf_abc}} for the class
+    definition.
 }

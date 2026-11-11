@@ -140,7 +140,7 @@ calculate_prevalence <- function(model, compartments, level,
 ##' @template prevalence-level-param
 ##' @template index-param
 ##' @param ... Additional arguments, see
-##'     \code{\link{prevalence,SimInf_model-method}}
+##'     \code{\link[=prevalence,SimInf_model-method]{prevalence}}
 ## nolint start: brace_linter
 setGeneric(
     "prevalence",
@@ -185,8 +185,7 @@ setGeneric(
 ##' @include match_compartments.R
 ##' @export
 ##' @examples
-##' ## For reproducibility, set the seed and number of threads.
-##' set.seed(1)
+##' ## For reproducibility, specify the number of threads.
 ##' set_num_threads(1)
 ##'
 ##' ## Create an 'SIR' model with 6 nodes.
@@ -203,8 +202,8 @@ setGeneric(
 ##'   gamma = 0.077
 ##' )
 ##'
-##' ## Run the model.
-##' result <- run(model)
+##' ## Run the model with a fixed seed for reproducibility.
+##' result <- run(model, seed = 12)
 ##'
 ##' ## 1. Population Prevalence (level = 1, default)
 ##' ## Proportion of infected individuals in the total population.
@@ -316,9 +315,10 @@ setMethod(
 ##' @template thin-param
 ##' @return A \code{data.frame} where the first column is the
 ##'     \code{iteration} and the remaining columns are the result from
-##'     calling \code{\link{prevalence,SimInf_model-method}} with the
-##'     arguments \code{formula}, \code{level} and \code{index} for
-##'     each iteration.
+##'     calling
+##'     \code{\link[=prevalence,SimInf_model-method]{prevalence}} with
+##'     the arguments \code{formula}, \code{level} and \code{index}
+##'     for each iteration.
 ##' @include pmcmc.R
 ##' @export
 setMethod(
