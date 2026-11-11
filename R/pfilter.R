@@ -412,7 +412,9 @@ pfilter_internal <- function(model,
             x@V <- x@V[, j, drop = FALSE]
         }
 
-        ## Save states.
+        ## Save states. Keep the full history of all particles, so
+        ## that a trajectory can be traced backward through the
+        ## ancestors after the final observation.
         U[, i + 1L] <- x@U
         V[, i + 1L] <- x@V
 
@@ -451,7 +453,8 @@ pfilter_internal <- function(model,
         w <- w / sum_w
         ess[i] <- 1 / sum(w^2)
 
-        ## Resampling
+        ## Systematic resampling. Sample the ancestor indices for the
+        ## next generation of particles from the normalised weights.
         a[, i + 1L] <- .Call(SimInf_systematic_resampling, w)
     }
 
@@ -463,6 +466,14 @@ pfilter_internal <- function(model,
                       nrow = n_nodes(model) * Nd,
                       ncol = Ntspan)
 
+    ## Sample a trajectory. Sample one particle uniformly from the
+    ## final particle system. The weights are already incorporated in
+    ## the last resampling step, which equalised the weights, so
+    ## sampling uniformly from the particles after resampling is
+    ## equivalent to sampling proportionally to the weights.  Trace
+    ## the sampled particle backward through the ancestor indices 'a'
+    ## to recover a full trajectory that is consistent with the
+    ## resampling performed at each time-step.
     i <- sample.int(n_particles, 1)
     for (j in rev(seq_len(Ntspan))) {
         u_i <- seq.int(
