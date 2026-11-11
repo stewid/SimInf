@@ -489,7 +489,7 @@ pfilter_internal <- function(model,
     v_i <- seq.int(
         from = (i - 1L) * n_nodes(model) * Nd + 1L,
         length.out = n_nodes(model) * Nd)
-    m@v0 <- matrix(
+    model@v0 <- matrix(
         data = V[v_i, 1L],
         nrow = nrow(model@v0),
         dimnames = dimnames(model@v0))
