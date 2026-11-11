@@ -21,12 +21,15 @@ final time-point, and its full state evolution across all
 time-points is reconstructed.}
 
 \item{\code{n_particles}}{An integer with the number of particles that was
-used at each time-step.}
+used at each time-point.}
 
-\item{\code{loglik}}{The estimated log-likelihood.}
+\item{\code{loglik}}{The estimated log-likelihood of the observed data.}
 
 \item{\code{ess}}{A numeric vector with the effective sample size (ESS) at
-each time-point.  The effective sample size is computed as
+each time-point, computed from the normalized particle weights
+before resampling. A small ESS indicates that few particles
+carry most of the weight, and that more particles may be
+needed. The effective sample size is computed as
 \deqn{\left(\sum_{i=1}^N\!(w_{t}^{i})^2\right)^{-1},}{1 /
 (sum(w_it^2)),} where \eqn{w_{t}^{i}}{w_it} is the normalized
 weight of particle \eqn{i} at time \eqn{t}.}

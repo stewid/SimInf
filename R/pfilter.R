@@ -30,10 +30,13 @@
 ##'     final time-point, and its full state evolution across all
 ##'     time-points is reconstructed.
 ##' @slot n_particles An integer with the number of particles that was
-##'     used at each time-step.
-##' @slot loglik The estimated log-likelihood.
+##'     used at each time-point.
+##' @slot loglik The estimated log-likelihood of the observed data.
 ##' @slot ess A numeric vector with the effective sample size (ESS) at
-##'     each time-point.  The effective sample size is computed as
+##'     each time-point, computed from the normalized particle weights
+##'     before resampling. A small ESS indicates that few particles
+##'     carry most of the weight, and that more particles may be
+##'     needed. The effective sample size is computed as
 ##'     \deqn{\left(\sum_{i=1}^N\!(w_{t}^{i})^2\right)^{-1},}{1 /
 ##'     (sum(w_it^2)),} where \eqn{w_{t}^{i}}{w_it} is the normalized
 ##'     weight of particle \eqn{i} at time \eqn{t}.
@@ -500,15 +503,38 @@ pfilter_internal <- function(model,
 
 ##' Bootstrap particle filter
 ##'
-##' The bootstrap filtering algorithm. Systematic resampling is
-##' performed at each observation.
+##' Estimate the hidden trajectory of a stochastic model from
+##' observations using the bootstrap particle filter (Gordon et al.,
+##' 1993).
 ##'
+##' @details The particle filter approximates the distribution of the
+##'     latent state conditional on the observed data. A large number
+##'     of independent trajectories ('particles') of the model are
+##'     simulated forward in time. At each observation, every particle
+##'     is assigned a weight given by the likelihood of the
+##'     observation under that particle. Particles with a poor fit to
+##'     the data therefore receive a low weight. Particles are
+##'     resampled proportionally to their weights using systematic
+##'     resampling, and the resulting particles are propagated forward
+##'     to the next observation. This focuses the computational effort
+##'     on trajectories that are consistent with the data and yields a
+##'     weighted approximation of the filtered state distribution at
+##'     each observation time. The accuracy of the approximation
+##'     improves as the number of particles increases.  After the
+##'     final observation, a single trajectory is sampled from the
+##'     particle system and traced backward through the ancestral
+##'     lineages.
 ##' @param model The \code{SimInf_model} object to simulate data from.
 ##' @template obs_process-param
 ##' @template data-param
 ##' @template n_particles-param
 ##' @template init_model-param
-##' @return A \code{SimInf_pfilter} object.
+##' @return A \code{SimInf_pfilter} object with the filtered
+##'     trajectory: a single trajectory sampled from the particle
+##'     system (traced backward through the particle genealogy),
+##'     together with the estimated log-likelihood of the data and the
+##'     effective sample size at each time-step. See
+##'     \code{\link{SimInf_pfilter-class}} for details.
 ##' @references
 ##'
 ##' \Gordon1993

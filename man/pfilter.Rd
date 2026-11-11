@@ -26,12 +26,11 @@ uniform(min, max)}. The observation process can also be a
 function to evaluate the probability density of the
 observations given the simulated states. The first argument
 passed to the \code{obs_process} function is the result from a
-run of the model and it contains one trajectory with simulated
-data for a time-point, where the trajectory contains
-\code{n_particles} replicates, see
+run of the model for the current time interval: a trajectory
+with one replicate per particle for that time-point, see
 \code{\link{trajectory,SimInf_model-method}}. The second
 argument to the \code{obs_process} function is a
-\code{data.frame} containing the rows for the specific
+\code{data.frame} containing the rows in \code{data} for the
 time-point that the function is called for. Note that the
 function must return the log of the density.}
 
@@ -48,11 +47,36 @@ specify the initial state of \code{u0} or \code{v0} of the
 model before running a trajectory with proposed parameters.}
 }
 \value{
-A \code{SimInf_pfilter} object.
+A \code{SimInf_pfilter} object with the filtered
+    trajectory: a single trajectory sampled from the particle
+    system (traced backward through the particle genealogy),
+    together with the estimated log-likelihood of the data and the
+    effective sample size at each time-step. See
+    \code{\link{SimInf_pfilter-class}} for details.
 }
 \description{
-The bootstrap filtering algorithm. Systematic resampling is
-performed at each observation.
+Estimate the hidden trajectory of a stochastic model from
+observations using the bootstrap particle filter (Gordon et al.,
+1993).
+}
+\details{
+The particle filter approximates the distribution of the
+    latent state conditional on the observed data. A large number
+    of independent trajectories ('particles') of the model are
+    simulated forward in time. At each observation, every particle
+    is assigned a weight given by the likelihood of the
+    observation under that particle. Particles with a poor fit to
+    the data therefore receive a low weight. Particles are
+    resampled proportionally to their weights using systematic
+    resampling, and the resulting particles are propagated forward
+    to the next observation. This focuses the computational effort
+    on trajectories that are consistent with the data and yields a
+    weighted approximation of the filtered state distribution at
+    each observation time. The accuracy of the approximation
+    improves as the number of particles increases.  After the
+    final observation, a single trajectory is sampled from the
+    particle system and traced backward through the ancestral
+    lineages.
 }
 \examples{
 \dontrun{
