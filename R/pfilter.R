@@ -163,7 +163,7 @@ pfilter_data <- function(model, data) {
     }
 
     if (data$time[1] < model@tspan[1])
-        stop("data$time[1] must be >= tspan[1].", call. = TRUE)
+        stop("data$time[1] must be >= tspan[1].", call. = FALSE)
 
     lapply(split(data, data$time), function(x) {
         rownames(x) <- NULL
