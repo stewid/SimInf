@@ -729,24 +729,22 @@ setMethod(
                                    init_model = init_model)
                 logLik_prop <- pf_prop@loglik
 
-                alpha <- exp(logLik_prop + logPrior_prop - logLik - logPrior)
-                if (is.finite(alpha)) {
-                    if (runif(1) < alpha) {
-                        logLik <- logLik_prop
-                        logPrior <- logPrior_prop
-                        logPost <- logLik + logPrior
-                        theta <- proposal
-                        pf <- pf_prop
-                        accept <- 1
-                        n_accepted <- n_accepted + 1
-                    }
-                } else {
-                    warning(
-                        "Non-finite log likelihood or log prior encountered.",
-                        call. = FALSE)
+                log_alpha <- logLik_prop + logPrior_prop - logLik - logPrior
+                if (is.nan(log_alpha)) {
+                    warning("Zero likelihood encountered; proposal rejected.",
+                            call. = FALSE)
+                } else if (log(runif(1)) < log_alpha) {
+                    logLik <- logLik_prop
+                    logPrior <- logPrior_prop
+                    logPost <- logLik + logPrior
+                    theta <- proposal
+                    pf <- pf_prop
+                    accept <- 1
+                    n_accepted <- n_accepted + 1
                 }
             } else {
-                warning("Non-finite log prior proposal encountered.",
+                warning("Non-finite log prior proposal encountered; ",
+                        "proposal rejected.",
                         call. = FALSE)
             }
 
