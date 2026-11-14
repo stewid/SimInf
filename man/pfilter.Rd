@@ -59,8 +59,8 @@ A \code{SimInf_pfilter} object with the filtered
     \code{\link{SimInf_pfilter-class}} for details. If an
     observation is impossible under every particle (\code{logLik =
     -Inf}), the object carries no trajectory: the model is
-    returned unmodified, and the effective sample size is zero for
-    the remaining time steps.
+    returned without a trajectory attached, and the effective
+    sample size is zero for the remaining time steps.
 }
 \description{
 Estimate the hidden trajectory of a stochastic model from

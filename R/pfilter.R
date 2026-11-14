@@ -569,8 +569,8 @@ pfilter_internal <- function(model,
 ##'     \code{\link{SimInf_pfilter-class}} for details. If an
 ##'     observation is impossible under every particle (\code{logLik =
 ##'     -Inf}), the object carries no trajectory: the model is
-##'     returned unmodified, and the effective sample size is zero for
-##'     the remaining time steps.
+##'     returned without a trajectory attached, and the effective
+##'     sample size is zero for the remaining time steps.
 ##' @references
 ##'
 ##' \Gordon1993
