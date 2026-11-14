@@ -68,8 +68,8 @@ data and the effective sample size at each observation. See
 [`SimInf_pfilter-class`](http://stewid.github.io/SimInf/reference/SimInf_pfilter-class.md)
 for details. If an observation is impossible under every particle
 (`logLik = -Inf`), the object carries no trajectory: the model is
-returned unmodified, and the effective sample size is zero for the
-remaining time steps.
+returned without a trajectory attached, and the effective sample size is
+zero for the remaining time steps.
 
 ## Details
 
