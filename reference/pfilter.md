@@ -37,7 +37,10 @@ pfilter(model, obs_process, data, n_particles, init_model = NULL)
   [`trajectory,SimInf_model-method`](http://stewid.github.io/SimInf/reference/trajectory.md).
   The second argument to the `obs_process` function is a `data.frame`
   containing the rows in `data` for the time-point that the function is
-  called for. Note that the function must return the log of the density.
+  called for. The function must return a numeric vector with one entry
+  per replicate, containing the log of the density. A value of `-Inf` is
+  valid and means that the observation is impossible for that replicate,
+  whereas `NA`, `NaN` and `+Inf` raise an error.
 
 - data:
 
@@ -63,7 +66,10 @@ trajectory sampled from the particle system (traced backward through the
 particle genealogy), together with the estimated log-likelihood of the
 data and the effective sample size at each observation. See
 [`SimInf_pfilter-class`](http://stewid.github.io/SimInf/reference/SimInf_pfilter-class.md)
-for details.
+for details. If an observation is impossible under every particle
+(`logLik = -Inf`), the object carries no trajectory: the model is
+returned unmodified, and the effective sample size is zero for the
+remaining time steps.
 
 ## Details
 
@@ -127,7 +133,9 @@ infected$Iobs <- rpois(nrow(infected), infected$I)
 ## added because the latent counts 'I' can be zero, in which case the
 ## Poisson density is zero for any positive observation. In the
 ## particle filter this would give the particle zero likelihood, so
-## the small constant keeps the weights finite.
+## the small constant keeps the weights finite; without it, the
+## filter would fail with a zero log-likelihood whenever all particles
+## have zero infections at an observation time
 
 ## Use a low number of particles here to keep the run-time of
 ## the example short. In practice, you may need to increase the

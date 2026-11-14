@@ -70,7 +70,10 @@ pmcmc(
   [`trajectory,SimInf_model-method`](http://stewid.github.io/SimInf/reference/trajectory.md).
   The second argument to the `obs_process` function is a `data.frame`
   containing the rows in `data` for the time-point that the function is
-  called for. Note that the function must return the log of the density.
+  called for. The function must return a numeric vector with one entry
+  per replicate, containing the log of the density. A value of `-Inf` is
+  valid and means that the observation is impossible for that replicate,
+  whereas `NA`, `NaN` and `+Inf` raise an error.
 
 - data:
 

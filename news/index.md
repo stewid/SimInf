@@ -4,10 +4,41 @@
 
 ### CHANGES OR IMPROVEMENTS
 
+- Improved and clarified the documentation for
+  [`pfilter()`](http://stewid.github.io/SimInf/reference/pfilter.md),
+  [`abc()`](http://stewid.github.io/SimInf/reference/abc.md),
+  [`trajectory()`](http://stewid.github.io/SimInf/reference/trajectory.md),
+  [`run()`](http://stewid.github.io/SimInf/reference/run.md),
+  [`select_matrix()`](http://stewid.github.io/SimInf/reference/select_matrix.md)
+  and the
+  [`shift_matrix()`](http://stewid.github.io/SimInf/reference/shift_matrix.md)
+  accessors, including worked-out examples.
+
+- [`pfilter()`](http://stewid.github.io/SimInf/reference/pfilter.md) now
+  handles an observation that is impossible under a particle: such a
+  particle is assigned zero weight instead of raising an error. If the
+  observation is impossible under every particle,
+  [`pfilter()`](http://stewid.github.io/SimInf/reference/pfilter.md)
+  returns an object with a log-likelihood of -Inf, and, for consistency,
+  the trajectory is not sampled.
+
 ### BUG FIXES
 
-- Fixed the initial continuous state (v0) in the model returned by
-  pfilter.
+- Fixed the acceptance step in
+  [`continue_pmcmc()`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md)
+  to compare on the log scale, so that proposals with a very high
+  acceptance ratio are no longer incorrectly rejected; this could
+  previously stall the chain at a starting point with a low likelihood.
+
+- Fixed the initial continuous state (`v0`) in the model returned by
+  [`pfilter()`](http://stewid.github.io/SimInf/reference/pfilter.md),
+  which stored an incorrect `v0` in the filtered trajectory.
+
+- Fixed the trajectory sampled by
+  [`pfilter()`](http://stewid.github.io/SimInf/reference/pfilter.md) to
+  be drawn proportionally to the final particle weights instead of
+  uniformly, correcting the sampling distribution to match the particle
+  weights.
 
 ## SimInf 11.1.0 (2026-09-08)
 

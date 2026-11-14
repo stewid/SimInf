@@ -102,8 +102,12 @@ with one replicate per particle for that time-point, see
 <code><a href="trajectory.html">trajectory,SimInf_model-method</a></code>. The second
 argument to the <code>obs_process</code> function is a
 <code>data.frame</code> containing the rows in <code>data</code> for the
-time-point that the function is called for. Note that the
-function must return the log of the density.</p></dd>
+time-point that the function is called for. The function must
+return a numeric vector with one entry per replicate,
+containing the log of the density. A value of <code>-Inf</code> is
+valid and means that the observation is impossible for that
+replicate, whereas <code>NA</code>, <code>NaN</code> and <code>+Inf</code> raise
+an error.</p></dd>
 
 
 <dt id="arg-n-iterations">n_iterations<a class="anchor" aria-label="anchor" href="#arg-n-iterations"></a></dt>

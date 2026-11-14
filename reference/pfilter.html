@@ -85,8 +85,12 @@ with one replicate per particle for that time-point, see
 <code><a href="trajectory.html">trajectory,SimInf_model-method</a></code>. The second
 argument to the <code>obs_process</code> function is a
 <code>data.frame</code> containing the rows in <code>data</code> for the
-time-point that the function is called for. Note that the
-function must return the log of the density.</p></dd>
+time-point that the function is called for. The function must
+return a numeric vector with one entry per replicate,
+containing the log of the density. A value of <code>-Inf</code> is
+valid and means that the observation is impossible for that
+replicate, whereas <code>NA</code>, <code>NaN</code> and <code>+Inf</code> raise
+an error.</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
@@ -114,7 +118,11 @@ model before running a trajectory with proposed parameters.</p></dd>
     system (traced backward through the particle genealogy),
     together with the estimated log-likelihood of the data and the
     effective sample size at each observation. See
-    <code><a href="SimInf_pfilter-class.html">SimInf_pfilter-class</a></code> for details.</p>
+    <code><a href="SimInf_pfilter-class.html">SimInf_pfilter-class</a></code> for details. If an
+    observation is impossible under every particle (<code>logLik =
+    -Inf</code>), the object carries no trajectory: the model is
+    returned unmodified, and the effective sample size is zero for
+    the remaining time steps.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -178,7 +186,9 @@ model before running a trajectory with proposed parameters.</p></dd>
 <span class="r-in"><span><span class="co">## added because the latent counts 'I' can be zero, in which case the</span></span></span>
 <span class="r-in"><span><span class="co">## Poisson density is zero for any positive observation. In the</span></span></span>
 <span class="r-in"><span><span class="co">## particle filter this would give the particle zero likelihood, so</span></span></span>
-<span class="r-in"><span><span class="co">## the small constant keeps the weights finite.</span></span></span>
+<span class="r-in"><span><span class="co">## the small constant keeps the weights finite; without it, the</span></span></span>
+<span class="r-in"><span><span class="co">## filter would fail with a zero log-likelihood whenever all particles</span></span></span>
+<span class="r-in"><span><span class="co">## have zero infections at an observation time</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Use a low number of particles here to keep the run-time of</span></span></span>
 <span class="r-in"><span><span class="co">## the example short. In practice, you may need to increase the</span></span></span>

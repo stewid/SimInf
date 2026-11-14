@@ -42,10 +42,14 @@
 <h2 class="pkg-version" data-toc-text="development version" id="siminf-development-version">SimInf (development version)<a class="anchor" aria-label="anchor" href="#siminf-development-version"></a></h2>
 <div class="section level3">
 <h3 id="changes-or-improvements-development-version">CHANGES OR IMPROVEMENTS<a class="anchor" aria-label="anchor" href="#changes-or-improvements-development-version"></a></h3>
-</div>
+<ul><li><p>Improved and clarified the documentation for <code><a href="../reference/pfilter.html">pfilter()</a></code>, <code><a href="../reference/abc.html">abc()</a></code>, <code><a href="../reference/trajectory.html">trajectory()</a></code>, <code><a href="../reference/run.html">run()</a></code>, <code><a href="../reference/select_matrix.html">select_matrix()</a></code> and the <code><a href="../reference/shift_matrix.html">shift_matrix()</a></code> accessors, including worked-out examples.</p></li>
+<li><p><code><a href="../reference/pfilter.html">pfilter()</a></code> now handles an observation that is impossible under a particle: such a particle is assigned zero weight instead of raising an error. If the observation is impossible under every particle, <code><a href="../reference/pfilter.html">pfilter()</a></code> returns an object with a log-likelihood of -Inf, and, for consistency, the trajectory is not sampled.</p></li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">BUG FIXES<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
-<ul><li>Fixed the initial continuous state (v0) in the model returned by pfilter.</li>
+<ul><li><p>Fixed the acceptance step in <code><a href="../reference/continue_pmcmc.html">continue_pmcmc()</a></code> to compare on the log scale, so that proposals with a very high acceptance ratio are no longer incorrectly rejected; this could previously stall the chain at a starting point with a low likelihood.</p></li>
+<li><p>Fixed the initial continuous state (<code>v0</code>) in the model returned by <code><a href="../reference/pfilter.html">pfilter()</a></code>, which stored an incorrect <code>v0</code> in the filtered trajectory.</p></li>
+<li><p>Fixed the trajectory sampled by <code><a href="../reference/pfilter.html">pfilter()</a></code> to be drawn proportionally to the final particle weights instead of uniformly, correcting the sampling distribution to match the particle weights.</p></li>
 </ul></div>
 </div>
     <div class="section level2">
