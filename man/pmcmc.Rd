@@ -64,8 +64,12 @@ with one replicate per particle for that time-point, see
 \code{\link{trajectory,SimInf_model-method}}. The second
 argument to the \code{obs_process} function is a
 \code{data.frame} containing the rows in \code{data} for the
-time-point that the function is called for. Note that the
-function must return the log of the density.}
+time-point that the function is called for. The function must
+return a numeric vector with one entry per replicate,
+containing the log of the density. A value of \code{-Inf} is
+valid and means that the observation is impossible for that
+replicate, whereas \code{NA}, \code{NaN} and \code{+Inf} raise
+an error.}
 
 \item{data}{A \code{data.frame} holding the time series data.}
 

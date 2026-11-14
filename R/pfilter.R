@@ -566,7 +566,11 @@ pfilter_internal <- function(model,
 ##'     system (traced backward through the particle genealogy),
 ##'     together with the estimated log-likelihood of the data and the
 ##'     effective sample size at each observation. See
-##'     \code{\link{SimInf_pfilter-class}} for details.
+##'     \code{\link{SimInf_pfilter-class}} for details. If an
+##'     observation is impossible under every particle (\code{logLik =
+##'     -Inf}), the object carries no trajectory: the model is
+##'     returned unmodified, and the effective sample size is zero for
+##'     the remaining time steps.
 ##' @references
 ##'
 ##' \Gordon1993
@@ -605,7 +609,9 @@ pfilter_internal <- function(model,
 ##' ## added because the latent counts 'I' can be zero, in which case the
 ##' ## Poisson density is zero for any positive observation. In the
 ##' ## particle filter this would give the particle zero likelihood, so
-##' ## the small constant keeps the weights finite.
+##' ## the small constant keeps the weights finite; without it, the
+##' ## filter would fail with a zero log-likelihood whenever all particles
+##' ## have zero infections at an observation time
 ##'
 ##' ## Use a low number of particles here to keep the run-time of
 ##' ## the example short. In practice, you may need to increase the
