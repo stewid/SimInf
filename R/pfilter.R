@@ -366,7 +366,7 @@ pfilter_internal <- function(model,
 
     a <- matrix(data = NA_integer_,
                 nrow = n_particles,
-                ncol = Ntspan + 1L)
+                ncol = Ntspan)
     a[, 1L] <- seq_len(n_particles)
 
     ## Loop over time series.
@@ -455,10 +455,16 @@ pfilter_internal <- function(model,
 
         ## Systematic resampling. Sample the ancestor indices for the
         ## next generation of particles from the normalised weights.
-        a[, i + 1L] <- .Call(SimInf_systematic_resampling, w)
+        if (i < Ntspan) {
+            a[, i + 1L] <- .Call(SimInf_systematic_resampling, w)
+        }
     }
 
-    ## Sample a trajectory.
+    ## Sample a trajectory. Draw one particle proportionally to its
+    ## final normalised weight (the final generation is never
+    ## resampled), then trace it backward through the ancestor indices
+    ## 'a' to recover a full trajectory consistent with the resampling
+    ## performed at each time-step.
     model@U <- matrix(data = NA_integer_,
                       nrow = n_nodes(model) * n_compartments(model),
                       ncol = Ntspan)
@@ -466,15 +472,7 @@ pfilter_internal <- function(model,
                       nrow = n_nodes(model) * Nd,
                       ncol = Ntspan)
 
-    ## Sample a trajectory. Sample one particle uniformly from the
-    ## final particle system. The weights are already incorporated in
-    ## the last resampling step, which equalised the weights, so
-    ## sampling uniformly from the particles after resampling is
-    ## equivalent to sampling proportionally to the weights. Trace the
-    ## sampled particle backward through the ancestor indices 'a' to
-    ## recover a full trajectory that is consistent with the
-    ## resampling performed at each time-step.
-    i <- sample.int(n_particles, 1)
+    i <- sample.int(n = n_particles, size = 1L, prob = w)
     for (j in rev(seq_len(Ntspan))) {
         u_i <- seq.int(
             from = (i - 1L) * n_nodes(model) * n_compartments(model) + 1L,

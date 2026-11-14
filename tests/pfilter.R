@@ -451,9 +451,9 @@ summary_expected <- c(
     "Compartments",
     "------------",
     "   Min. 1st Qu. Median Mean 3rd Qu. Max.",
-    " S 53.0    61.5   71.0 71.1    80.5 90.0",
-    " I  0.0    15.0   15.0 13.7    16.5 18.0",
-    " R  0.0     4.5   12.0 13.7    22.0 31.0")
+    " S 50.0    58.5   73.0 71.1    84.0 90.0",
+    " I  0.0    13.5   17.0 14.3    17.5 21.0",
+    " R  0.0     2.5   10.0 13.1    22.0 33.0")
 
 summary_observed <- capture.output(summary(pf))
 stopifnot(identical(summary_observed, summary_expected))
@@ -466,16 +466,16 @@ stopifnot(identical(
     data.frame(
         node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L),
         time = c(1L, 4L, 7L, 10L, 13L, 16L, 19L),
-        S = c(90L, 83L, 78L, 71L, 65L, 58L, 53L),
-        I = c(0L, 15L, 15L, 17L, 15L, 18L, 16L),
-        R = c(0L, 2L, 7L, 12L, 20L, 24L, 31L))))
+        S = c(90L, 87L, 81L, 73L, 61L, 56L, 50L),
+        I = c(0L, 12L, 15L, 17L, 21L, 18L, 17L),
+        R = c(0L, 1L, 4L, 10L, 18L, 26L, 33L))))
 
 stopifnot(identical(
     prevalence(pf, I ~ .)$time,
     c(1, 4, 7, 10, 13, 16, 19)))
 
 stopifnot(all(abs(prevalence(pf, I ~ .)$prevalence
-                  - c(0, 0.15, 0.15, 0.17, 0.15, 0.18, 0.16)) < tol))
+                  - c(0, 0.12, 0.15, 0.17, 0.21, 0.18, 0.17)) < tol))
 
 ## Modify the model object to check that 'gdata' is included in the
 ## output.
@@ -509,9 +509,9 @@ summary_expected <- c(
     "Compartments",
     "------------",
     "   Min. 1st Qu. Median Mean 3rd Qu. Max.",
-    " S 53.0    61.5   71.0 71.1    80.5 90.0",
-    " I  0.0    15.0   15.0 13.7    16.5 18.0",
-    " R  0.0     4.5   12.0 13.7    22.0 31.0")
+    " S 50.0    58.5   73.0 71.1    84.0 90.0",
+    " I  0.0    13.5   17.0 14.3    17.5 21.0",
+    " R  0.0     2.5   10.0 13.1    22.0 33.0")
 
 summary_observed <- capture.output(summary(pf))
 stopifnot(identical(summary_observed, summary_expected))
