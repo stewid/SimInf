@@ -527,7 +527,9 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
 
 res <- assertError(
     pfilter(model,
-            obs_process = function(result, data) {1},
+            obs_process = function(result, data) {
+                1
+            },
             data = infected,
             n_particles = 2))
 
@@ -536,7 +538,9 @@ check_error(res, paste0("Invalid observation process: weights must be a ",
 
 res <- assertError(
     pfilter(model,
-            obs_process = function(result, data) {c("a", "b")},
+            obs_process = function(result, data) {
+                c("a", "b")
+            },
             data = infected,
             n_particles = 2))
 
@@ -545,7 +549,9 @@ check_error(res, paste0("Invalid observation process: weights must be a ",
 
 res <- assertError(
     pfilter(model,
-            obs_process = function(result, data) {c(1, NA_real_)},
+            obs_process = function(result, data) {
+                c(1, NA_real_)
+            },
             data = infected,
             n_particles = 2))
 
@@ -553,7 +559,9 @@ check_error(res, "Invalid observation process: weights must not be NA or NaN.")
 
 res <- assertError(
     pfilter(model,
-            obs_process = function(result, data) {c(1, NaN)},
+            obs_process = function(result, data) {
+                c(1, NaN)
+            },
             data = infected,
             n_particles = 2))
 
@@ -561,14 +569,18 @@ check_error(res, "Invalid observation process: weights must not be NA or NaN.")
 
 res <- assertError(
     pfilter(model,
-            obs_process = function(result, data) {c(1, Inf)},
+            obs_process = function(result, data) {
+                c(1, Inf)
+            },
             data = infected,
             n_particles = 2))
 
 check_error(res, "Invalid observation process: weights must not be +Inf.")
 
 pf <- pfilter(model,
-              obs_process = function(result, data) {c(-Inf, -Inf)},
+              obs_process = function(result, data) {
+                  c(-Inf, -Inf)
+              },
               data = infected,
               n_particles = 2)
 
