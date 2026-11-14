@@ -521,7 +521,7 @@ infected <- data.frame(
     Iobs = c(1, 2, 2))
 
 model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
-             tspan = c(1, 4, 7),
+             tspan = 1:7,
              beta = 0.16,
              gamma = 0.077)
 
@@ -579,12 +579,16 @@ check_error(res, "Invalid observation process: weights must not be +Inf.")
 
 pf <- pfilter(model,
               obs_process = function(result, data) {
-                  c(-Inf, -Inf)
+                  if (data$time == 1) c(-1, -2) else c(-Inf, -Inf)
               },
               data = infected,
               n_particles = 2)
 
+model@tspan <- c(1, 4, 7)
 stopifnot(identical(pf@model, model))
 stopifnot(identical(logLik(pf), -Inf))
 stopifnot(identical(pf@n_particles, 2L))
-stopifnot(identical(pf@ess, c(0, 0, 0)))
+stopifnot(length(pf@ess) == 3,
+          all(abs(pf@ess[1] - (1 + exp(-1))^2 / (1 + exp(-2))) < tol),
+          pf@ess[2] == 0,
+          pf@ess[3] == 0)
