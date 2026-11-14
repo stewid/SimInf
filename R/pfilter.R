@@ -440,13 +440,34 @@ pfilter_internal <- function(model,
             w <- evalq(eval(parse(text = expr)), envir = e)
         }
 
-        if (!all(all(is.finite(w)),
-                 identical(length(w), n_particles),
-                 is.vector(w, "numeric"))) {
-            stop("Invalid observation process.", call. = FALSE)
+        ## The observation process must return a numeric vector with
+        ## one entry per particle. -Inf is a valid outcome: the
+        ## observation is impossible under that particle, and the
+        ## weight normalisation assigns it zero weight. +Inf/NA/NaN
+        ## are invalid.
+        if (!identical(length(w), n_particles) || !is.vector(w, "numeric")) {
+            stop("Invalid observation process: weights must be ",
+                 "a numeric vector of length 'n_replicates'.",
+                 call. = FALSE)
+        }
+        if (anyNA(w)) {
+            stop("Invalid observation process: weights must not be NA or NaN.",
+                 call. = FALSE)
+        }
+        if (any(w == Inf)) {
+            stop("Invalid observation process: weights must not be +Inf.",
+                 call. = FALSE)
         }
 
         max_w <- max(w)
+        if (!is.finite(max_w)) {
+            return(methods::new("SimInf_pfilter",
+                                model = model,
+                                n_particles = n_particles,
+                                loglik = -Inf,
+                                ess = ess))
+        }
+
         w <- exp(w - max_w)
         sum_w <- sum(w)
         loglik <- loglik + max_w + log(sum_w) - log(n_particles)
