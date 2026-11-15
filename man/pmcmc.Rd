@@ -168,8 +168,9 @@ get information every nth information by specifying
 \code{verbose=n}, for example, \code{verbose=1} or
 \code{verbose=10}.}
 
-\item{object}{The \code{SimInf_pmcmc} object to continue, as
-returned by \code{pmcmc()}.}
+\item{object}{For \code{continue_pmcmc()}: the
+\code{SimInf_pmcmc} object to continue, as returned by
+\code{pmcmc()}.}
 }
 \value{
 For \code{pmcmc()}, a \code{\linkS4class{SimInf_pmcmc}}
