@@ -69,8 +69,8 @@ its \code{age} argument.
 }
 \examples{
 ## Example data with two animals; the first has a plausible life
-## history, the second does not since the animal is not registered at
-## the node of the exit event.
+## history, the second does not since the animal is not registered
+## at the node of the exit event.
 events <- data.frame(
   id = c(1, 1, 1, 1,
          2, 2, 2),
@@ -80,13 +80,14 @@ events <- data.frame(
            "2025-04-01", "2025-07-01", "2025-10-01"),
   node = c("N1", "N1", "N2", "N2",
            "N3", "N3", "N5"),
-  dest = c(NA, "N2", NA, "N3",
-           NA, "N4", NA)
+  dest = c("-", "N2", "-", "N3",
+           "-", "N4", "-")
 )
 
 ## Keep the longest plausible life history for each animal: the
-## movement after the exit event of the first animal is discarded, and
-## all events of the second animal are dropped.
+## movement after the exit event of the first animal is discarded,
+## and all events of the second animal are dropped. Note that the
+## '-' in 'dest' is replaced with NA for non-movement events.
 as.data.frame(individual_events(events))
 }
 \references{
