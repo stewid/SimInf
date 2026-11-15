@@ -123,9 +123,6 @@
 - [`boxplot(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/boxplot-SimInf_model-method.md)
   : Box plot of number of individuals in each compartment
 
-- [`continue_pmcmc()`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md)
-  : Continue PMCMC from an Existing Chain
-
 - [`distance_matrix()`](http://stewid.github.io/SimInf/reference/distance_matrix.md)
   : Create a distance matrix between nodes for spatial models
 
@@ -234,8 +231,9 @@
 - [`plot(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/plot.md)
   : Display the outcome from a simulated trajectory
 
-- [`pmcmc()`](http://stewid.github.io/SimInf/reference/pmcmc.md) :
-  Particle Markov chain Monte Carlo (PMCMC) algorithm
+- [`pmcmc()`](http://stewid.github.io/SimInf/reference/pmcmc.md)
+  [`continue_pmcmc()`](http://stewid.github.io/SimInf/reference/pmcmc.md)
+  : Particle Markov chain Monte Carlo (PMCMC) algorithm
 
 - [`prevalence(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/prevalence-SimInf_model-method.md)
   : Calculate prevalence from a model object with trajectory data

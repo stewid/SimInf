@@ -43,6 +43,27 @@ pmcmc(
   chain = NULL,
   verbose = FALSE
 )
+
+continue_pmcmc(
+  object,
+  obs_process,
+  n_iterations,
+  post_proposal = NULL,
+  init_model = NULL,
+  post_particle = NULL,
+  verbose = FALSE
+)
+
+# S4 method for class 'SimInf_pmcmc'
+continue_pmcmc(
+  object,
+  obs_process,
+  n_iterations,
+  post_proposal = NULL,
+  init_model = NULL,
+  post_particle = NULL,
+  verbose = FALSE
+)
 ```
 
 ## Arguments
@@ -165,12 +186,46 @@ pmcmc(
   pmcmc, it is possible to get information every nth information by
   specifying `verbose=n`, for example, `verbose=1` or `verbose=10`.
 
+- object:
+
+  The `SimInf_pmcmc` object to continue, as returned by `pmcmc()`.
+
 ## Value
 
-A
+For `pmcmc()`, a
 [`SimInf_pmcmc`](http://stewid.github.io/SimInf/reference/SimInf_pmcmc-class.md)
 object containing the fitted parameters and diagnostic information for
-all iterations.
+all iterations. For `continue_pmcmc()`, the
+[`SimInf_pmcmc`](http://stewid.github.io/SimInf/reference/SimInf_pmcmc-class.md)
+object with the chain extended by `n_iterations` new rows.
+
+## Details
+
+The `pmcmc` function implements the particle Markov chain Monte Carlo
+algorithm of Andrieu, Doucet and Holenstein (2010). Parameters are
+explored with a Metropolis-Hastings sampler, where the likelihood of the
+data is estimated with a bootstrap particle filter for each proposal.
+The parameters to estimate can be continuous (`ldata`) or global
+(`gdata`) model parameters, and are specified in the `priors` argument
+together with their prior distributions.
+
+At each iteration, a new parameter value is proposed from a mixture of
+two multivariate normal distributions: a fixed component with covariance
+`covmat`, and an adaptive component estimated from the covariance of the
+samples in the chain so far (Roberts and Rosenthal 2009). Adaptive
+updates start at the iteration given by `adaptive`, and the mixing
+proportion between the two components is controlled by `adaptmix`.
+
+If `theta` is `NULL`, the initial parameter value is sampled from the
+prior distribution(s). If `covmat` is `NULL`, the initial covariance
+matrix for the proposal distribution is a diagonal matrix scaled from
+`theta`.
+
+The fit can be continued with `continue_pmcmc()` to run additional
+iterations, starting from the final state of the returned object. The
+observation process is not stored in the object and must be supplied
+again when continuing. Note that a chain from a previous run can also be
+passed to `pmcmc()` via the `chain` argument.
 
 ## References
 
@@ -182,8 +237,3 @@ Carlo methods. *Journal of the Royal Statistical Society, Series B*
 G. O. Roberts and J. S. Rosenthal. Examples of adaptive MCMC. *Journal
 of computational and graphical statistics*, **18**(2), 349–367, 2009.
 [doi:10.1198/jcgs.2009.06134](https://doi.org/10.1198/jcgs.2009.06134)
-
-## See also
-
-[`continue_pmcmc`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md)
-for running additional iterations.

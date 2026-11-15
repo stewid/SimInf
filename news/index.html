@@ -47,7 +47,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">BUG FIXES<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
-<ul><li><p>Fixed the acceptance step in <code><a href="../reference/continue_pmcmc.html">continue_pmcmc()</a></code> to compare on the log scale, so that proposals with a very high acceptance ratio are no longer incorrectly rejected; this could previously stall the chain at a starting point with a low likelihood.</p></li>
+<ul><li><p>Fixed the acceptance step in <code><a href="../reference/pmcmc.html">continue_pmcmc()</a></code> to compare on the log scale, so that proposals with a very high acceptance ratio are no longer incorrectly rejected; this could previously stall the chain at a starting point with a low likelihood.</p></li>
 <li><p>Fixed the initial continuous state (<code>v0</code>) in the model returned by <code><a href="../reference/pfilter.html">pfilter()</a></code>, which stored an incorrect <code>v0</code> in the filtered trajectory.</p></li>
 <li><p>Fixed the trajectory sampled by <code><a href="../reference/pfilter.html">pfilter()</a></code> to be drawn proportionally to the final particle weights instead of uniformly, correcting the sampling distribution to match the particle weights.</p></li>
 </ul></div>

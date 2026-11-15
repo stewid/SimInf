@@ -38,5 +38,5 @@ post-processing and visualization.
 the PMCMC analysis,
 [`SimInf_pmcmc`](http://stewid.github.io/SimInf/reference/SimInf_pmcmc-class.md)
 for the class definition, and
-[`continue_pmcmc`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md)
+[`continue_pmcmc`](http://stewid.github.io/SimInf/reference/pmcmc.md)
 for continuing an existing PMCMC run.

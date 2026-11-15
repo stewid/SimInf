@@ -83,5 +83,5 @@ Class `SimInf_pmcmc`
 
 [`pmcmc`](http://stewid.github.io/SimInf/reference/pmcmc.md) for the
 main PMCMC function,
-[`continue_pmcmc`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md)
+[`continue_pmcmc`](http://stewid.github.io/SimInf/reference/pmcmc.md)
 for continuing an existing PMCMC run.

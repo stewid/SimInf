@@ -26,7 +26,7 @@
 ### BUG FIXES
 
 - Fixed the acceptance step in
-  [`continue_pmcmc()`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md)
+  [`continue_pmcmc()`](http://stewid.github.io/SimInf/reference/pmcmc.md)
   to compare on the log scale, so that proposals with a very high
   acceptance ratio are no longer incorrectly rejected; this could
   previously stall the chain at a starting point with a low likelihood.
