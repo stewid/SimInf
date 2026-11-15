@@ -225,8 +225,41 @@ setMethod(
 ##' combines a particle filter for likelihood evaluation with a
 ##' Metropolis-Hastings MCMC sampler for parameter estimation.
 ##'
+##' @details
+##'
+##' The \code{pmcmc} function implements the particle Markov chain
+##' Monte Carlo algorithm of Andrieu, Doucet and Holenstein (2010).
+##' Parameters are explored with a Metropolis-Hastings sampler, where
+##' the likelihood of the data is estimated with a bootstrap particle
+##' filter for each proposal. The parameters to estimate can be
+##' continuous (\code{ldata}) or global (\code{gdata}) model
+##' parameters, and are specified in the \code{priors} argument
+##' together with their prior distributions.
+##'
+##' At each iteration, a new parameter value is proposed from a
+##' mixture of two multivariate normal distributions: a fixed
+##' component with covariance \code{covmat}, and an adaptive component
+##' estimated from the covariance of the samples in the chain so far
+##' (Roberts and Rosenthal 2009). Adaptive updates start at the
+##' iteration given by \code{adaptive}, and the mixing proportion
+##' between the two components is controlled by \code{adaptmix}.
+##'
+##' If \code{theta} is \code{NULL}, the initial parameter value is
+##' sampled from the prior distribution(s). If \code{covmat} is
+##' \code{NULL}, the initial covariance matrix for the proposal
+##' distribution is a diagonal matrix scaled from \code{theta}.
+##'
+##' The fit can be continued with \code{continue_pmcmc()} to run
+##' additional iterations, starting from the final state of the
+##' returned object. The observation process is not stored in the
+##' object and must be supplied again when continuing. Note that a
+##' chain from a previous run can also be passed to \code{pmcmc()} via
+##' the \code{chain} argument.
+##'
 ##' @param model The \code{SimInf_model} object to estimate parameters
 ##'     for.
+##' @param object The \code{SimInf_pmcmc} object to continue, as
+##'     returned by \code{pmcmc()}.
 ##' @template obs_process-param
 ##' @template data-param
 ##' @template priors-param
@@ -257,16 +290,16 @@ setMethod(
 ##'     provided, \code{theta} and \code{covmat} must be \code{NULL},
 ##'     and \code{n_iterations} can be 0.
 ##' @template verbose-param-pmcmc
-##' @return A \code{\linkS4class{SimInf_pmcmc}} object containing the
-##'     fitted parameters and diagnostic information for all
-##'     iterations.
+##' @return For \code{pmcmc()}, a \code{\linkS4class{SimInf_pmcmc}}
+##'     object containing the fitted parameters and diagnostic
+##'     information for all iterations. For \code{continue_pmcmc()},
+##'     the \code{\linkS4class{SimInf_pmcmc}} object with the chain
+##'     extended by \code{n_iterations} new rows.
 ##' @references
 ##'
 ##' \Andrieu2010
 ##'
 ##' \Roberts2009
-##' @seealso \code{\link{continue_pmcmc}} for running additional
-##'     iterations.
 ##' @export
 ## nolint start: brace_linter
 setGeneric(
@@ -609,27 +642,7 @@ get_verbose <- function(verbose) {
     NULL
 }
 
-##' Continue PMCMC from an Existing Chain
-##'
-##' Extends a previously computed PMCMC chain by running additional
-##' iterations of the Metropolis-Hastings sampler, continuing from the
-##' final state of the previous chain.
-##'
-##' @param object A \code{\linkS4class{SimInf_pmcmc}} object from a
-##'     previous \code{pmcmc} or \code{continue_pmcmc} call.
-##' @template obs_process-param
-##' @template n_iterations-param
-##' @template post_proposal-param
-##' @param init_model Optional function applied before each particle
-##'     filter run. Must accept a \code{SimInf_model} object and
-##'     return the modified model. Useful for setting initial states
-##'     (\code{u0}, \code{v0}) before running trajectories with
-##'     proposed parameters.
-##' @template post-particle-param
-##' @template verbose-param-pmcmc
-##' @return The updated \code{\linkS4class{SimInf_pmcmc}} object with
-##'     the chain extended by \code{n_iterations} new rows.
-##' @seealso \code{\link{pmcmc}} for initiating a new PMCMC chain.
+##' @rdname pmcmc
 ##' @export
 ## nolint start: brace_linter
 setGeneric(
@@ -646,7 +659,7 @@ setGeneric(
 )
 ## nolint end
 
-##' @rdname continue_pmcmc
+##' @rdname pmcmc
 ##' @export
 setMethod(
     "continue_pmcmc",
