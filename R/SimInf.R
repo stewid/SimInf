@@ -180,10 +180,6 @@
 ##'   nodes,
 ##'   col = ifelse(infected, "blue", "yellow"),
 ##'   pch = 20,
-##'   xlim = range(nodes$x),
-##'   ylim = range(nodes$y),
-##'   xaxs = "i",
-##'   yaxs = "i",
 ##'   asp = 1
 ##' )
 NULL
