@@ -188,7 +188,8 @@ continue_pmcmc(
 
 - object:
 
-  The `SimInf_pmcmc` object to continue, as returned by `pmcmc()`.
+  For `continue_pmcmc()`: the `SimInf_pmcmc` object to continue, as
+  returned by `pmcmc()`.
 
 ## Value
 
