@@ -863,9 +863,14 @@ abc_internal <- function(object,
 ##' \code{tolerance} argument, or determined adaptively using the
 ##' algorithm of Simola and others (2021), see \code{n_init}. The
 ##' returned \code{\linkS4class{SimInf_abc}} object holds the accepted
-##' particles for each generation together with their weights.
+##' particles for each generation together with their weights. The fit
+##' can be continued with \code{continue_abc()} to run additional
+##' generations, for example with smaller tolerances, starting from
+##' the final generation of the returned object.
 ##'
 ##' @param model The \code{SimInf_model} object to generate data from.
+##' @param object In \code{continue_abc()}, the \code{SimInf_abc}
+##'     object to continue from.
 ##' @template priors-param
 ##' @param n_particles An integer \code{(>1)} specifying the number of
 ##'     particles to approximate the posterior with.
@@ -885,7 +890,7 @@ abc_internal <- function(object,
 ##'     function is the result from a \code{run} of the model with one
 ##'     trajectory attached to it. The second argument,
 ##'     \code{generation}, to \code{distance} is an integer with the
-##'     generation of the particle(s). Further arguments that can
+##'     generation of the particle(s). Further arguments that can be
 ##'     passed to the \code{distance} function comes from the
 ##'     \code{data} argument in the \code{abc} function. Depending on
 ##'     the underlying model structure, data for one or more particles
@@ -913,16 +918,25 @@ abc_internal <- function(object,
 ##'     run. If the \code{n_init} parameter is specified, then
 ##'     \code{tolerance} must be \code{NULL}.
 ##' @param data Optional data to be passed to the \code{distance}
-##'     function. Default is \code{NULL}.
+##'     function. Default is \code{NULL}. Note that the data is not
+##'     stored in the \code{SimInf_abc} object, so
+##'     \code{continue_abc()} must be given the same data again to
+##'     continue the fit under the same conditions.
 ##' @template verbose-param
 ##' @template post_gen-param
-##' @template init_model-param
+##' @param init_model An optional function that, if non-NULL, is
+##'     applied before running each proposal. The function must accept
+##'     one argument of type \code{SimInf_model} with the current
+##'     model of the fitting process. This function can be useful to
+##'     specify the initial state of \code{u0} or \code{v0} of the
+##'     model before running a trajectory with proposed
+##'     parameters. Note: not supported when the parameters to fit are
+##'     in ldata.
 ##' @return A \code{SimInf_abc} object.
 ##' @seealso \code{\link[=plot,SimInf_abc-method]{plot}},
 ##'     \code{\link[=summary,SimInf_abc-method]{summary}} and
 ##'     \code{\link[=as.data.frame.SimInf_abc]{as.data.frame}} to
-##'     inspect the fitted object, \code{\link{continue_abc}} to
-##'     refine the fit with additional generations, and
+##'     inspect the fitted object, and
 ##'     \code{\link[=run,SimInf_model-method]{run}} to generate
 ##'     trajectories from the posterior.
 ##' @references
@@ -932,7 +946,6 @@ abc_internal <- function(object,
 ##' \Simola2021
 ##' @include density_ratio.R
 ##' @export
-##' @seealso \code{\link{continue_abc}}.
 ##' @examples
 ##' ## For reproducibility, specify a seed and the number of threads to
 ##' ## use.
@@ -1080,21 +1093,7 @@ setMethod(
     }
 )
 
-##' Run more generations of ABC SMC
-##'
-##' @param object The \code{SimInf_abc} object to continue from.
-##' @param tolerance A numeric matrix (number of summary statistics
-##'     \eqn{\times} number of generations) where each column contains
-##'     the tolerances for a generation and each row contains a
-##'     sequence of gradually decreasing tolerances. Can also be a
-##'     numeric vector if there is only one summary statistic. The
-##'     tolerance determines the number of generations of ABC-SMC to
-##'     run.
-##' @param data Optional data to be passed to the
-##'     \code{SimInf_abc@@fn} function. Default is \code{NULL}.
-##' @template verbose-param
-##' @template post_gen-param
-##' @return A \code{SimInf_abc} object.
+##' @rdname abc
 ##' @export
 ## nolint start: brace_linter
 setGeneric(
@@ -1109,7 +1108,7 @@ setGeneric(
 )
 ## nolint end
 
-##' @rdname continue_abc
+##' @rdname abc
 ##' @export
 setMethod(
     "continue_abc",

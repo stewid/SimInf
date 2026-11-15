@@ -3,6 +3,8 @@
 \name{abc}
 \alias{abc}
 \alias{abc,SimInf_model-method}
+\alias{continue_abc}
+\alias{continue_abc,SimInf_abc-method}
 \title{Approximate Bayesian computation}
 \usage{
 abc(
@@ -29,6 +31,22 @@ abc(
   verbose = FALSE,
   post_gen = NULL,
   init_model = NULL
+)
+
+continue_abc(
+  object,
+  tolerance = NULL,
+  data = NULL,
+  verbose = FALSE,
+  post_gen = NULL
+)
+
+\S4method{continue_abc}{SimInf_abc}(
+  object,
+  tolerance = NULL,
+  data = NULL,
+  verbose = FALSE,
+  post_gen = NULL
 )
 }
 \arguments{
@@ -64,7 +82,7 @@ first argument, \code{result}, passed to the \code{distance}
 function is the result from a \code{run} of the model with one
 trajectory attached to it. The second argument,
 \code{generation}, to \code{distance} is an integer with the
-generation of the particle(s). Further arguments that can
+generation of the particle(s). Further arguments that can be
 passed to the \code{distance} function comes from the
 \code{data} argument in the \code{abc} function. Depending on
 the underlying model structure, data for one or more particles
@@ -94,7 +112,10 @@ run. If the \code{n_init} parameter is specified, then
 \code{tolerance} must be \code{NULL}.}
 
 \item{data}{Optional data to be passed to the \code{distance}
-function. Default is \code{NULL}.}
+function. Default is \code{NULL}. Note that the data is not
+stored in the \code{SimInf_abc} object, so
+\code{continue_abc()} must be given the same data again to
+continue the fit under the same conditions.}
 
 \item{verbose}{prints diagnostic messages when \code{TRUE}.
 Default is \code{FALSE}.}
@@ -110,7 +131,12 @@ applied before running each proposal. The function must accept
 one argument of type \code{SimInf_model} with the current
 model of the fitting process. This function can be useful to
 specify the initial state of \code{u0} or \code{v0} of the
-model before running a trajectory with proposed parameters.}
+model before running a trajectory with proposed
+parameters. Note: not supported when the parameters to fit are
+in ldata.}
+
+\item{object}{In \code{continue_abc()}, the \code{SimInf_abc}
+object to continue from.}
 }
 \value{
 A \code{SimInf_abc} object.
@@ -136,7 +162,10 @@ The tolerances can either be supplied explicitly through the
 \code{tolerance} argument, or determined adaptively using the
 algorithm of Simola and others (2021), see \code{n_init}. The
 returned \code{\linkS4class{SimInf_abc}} object holds the accepted
-particles for each generation together with their weights.
+particles for each generation together with their weights. The fit
+can be continued with \code{continue_abc()} to run additional
+generations, for example with smaller tolerances, starting from
+the final generation of the returned object.
 }
 \examples{
 ## For reproducibility, specify a seed and the number of threads to
@@ -226,10 +255,7 @@ plot(fit)
 \code{\link[=plot,SimInf_abc-method]{plot}},
     \code{\link[=summary,SimInf_abc-method]{summary}} and
     \code{\link[=as.data.frame.SimInf_abc]{as.data.frame}} to
-    inspect the fitted object, \code{\link{continue_abc}} to
-    refine the fit with additional generations, and
+    inspect the fitted object, and
     \code{\link[=run,SimInf_model-method]{run}} to generate
     trajectories from the posterior.
-
-\code{\link{continue_abc}}.
 }
