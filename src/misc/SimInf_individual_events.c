@@ -3,7 +3,7 @@
  * disease spread simulations.
  *
  * Copyright (C) 2022 Ivana Rodriguez Ewerlöf
- * Copyright (C) 2015 -- 2025 Stefan Widgren
+ * Copyright (C) 2015 -- 2026 Stefan Widgren
  *
  * SimInf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@
  * @param node integer vector with the node that the event operates
  *        on.
  * @param dest integer vector with the destination node for an
- *        external transfer event i.e.of proposals to generate Not
- *        used for the other event types.
+ *        external transfer event (i.e., movement). Not used for the
+ *        other event types.
  * @param path integer vector for temporary storage of one-based
  *        indices to the events in the current search.
  * @param keep integer vector for results with 1 for each event to
@@ -158,8 +158,8 @@ SimInf_find_longest_path(
  * @param node integer vector with the node that the event operates
  *        on.
  * @param dest integer vector with the destination node for an
- *        external transfer event i.e.of proposals to generate Not
- *        used for the other event types.
+ *        external transfer event (i.e., movement). Not used for the
+ *        other event types.
  * @return a logical vector with TRUE for each event to keep, else
  *         FALSE.
  */
