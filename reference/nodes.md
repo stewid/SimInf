@@ -33,14 +33,13 @@ set_num_threads(1)
 ## to the first node.
 u0 <- u0_SIR()
 u0$I[1] <- 1
-tspan <- seq(from = 1, to = 4*365, by = 1)
 
 model <- SIR(
-    u0     = u0,
-    tspan  = tspan,
-    events = events_SIR(),
-    beta   = 0.16,
-    gamma  = 0.077
+  u0     = u0,
+  tspan  = seq(from = 1, to = 4*365, by = 1),
+  events = events_SIR(),
+  beta   = 0.16,
+  gamma  = 0.077
 )
 
 ## Run the model to generate a single stochastic trajectory.
@@ -55,10 +54,12 @@ infected <- colSums(trajectory(result, ~ I, format = "matrix")) > 0
 ## Display infected nodes in 'blue' and non-infected nodes in 'yellow'.
 data("nodes", package = "SimInf")
 plot(
-    y ~ x,
-    nodes,
-    col = ifelse(infected, "blue", "yellow"),
-    pch = 20,
-    asp = 1
+  y ~ x,
+  nodes,
+  col = ifelse(infected, "blue", "yellow"),
+  pch = 20,
+  xlim = range(nodes$x),
+  ylim = range(nodes$y),
+  asp = 1
 )
 ```
