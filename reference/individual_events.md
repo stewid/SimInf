@@ -1,11 +1,10 @@
 # Individual events
 
 In many countries, individual-based livestock data are collected to
-enable contact tracing during disease outbreaks. However, the livestock
-databases are not always structured in such a way that relevant
-information for disease spread simulations is easily retrieved. The aim
-of this function is to facilitate cleaning livestock event data and
-prepare it for usage in SimInf.
+enable contact tracing during disease outbreaks. However, the
+individual-based records are not always directly usable for disease
+spread simulations. The aim of this function is to facilitate cleaning
+livestock event data and prepare it for usage in SimInf.
 
 ## Usage
 
@@ -18,11 +17,14 @@ individual_events(events)
 - events:
 
   a `data.frame` with the columns `id`, `event`, `time`, `node`, and
-  `dest` to define the events, see `details`.
+  `dest` to define the events, see Details.
 
 ## Value
 
+A
 [SimInf_individual_events](http://stewid.github.io/SimInf/reference/SimInf_individual_events-class.md)
+object with the cleaned events for all individuals with a plausible life
+history.
 
 ## Details
 
@@ -31,15 +33,14 @@ the following columns:
 
 - **id:** an integer or character identifier of the individual.
 
-- **event:** four event types are supported: *exit*, *enter*, *internal
-  transfer*, and *external transfer*. When assigning the events, they
-  can either be coded as a numerical value or a character string:
-  *exit;* `0` or `'exit'`, *enter;* `1` or `'enter'`, *internal
-  transfer;* `2` or `'intTrans'`, and *external transfer;* `3` or
+- **event:** three event types are supported: *exit*, *enter*, and
+  *external transfer*. When assigning the events, they can either be
+  coded as a numerical value or a character string: *exit;* `0` or
+  `'exit'`, *enter;* `1` or `'enter'`, and *external transfer;* `3` or
   `'extTrans'`.
 
 - **time:** an integer, character, or date (of class `Date`) for when
-  the event occured. If it's a character it must be able to coerce to
+  the event occurred. If it's a character it must be able to coerce to
   `Date`.
 
 - **node:** an integer or character identifier of the source node.
@@ -47,6 +48,28 @@ the following columns:
 - **dest:** an integer or character identifier of the destination node
   for movement events, and 'dest' will be replaced with `NA` for
   non-movement events.
+
+The node and dest identifiers must uniquely identify the nodes, e.g.
+'XY010', 'XY023', etc. Character identifiers are internally mapped to
+consecutive integer node numbers.
+
+For each individual, duplicated records are removed and the function
+then searches for the longest plausible sequence of events: an enter
+event, followed by zero or more external transfer events, and finally an
+exit event, if the individual has one. In a plausible sequence, the
+events occur in chronological order and each external transfer departs
+from the node where the individual was last registered. All events that
+are not part of the longest plausible sequence are discarded, and if no
+plausible sequence can be found for an individual, all events for that
+individual are dropped. The method is described in Ewerlöf and others
+(2025).
+
+Internal transfer events, such as ageing of an individual, are not part
+of the event data that this function accepts. Instead, internal transfer
+events can be generated when the cleaned events are applied to a model,
+see
+[`node_events`](http://stewid.github.io/SimInf/reference/node_events.md)
+and its `age` argument.
 
 ## References
 
