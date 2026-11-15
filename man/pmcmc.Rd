@@ -3,6 +3,8 @@
 \name{pmcmc}
 \alias{pmcmc}
 \alias{pmcmc,SimInf_model-method}
+\alias{continue_pmcmc}
+\alias{continue_pmcmc,SimInf_pmcmc-method}
 \title{Particle Markov chain Monte Carlo (PMCMC) algorithm}
 \usage{
 pmcmc(
@@ -40,6 +42,26 @@ pmcmc(
   chain = NULL,
   verbose = FALSE
 )
+
+continue_pmcmc(
+  object,
+  obs_process,
+  n_iterations,
+  post_proposal = NULL,
+  init_model = NULL,
+  post_particle = NULL,
+  verbose = FALSE
+)
+
+\S4method{continue_pmcmc}{SimInf_pmcmc}(
+  object,
+  obs_process,
+  n_iterations,
+  post_proposal = NULL,
+  init_model = NULL,
+  post_particle = NULL,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{model}{The \code{SimInf_model} object to estimate parameters
@@ -64,8 +86,12 @@ with one replicate per particle for that time-point, see
 \code{\link{trajectory,SimInf_model-method}}. The second
 argument to the \code{obs_process} function is a
 \code{data.frame} containing the rows in \code{data} for the
-time-point that the function is called for. Note that the
-function must return the log of the density.}
+time-point that the function is called for. The function must
+return a numeric vector with one entry per replicate,
+containing the log of the density. A value of \code{-Inf} is
+valid and means that the observation is impossible for that
+replicate, whereas \code{NA}, \code{NaN} and \code{+Inf} raise
+an error.}
 
 \item{data}{A \code{data.frame} holding the time series data.}
 
@@ -141,23 +167,54 @@ is printed every 100 iterations. For pmcmc, it is possible to
 get information every nth information by specifying
 \code{verbose=n}, for example, \code{verbose=1} or
 \code{verbose=10}.}
+
+\item{object}{The \code{SimInf_pmcmc} object to continue, as
+returned by \code{pmcmc()}.}
 }
 \value{
-A \code{\linkS4class{SimInf_pmcmc}} object containing the
-    fitted parameters and diagnostic information for all
-    iterations.
+For \code{pmcmc()}, a \code{\linkS4class{SimInf_pmcmc}}
+    object containing the fitted parameters and diagnostic
+    information for all iterations. For \code{continue_pmcmc()},
+    the \code{\linkS4class{SimInf_pmcmc}} object with the chain
+    extended by \code{n_iterations} new rows.
 }
 \description{
 Estimates model parameters using the PMCMC algorithm, which
 combines a particle filter for likelihood evaluation with a
 Metropolis-Hastings MCMC sampler for parameter estimation.
 }
+\details{
+The \code{pmcmc} function implements the particle Markov chain
+Monte Carlo algorithm of Andrieu, Doucet and Holenstein (2010).
+Parameters are explored with a Metropolis-Hastings sampler, where
+the likelihood of the data is estimated with a bootstrap particle
+filter for each proposal. The parameters to estimate can be
+continuous (\code{ldata}) or global (\code{gdata}) model
+parameters, and are specified in the \code{priors} argument
+together with their prior distributions.
+
+At each iteration, a new parameter value is proposed from a
+mixture of two multivariate normal distributions: a fixed
+component with covariance \code{covmat}, and an adaptive component
+estimated from the covariance of the samples in the chain so far
+(Roberts and Rosenthal 2009). Adaptive updates start at the
+iteration given by \code{adaptive}, and the mixing proportion
+between the two components is controlled by \code{adaptmix}.
+
+If \code{theta} is \code{NULL}, the initial parameter value is
+sampled from the prior distribution(s). If \code{covmat} is
+\code{NULL}, the initial covariance matrix for the proposal
+distribution is a diagonal matrix scaled from \code{theta}.
+
+The fit can be continued with \code{continue_pmcmc()} to run
+additional iterations, starting from the final state of the
+returned object. The observation process is not stored in the
+object and must be supplied again when continuing. Note that a
+chain from a previous run can also be passed to \code{pmcmc()} via
+the \code{chain} argument.
+}
 \references{
 \Andrieu2010
 
 \Roberts2009
-}
-\seealso{
-\code{\link{continue_pmcmc}} for running additional
-    iterations.
 }

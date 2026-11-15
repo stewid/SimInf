@@ -163,7 +163,7 @@ pfilter_data <- function(model, data) {
     }
 
     if (data$time[1] < model@tspan[1])
-        stop("data$time[1] must be >= tspan[1].", call. = TRUE)
+        stop("data$time[1] must be >= tspan[1].", call. = FALSE)
 
     lapply(split(data, data$time), function(x) {
         rownames(x) <- NULL
@@ -366,7 +366,7 @@ pfilter_internal <- function(model,
 
     a <- matrix(data = NA_integer_,
                 nrow = n_particles,
-                ncol = Ntspan + 1L)
+                ncol = Ntspan)
     a[, 1L] <- seq_len(n_particles)
 
     ## Loop over time series.
@@ -440,13 +440,34 @@ pfilter_internal <- function(model,
             w <- evalq(eval(parse(text = expr)), envir = e)
         }
 
-        if (!all(all(is.finite(w)),
-                 identical(length(w), n_particles),
-                 is.vector(w, "numeric"))) {
-            stop("Invalid observation process.", call. = FALSE)
+        ## The observation process must return a numeric vector with
+        ## one entry per particle. -Inf is a valid outcome: the
+        ## observation is impossible under that particle, and the
+        ## weight normalisation assigns it zero weight. +Inf/NA/NaN
+        ## are invalid.
+        if (!identical(length(w), n_particles) || !is.vector(w, "numeric")) {
+            stop("Invalid observation process: weights must be ",
+                 "a numeric vector of length 'n_replicates'.",
+                 call. = FALSE)
+        }
+        if (anyNA(w)) {
+            stop("Invalid observation process: weights must not be NA or NaN.",
+                 call. = FALSE)
+        }
+        if (any(w == Inf)) {
+            stop("Invalid observation process: weights must not be +Inf.",
+                 call. = FALSE)
         }
 
         max_w <- max(w)
+        if (!is.finite(max_w)) {
+            return(methods::new("SimInf_pfilter",
+                                model = model,
+                                n_particles = n_particles,
+                                loglik = -Inf,
+                                ess = ess))
+        }
+
         w <- exp(w - max_w)
         sum_w <- sum(w)
         loglik <- loglik + max_w + log(sum_w) - log(n_particles)
@@ -455,10 +476,16 @@ pfilter_internal <- function(model,
 
         ## Systematic resampling. Sample the ancestor indices for the
         ## next generation of particles from the normalised weights.
-        a[, i + 1L] <- .Call(SimInf_systematic_resampling, w)
+        if (i < Ntspan) {
+            a[, i + 1L] <- .Call(SimInf_systematic_resampling, w)
+        }
     }
 
-    ## Sample a trajectory.
+    ## Sample a trajectory. Draw one particle proportionally to its
+    ## final normalised weight (the final generation is never
+    ## resampled), then trace it backward through the ancestor indices
+    ## 'a' to recover a full trajectory consistent with the resampling
+    ## performed at each time-step.
     model@U <- matrix(data = NA_integer_,
                       nrow = n_nodes(model) * n_compartments(model),
                       ncol = Ntspan)
@@ -466,15 +493,7 @@ pfilter_internal <- function(model,
                       nrow = n_nodes(model) * Nd,
                       ncol = Ntspan)
 
-    ## Sample a trajectory. Sample one particle uniformly from the
-    ## final particle system. The weights are already incorporated in
-    ## the last resampling step, which equalised the weights, so
-    ## sampling uniformly from the particles after resampling is
-    ## equivalent to sampling proportionally to the weights.  Trace
-    ## the sampled particle backward through the ancestor indices 'a'
-    ## to recover a full trajectory that is consistent with the
-    ## resampling performed at each time-step.
-    i <- sample.int(n_particles, 1)
+    i <- sample.int(n = n_particles, size = 1L, prob = w)
     for (j in rev(seq_len(Ntspan))) {
         u_i <- seq.int(
             from = (i - 1L) * n_nodes(model) * n_compartments(model) + 1L,
@@ -531,10 +550,12 @@ pfilter_internal <- function(model,
 ##'     on trajectories that are consistent with the data and yields a
 ##'     weighted approximation of the filtered state distribution at
 ##'     each observation time. The accuracy of the approximation
-##'     improves as the number of particles increases.  After the
-##'     final observation, a single trajectory is sampled from the
-##'     particle system and traced backward through the ancestral
-##'     lineages.
+##'     improves as the number of particles increases. After the final
+##'     observation, a single trajectory is sampled from the particle
+##'     system and traced backward through the ancestral lineages. The
+##'     effective sample size is recorded at each observation, before
+##'     resampling, as a measure of how unevenly the weights were
+##'     distributed at that step.
 ##' @param model The \code{SimInf_model} object to simulate data from.
 ##' @template obs_process-param
 ##' @template data-param
@@ -544,13 +565,98 @@ pfilter_internal <- function(model,
 ##'     trajectory: a single trajectory sampled from the particle
 ##'     system (traced backward through the particle genealogy),
 ##'     together with the estimated log-likelihood of the data and the
-##'     effective sample size at each time-step. See
-##'     \code{\link{SimInf_pfilter-class}} for details.
+##'     effective sample size at each observation. See
+##'     \code{\link{SimInf_pfilter-class}} for details. If an
+##'     observation is impossible under every particle (\code{logLik =
+##'     -Inf}), the object carries no trajectory: the model is
+##'     returned without a trajectory attached, and the effective
+##'     sample size is zero for the remaining time steps.
 ##' @references
 ##'
 ##' \Gordon1993
 ##' @export
-##' @example man/examples/pfilter.R
+##' @examples
+##' ## For reproducibility, specify a seed and the number of threads to
+##' ## use.
+##' set.seed(22)
+##' set_num_threads(1)
+##'
+##' ## Let us consider an SIR model in a closed population with 'N = 100'
+##' ## individuals of whom one is initially infectious and the rest
+##' ## are susceptible. First, generate one realisation from the model
+##' ## with known parameters 'beta = 0.16' and 'gamma = 0.077'. Specify
+##' ## 'tspan' to record the process every third day. Then, use
+##' ## 'pfilter' to apply the bootstrap particle filter algorithm on
+##' ## the simulated data.
+##' model <- SIR(
+##'   u0 = data.frame(
+##'     S = 99,
+##'     I = 1,
+##'     R = 0),
+##'   tspan = seq(1, 100, by = 3),
+##'   beta = 0.16,
+##'   gamma = 0.077
+##' )
+##'
+##' ## Run the SIR model to generate the latent number of infected
+##' ## individuals, then simulate noisy observations from them using the
+##' ## Poisson observation model.
+##' infected <- trajectory(run(model))
+##' infected$Iobs <- rpois(nrow(infected), infected$I)
+##'
+##' ## Use a Poisson observation process for the number of infected
+##' ## individuals: Iobs ~ poisson(I + 1e-6). A small constant '1e-6' is
+##' ## added because the latent counts 'I' can be zero, in which case the
+##' ## Poisson density is zero for any positive observation. In the
+##' ## particle filter this would give the particle zero likelihood, so
+##' ## the small constant keeps the weights finite; without it, the
+##' ## filter would fail with a zero log-likelihood whenever all particles
+##' ## have zero infections at an observation time
+##'
+##' ## Use a low number of particles here to keep the run-time of
+##' ## the example short. In practice, you may need to increase the
+##' ## number of particles for a smoother filtered trajectory.
+##' pf <- pfilter(
+##'   model,
+##'   obs_process = Iobs ~ poisson(I + 1e-6),
+##'   data = infected[, c("time", "Iobs")],
+##'   n_particles = 100
+##' )
+##'
+##' ## Print a brief summary.
+##' pf
+##'
+##' ## Compare the number of infected individuals 'I' in the filtered
+##' ## trajectory with the noisy observations 'Iobs' and the latent
+##' ## trajectory 'I'.
+##' plot(pf, ~I, ylim = c(0, 30))
+##'
+##' lines(
+##'   Iobs ~ time,
+##'   infected,
+##'   col = "blue",
+##'   lwd = 2,
+##'   type = "s",
+##'   lty = "dotted"
+##' )
+##'
+##' lines(
+##'   I ~ time,
+##'   infected,
+##'   col = "red",
+##'   lwd = 2,
+##'   type = "s",
+##'   lty = "dashed"
+##' )
+##'
+##' ## Add a legend.
+##' legend(
+##'   "topright",
+##'   legend = c("Filtered", "Observed", "Latent"),
+##'   col = c("black", "blue", "red"),
+##'   lty = c("solid", "dotted", "dashed"),
+##'   lwd = 2
+##' )
 ## nolint start: brace_linter
 setGeneric(
     "pfilter",

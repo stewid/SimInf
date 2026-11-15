@@ -451,9 +451,9 @@ summary_expected <- c(
     "Compartments",
     "------------",
     "   Min. 1st Qu. Median Mean 3rd Qu. Max.",
-    " S 53.0    61.5   71.0 71.1    80.5 90.0",
-    " I  0.0    15.0   15.0 13.7    16.5 18.0",
-    " R  0.0     4.5   12.0 13.7    22.0 31.0")
+    " S 50.0    58.5   73.0 71.1    84.0 90.0",
+    " I  0.0    13.5   17.0 14.3    17.5 21.0",
+    " R  0.0     2.5   10.0 13.1    22.0 33.0")
 
 summary_observed <- capture.output(summary(pf))
 stopifnot(identical(summary_observed, summary_expected))
@@ -466,16 +466,16 @@ stopifnot(identical(
     data.frame(
         node = c(1L, 1L, 1L, 1L, 1L, 1L, 1L),
         time = c(1L, 4L, 7L, 10L, 13L, 16L, 19L),
-        S = c(90L, 83L, 78L, 71L, 65L, 58L, 53L),
-        I = c(0L, 15L, 15L, 17L, 15L, 18L, 16L),
-        R = c(0L, 2L, 7L, 12L, 20L, 24L, 31L))))
+        S = c(90L, 87L, 81L, 73L, 61L, 56L, 50L),
+        I = c(0L, 12L, 15L, 17L, 21L, 18L, 17L),
+        R = c(0L, 1L, 4L, 10L, 18L, 26L, 33L))))
 
 stopifnot(identical(
     prevalence(pf, I ~ .)$time,
     c(1, 4, 7, 10, 13, 16, 19)))
 
 stopifnot(all(abs(prevalence(pf, I ~ .)$prevalence
-                  - c(0, 0.15, 0.15, 0.17, 0.15, 0.18, 0.16)) < tol))
+                  - c(0, 0.12, 0.15, 0.17, 0.21, 0.18, 0.17)) < tol))
 
 ## Modify the model object to check that 'gdata' is included in the
 ## output.
@@ -509,9 +509,86 @@ summary_expected <- c(
     "Compartments",
     "------------",
     "   Min. 1st Qu. Median Mean 3rd Qu. Max.",
-    " S 53.0    61.5   71.0 71.1    80.5 90.0",
-    " I  0.0    15.0   15.0 13.7    16.5 18.0",
-    " R  0.0     4.5   12.0 13.7    22.0 31.0")
+    " S 50.0    58.5   73.0 71.1    84.0 90.0",
+    " I  0.0    13.5   17.0 14.3    17.5 21.0",
+    " R  0.0     2.5   10.0 13.1    22.0 33.0")
 
 summary_observed <- capture.output(summary(pf))
 stopifnot(identical(summary_observed, summary_expected))
+
+infected <- data.frame(
+    time = c(1, 4, 7),
+    Iobs = c(1, 2, 2))
+
+model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
+             tspan = 1:7,
+             beta = 0.16,
+             gamma = 0.077)
+
+res <- assertError(
+    pfilter(model,
+            obs_process = function(result, data) {
+                1
+            },
+            data = infected,
+            n_particles = 2))
+
+check_error(res, paste0("Invalid observation process: weights must be a ",
+                        "numeric vector of length 'n_replicates'."))
+
+res <- assertError(
+    pfilter(model,
+            obs_process = function(result, data) {
+                c("a", "b")
+            },
+            data = infected,
+            n_particles = 2))
+
+check_error(res, paste0("Invalid observation process: weights must be a ",
+                        "numeric vector of length 'n_replicates'."))
+
+res <- assertError(
+    pfilter(model,
+            obs_process = function(result, data) {
+                c(1, NA_real_)
+            },
+            data = infected,
+            n_particles = 2))
+
+check_error(res, "Invalid observation process: weights must not be NA or NaN.")
+
+res <- assertError(
+    pfilter(model,
+            obs_process = function(result, data) {
+                c(1, NaN)
+            },
+            data = infected,
+            n_particles = 2))
+
+check_error(res, "Invalid observation process: weights must not be NA or NaN.")
+
+res <- assertError(
+    pfilter(model,
+            obs_process = function(result, data) {
+                c(1, Inf)
+            },
+            data = infected,
+            n_particles = 2))
+
+check_error(res, "Invalid observation process: weights must not be +Inf.")
+
+pf <- pfilter(model,
+              obs_process = function(result, data) {
+                  if (data$time == 1) c(-1, -2) else c(-Inf, -Inf)
+              },
+              data = infected,
+              n_particles = 2)
+
+model@tspan <- c(1, 4, 7)
+stopifnot(identical(pf@model, model))
+stopifnot(identical(logLik(pf), -Inf))
+stopifnot(identical(pf@n_particles, 2L))
+stopifnot(length(pf@ess) == 3,
+          all(abs(pf@ess[1] - (1 + exp(-1))^2 / (1 + exp(-2))) < tol),
+          pf@ess[2] == 0,
+          pf@ess[3] == 0)

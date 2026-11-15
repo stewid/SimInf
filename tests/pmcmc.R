@@ -181,13 +181,13 @@ show_expected <- c(
     "Number of iterations: 5",
     "Number of particles: 10",
     "Mixing proportion for adaptive proposal: 0.05",
-    "Acceptance ratio: 0.400",
+    "Acceptance ratio: 0.200",
     "",
     "Quantiles, mean and standard deviation for each variable",
     "--------------------------------------------------------",
     "         2.5%     25%     50%     75%   97.5%    Mean      SD",
-    "beta  0.15252 0.16000 0.16000 0.16749 0.16749 0.16133 0.00657",
-    "gamma 0.07000 0.07700 0.07700 0.07883 0.07883 0.07618 0.00399")
+    "beta  0.16093 0.16930 0.16930 0.16930 0.16930 0.16744 0.00416",
+    "gamma 0.07737 0.08075 0.08075 0.08075 0.08075 0.08000 0.00168")
 show_observed <- capture.output(show(fit))
 stopifnot(identical(show_observed, show_expected))
 
@@ -196,7 +196,7 @@ summary_expected <- c(
     "---------------------------------",
     "Number of iterations: 5",
     "Number of particles: 10",
-    "Acceptance ratio: 0.400",
+    "Acceptance ratio: 0.200",
     "Model: SIR",
     "Number of nodes: 1",
     "",
@@ -208,16 +208,16 @@ summary_expected <- c(
     "Quantiles, mean and standard deviation for each variable",
     "--------------------------------------------------------",
     "         2.5%     25%     50%     75%   97.5%    Mean      SD",
-    "beta  0.15252 0.16000 0.16000 0.16749 0.16749 0.16133 0.00657",
-    "gamma 0.07000 0.07700 0.07700 0.07883 0.07883 0.07618 0.00399")
+    "beta  0.16093 0.16930 0.16930 0.16930 0.16930 0.16744 0.00416",
+    "gamma 0.07737 0.08075 0.08075 0.08075 0.08075 0.08000 0.00168")
 summary_observed <- capture.output(summary(fit))
 stopifnot(identical(summary_observed, summary_expected))
 
 df_expected <- data.frame(
-    beta = c(0.16, 0.16, 0.151684128334327, 0.167494206136944,
-             0.167494206136944),
-    gamma = c(0.077, 0.077, 0.0692266474978343, 0.0788292483376109,
-              0.0788292483376109))
+    beta = c(0.16, 0.169295128865927, 0.169295128865927,
+             0.169295128865927, 0.169295128865927),
+    gamma = c(0.077, 0.0807494548897359, 0.0807494548897359,
+              0.0807494548897359, 0.0807494548897359))
 df_observed <- as.data.frame(fit)
 stopifnot(all(abs(df_observed$beta - df_expected$beta) < tol))
 stopifnot(all(abs(df_observed$gamma - df_expected$gamma) < tol))
@@ -364,15 +364,14 @@ set.seed(22)
 fit@chain <- fit@chain[sample(1:5, 100, replace = TRUE), ]
 progress_expected <- c(
 "             2.5%       25%       50%       75%     97.5%      Mean        SD",
-"logPost -79.76966 -79.76966 -79.45949 -79.45949 -78.50691 -79.37731   0.47179",
-"beta      0.15168   0.16000   0.16000   0.16749   0.16749   0.16110   0.00592",
-"gamma     0.06923   0.07700   0.07700   0.07883   0.07883   0.07606   0.00364")
+"logPost -79.45949 -77.34194 -77.34194 -77.34194 -77.34194 -77.78662   0.86684",
+"beta      0.16000   0.16930   0.16930   0.16930   0.16930   0.16734   0.00381",
+"gamma     0.07700   0.08075   0.08075   0.08075   0.08075   0.07996   0.00153")
 progress_observed <- capture.output(SimInf:::pmcmc_progress(fit, 100, TRUE))
 ## Skip first three lines since it contains a timestamp.
 progress_observed <- progress_observed[4:7]
 stopifnot(identical(progress_observed, progress_expected))
 
-plot(fit)
 plot(fit, ~trace)
 
 fit@model@gdata <- c(beta = 0, gamma = 0)

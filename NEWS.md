@@ -2,10 +2,30 @@
 
 ## CHANGES OR IMPROVEMENTS
 
+* Improved and clarified the documentation for `pfilter()`, `abc()`,
+  `pmcmc()`, `trajectory()`, `run()`, `select_matrix()` and the
+  `shift_matrix()` accessors, including worked-out examples.
+
+* `pfilter()` now handles an observation that is impossible under a
+  particle: such a particle is assigned zero weight instead of raising
+  an error. If the observation is impossible under every particle,
+  `pfilter()` returns an object with a log-likelihood of -Inf, and,
+  for consistency, the trajectory is not sampled.
+
 ## BUG FIXES
 
-* Fixed the initial continuous state (v0) in the model returned by
-  pfilter.
+* Fixed the acceptance step in `continue_pmcmc()` to compare on the
+  log scale, so that proposals with a very high acceptance ratio are
+  no longer incorrectly rejected; this could previously stall the
+  chain at a starting point with a low likelihood.
+
+* Fixed the initial continuous state (`v0`) in the model returned by
+  `pfilter()`, which stored an incorrect `v0` in the filtered
+  trajectory.
+
+* Fixed the trajectory sampled by `pfilter()` to be drawn
+  proportionally to the final particle weights instead of uniformly,
+  correcting the sampling distribution to match the particle weights.
 
 # SimInf 11.1.0 (2026-09-08)
 
