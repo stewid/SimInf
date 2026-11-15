@@ -3,8 +3,8 @@
 ## CHANGES OR IMPROVEMENTS
 
 * Improved and clarified the documentation for `pfilter()`, `abc()`,
-  `trajectory()`, `run()`, `select_matrix()` and the `shift_matrix()`
-  accessors, including worked-out examples.
+  `pmcmc()`, `trajectory()`, `run()`, `select_matrix()` and the
+  `shift_matrix()` accessors, including worked-out examples.
 
 * `pfilter()` now handles an observation that is impossible under a
   particle: such a particle is assigned zero weight instead of raising
