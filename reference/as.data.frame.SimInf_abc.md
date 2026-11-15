@@ -45,5 +45,5 @@ include:
 ABC analysis,
 [`SimInf_abc`](http://stewid.github.io/SimInf/reference/SimInf_abc-class.md)
 for the class definition, and
-[`continue_abc`](http://stewid.github.io/SimInf/reference/continue_abc.md)
-for continuing an existing ABC run.
+[`continue_abc`](http://stewid.github.io/SimInf/reference/abc.md) for
+continuing an existing ABC run.

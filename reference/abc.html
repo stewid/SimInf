@@ -109,6 +109,23 @@ towards an approximation of the posterior distribution.</p>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  post_gen <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  init_model <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">continue_abc</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  tolerance <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  post_gen <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'SimInf_abc'</span></span>
+<span><span class="fu">continue_abc</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  tolerance <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  post_gen <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -157,7 +174,7 @@ first argument, <code>result</code>, passed to the <code>distance</code>
 function is the result from a <code>run</code> of the model with one
 trajectory attached to it. The second argument,
 <code>generation</code>, to <code>distance</code> is an integer with the
-generation of the particle(s). Further arguments that can
+generation of the particle(s). Further arguments that can be
 passed to the <code>distance</code> function comes from the
 <code>data</code> argument in the <code>abc</code> function. Depending on
 the underlying model structure, data for one or more particles
@@ -191,7 +208,10 @@ run. If the <code>n_init</code> parameter is specified, then
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p>Optional data to be passed to the <code>distance</code>
-function. Default is <code>NULL</code>.</p></dd>
+function. Default is <code>NULL</code>. Note that the data is not
+stored in the <code>SimInf_abc</code> object, so
+<code>continue_abc()</code> must be given the same data again to
+continue the fit under the same conditions.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -213,7 +233,14 @@ applied before running each proposal. The function must accept
 one argument of type <code>SimInf_model</code> with the current
 model of the fitting process. This function can be useful to
 specify the initial state of <code>u0</code> or <code>v0</code> of the
-model before running a trajectory with proposed parameters.</p></dd>
+model before running a trajectory with proposed
+parameters. Note: not supported when the parameters to fit are
+in ldata.</p></dd>
+
+
+<dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+<dd><p>In <code>continue_abc()</code>, the <code>SimInf_abc</code>
+object to continue from.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -226,7 +253,10 @@ model before running a trajectory with proposed parameters.</p></dd>
 <code>tolerance</code> argument, or determined adaptively using the
 algorithm of Simola and others (2021), see <code>n_init</code>. The
 returned <code><a href="SimInf_abc-class.html">SimInf_abc</a></code> object holds the accepted
-particles for each generation together with their weights.</p>
+particles for each generation together with their weights. The fit
+can be continued with <code>continue_abc()</code> to run additional
+generations, for example with smaller tolerances, starting from
+the final generation of the returned object.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -238,11 +268,9 @@ particles for each generation together with their weights.</p>
     <div class="dont-index"><p><code><a href="plot-SimInf_abc-method.html">plot</a></code>,
     <code><a href="summary-SimInf_abc-method.html">summary</a></code> and
     <code><a href="as.data.frame.SimInf_abc.html">as.data.frame</a></code> to
-    inspect the fitted object, <code><a href="continue_abc.html">continue_abc</a></code> to
-    refine the fit with additional generations, and
+    inspect the fitted object, and
     <code><a href="run.html">run</a></code> to generate
-    trajectories from the posterior.</p>
-<p><code><a href="continue_abc.html">continue_abc</a></code>.</p></div>
+    trajectories from the posterior.</p></div>
     </div>
 
     <div class="section level2">

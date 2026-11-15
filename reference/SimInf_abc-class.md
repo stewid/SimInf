@@ -116,5 +116,5 @@ convergence diagnostics.
 
 [`abc`](http://stewid.github.io/SimInf/reference/abc.md) for the main
 ABC function and
-[`continue_abc`](http://stewid.github.io/SimInf/reference/continue_abc.md)
-for continuing an ABC run.
+[`continue_abc`](http://stewid.github.io/SimInf/reference/abc.md) for
+continuing an ABC run.

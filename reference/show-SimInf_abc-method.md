@@ -30,7 +30,7 @@ The `object`, returned invisibly.
 
 [`abc`](http://stewid.github.io/SimInf/reference/abc.md) for running an
 ABC analysis,
-[`continue_abc`](http://stewid.github.io/SimInf/reference/continue_abc.md)
-for continuing an existing ABC chain,
+[`continue_abc`](http://stewid.github.io/SimInf/reference/abc.md) for
+continuing an existing ABC chain,
 [`SimInf_abc`](http://stewid.github.io/SimInf/reference/SimInf_abc-class.md)
 for the class definition.

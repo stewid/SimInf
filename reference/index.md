@@ -93,7 +93,8 @@
 
   Class `SimInf_pmcmc`
 
-- [`abc()`](http://stewid.github.io/SimInf/reference/abc.md) :
+- [`abc()`](http://stewid.github.io/SimInf/reference/abc.md)
+  [`continue_abc()`](http://stewid.github.io/SimInf/reference/abc.md) :
   Approximate Bayesian computation
 
 - [`add_spatial_coupling_to_ldata()`](http://stewid.github.io/SimInf/reference/add_spatial_coupling_to_ldata.md)
@@ -121,9 +122,6 @@
 
 - [`boxplot(`*`<SimInf_model>`*`)`](http://stewid.github.io/SimInf/reference/boxplot-SimInf_model-method.md)
   : Box plot of number of individuals in each compartment
-
-- [`continue_abc()`](http://stewid.github.io/SimInf/reference/continue_abc.md)
-  : Run more generations of ABC SMC
 
 - [`continue_pmcmc()`](http://stewid.github.io/SimInf/reference/continue_pmcmc.md)
   : Continue PMCMC from an Existing Chain

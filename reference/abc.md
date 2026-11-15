@@ -44,6 +44,23 @@ abc(
   post_gen = NULL,
   init_model = NULL
 )
+
+continue_abc(
+  object,
+  tolerance = NULL,
+  data = NULL,
+  verbose = FALSE,
+  post_gen = NULL
+)
+
+# S4 method for class 'SimInf_abc'
+continue_abc(
+  object,
+  tolerance = NULL,
+  data = NULL,
+  verbose = FALSE,
+  post_gen = NULL
+)
 ```
 
 ## Arguments
@@ -87,7 +104,7 @@ abc(
   passed to the `distance` function is the result from a `run` of the
   model with one trajectory attached to it. The second argument,
   `generation`, to `distance` is an integer with the generation of the
-  particle(s). Further arguments that can passed to the `distance`
+  particle(s). Further arguments that can be passed to the `distance`
   function comes from the `data` argument in the `abc` function.
   Depending on the underlying model structure, data for one or more
   particles have been generated in each call to `distance`. If the
@@ -117,7 +134,9 @@ abc(
 - data:
 
   Optional data to be passed to the `distance` function. Default is
-  `NULL`.
+  `NULL`. Note that the data is not stored in the `SimInf_abc` object,
+  so `continue_abc()` must be given the same data again to continue the
+  fit under the same conditions.
 
 - verbose:
 
@@ -137,7 +156,12 @@ abc(
   proposal. The function must accept one argument of type `SimInf_model`
   with the current model of the fitting process. This function can be
   useful to specify the initial state of `u0` or `v0` of the model
-  before running a trajectory with proposed parameters.
+  before running a trajectory with proposed parameters. Note: not
+  supported when the parameters to fit are in ldata.
+
+- object:
+
+  In `continue_abc()`, the `SimInf_abc` object to continue from.
 
 ## Value
 
@@ -150,7 +174,9 @@ argument, or determined adaptively using the algorithm of Simola and
 others (2021), see `n_init`. The returned
 [`SimInf_abc`](http://stewid.github.io/SimInf/reference/SimInf_abc-class.md)
 object holds the accepted particles for each generation together with
-their weights.
+their weights. The fit can be continued with `continue_abc()` to run
+additional generations, for example with smaller tolerances, starting
+from the final generation of the returned object.
 
 ## References
 
@@ -171,13 +197,9 @@ Analysis*, **16**(2), 397–423, 2021.
 [`summary`](http://stewid.github.io/SimInf/reference/summary-SimInf_abc-method.md)
 and
 [`as.data.frame`](http://stewid.github.io/SimInf/reference/as.data.frame.SimInf_abc.md)
-to inspect the fitted object,
-[`continue_abc`](http://stewid.github.io/SimInf/reference/continue_abc.md)
-to refine the fit with additional generations, and
+to inspect the fitted object, and
 [`run`](http://stewid.github.io/SimInf/reference/run.md) to generate
 trajectories from the posterior.
-
-[`continue_abc`](http://stewid.github.io/SimInf/reference/continue_abc.md).
 
 ## Examples
 
