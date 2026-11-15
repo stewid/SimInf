@@ -126,6 +126,34 @@ its <code>age</code> argument.</p>
     <div class="dont-index"><p><code><a href="node_events.html">node_events</a></code>.</p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Example data with two animals; the first has a plausible life</span></span></span>
+<span class="r-in"><span><span class="co">## history, the second does not since the animal is not registered at</span></span></span>
+<span class="r-in"><span><span class="co">## the node of the exit event.</span></span></span>
+<span class="r-in"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>         <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  event <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"enter"</span>, <span class="st">"extTrans"</span>, <span class="st">"exit"</span>, <span class="st">"extTrans"</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"enter"</span>, <span class="st">"extTrans"</span>, <span class="st">"exit"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2025-03-01"</span>, <span class="st">"2025-06-15"</span>, <span class="st">"2025-09-01"</span>, <span class="st">"2025-12-01"</span>,</span></span>
+<span class="r-in"><span>           <span class="st">"2025-04-01"</span>, <span class="st">"2025-07-01"</span>, <span class="st">"2025-10-01"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N1"</span>, <span class="st">"N1"</span>, <span class="st">"N2"</span>, <span class="st">"N2"</span>,</span></span>
+<span class="r-in"><span>           <span class="st">"N3"</span>, <span class="st">"N3"</span>, <span class="st">"N5"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  dest <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"N2"</span>, <span class="cn">NA</span>, <span class="st">"N3"</span>,</span></span>
+<span class="r-in"><span>           <span class="cn">NA</span>, <span class="st">"N4"</span>, <span class="cn">NA</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Keep the longest plausible life history for each animal: the</span></span></span>
+<span class="r-in"><span><span class="co">## movement after the exit event of the first animal is discarded, and</span></span></span>
+<span class="r-in"><span><span class="co">## all events of the second animal are dropped.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu">individual_events</span><span class="op">(</span><span class="va">events</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   id    event       time node dest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1    enter 2025-03-01   N1 &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1 extTrans 2025-06-15   N1   N2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1     exit 2025-09-01   N2 &lt;NA&gt;</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -82,3 +82,32 @@ Medicine*, **243**, 106608, 2025.
 ## See also
 
 [`node_events`](http://stewid.github.io/SimInf/reference/node_events.md).
+
+## Examples
+
+``` r
+## Example data with two animals; the first has a plausible life
+## history, the second does not since the animal is not registered at
+## the node of the exit event.
+events <- data.frame(
+  id = c(1, 1, 1, 1,
+         2, 2, 2),
+  event = c("enter", "extTrans", "exit", "extTrans",
+            "enter", "extTrans", "exit"),
+  time = c("2025-03-01", "2025-06-15", "2025-09-01", "2025-12-01",
+           "2025-04-01", "2025-07-01", "2025-10-01"),
+  node = c("N1", "N1", "N2", "N2",
+           "N3", "N3", "N5"),
+  dest = c(NA, "N2", NA, "N3",
+           NA, "N4", NA)
+)
+
+## Keep the longest plausible life history for each animal: the
+## movement after the exit event of the first animal is discarded, and
+## all events of the second animal are dropped.
+as.data.frame(individual_events(events))
+#>   id    event       time node dest
+#> 1  1    enter 2025-03-01   N1 <NA>
+#> 2  1 extTrans 2025-06-15   N1   N2
+#> 3  1     exit 2025-09-01   N2 <NA>
+```
