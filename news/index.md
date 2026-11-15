@@ -7,6 +7,7 @@
 - Improved and clarified the documentation for
   [`pfilter()`](http://stewid.github.io/SimInf/reference/pfilter.md),
   [`abc()`](http://stewid.github.io/SimInf/reference/abc.md),
+  [`pmcmc()`](http://stewid.github.io/SimInf/reference/pmcmc.md),
   [`trajectory()`](http://stewid.github.io/SimInf/reference/trajectory.md),
   [`run()`](http://stewid.github.io/SimInf/reference/run.md),
   [`select_matrix()`](http://stewid.github.io/SimInf/reference/select_matrix.md)
