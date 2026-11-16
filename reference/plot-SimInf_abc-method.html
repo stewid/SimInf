@@ -7,14 +7,15 @@ scatterplot matrix of the pairwise distributions is produced, with
 one row and column per parameter.
 Diagonal panels: Display a normalized density
     estimate with a rug plot showing individual samples. The
-    density is estimated with the bandwidth
-    'SJ-ste' and scaled so that its peak equals one.
+    density is estimated with the 'SJ-ste' bandwidth
+    selection method and scaled so that its peak equals one.
 Upper triangular panels: Display scatterplots of
     the raw parameter samples for each pair of variables.
 Lower triangular panels: Display contour lines of
     the 2D kernel density estimate of the joint distribution
-    between parameter pairs, computed with MASS::kde2d with
-    default bandwidths and without contour labels.
+    between parameter pairs, computed with the kde2d
+    function in the 'MASS' package with default bandwidths and
+    without contour labels.
 If only a single parameter is selected, a single density plot with
 a rug is produced."><meta property="og:description" content="Produce diagnostic plots of the Approximate Bayesian Computation
 (ABC) posterior distribution stored in a SimInf_abc
@@ -24,14 +25,15 @@ scatterplot matrix of the pairwise distributions is produced, with
 one row and column per parameter.
 Diagonal panels: Display a normalized density
     estimate with a rug plot showing individual samples. The
-    density is estimated with the bandwidth
-    'SJ-ste' and scaled so that its peak equals one.
+    density is estimated with the 'SJ-ste' bandwidth
+    selection method and scaled so that its peak equals one.
 Upper triangular panels: Display scatterplots of
     the raw parameter samples for each pair of variables.
 Lower triangular panels: Display contour lines of
     the 2D kernel density estimate of the joint distribution
-    between parameter pairs, computed with MASS::kde2d with
-    default bandwidths and without contour labels.
+    between parameter pairs, computed with the kde2d
+    function in the 'MASS' package with default bandwidths and
+    without contour labels.
 If only a single parameter is selected, a single density plot with
 a rug is produced."><meta property="og:image" content="http://stewid.github.io/SimInf/logo.svg"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -80,14 +82,15 @@ selected generation are displayed: with more than one parameter, a
 scatterplot matrix of the pairwise distributions is produced, with
 one row and column per parameter.</p><ul><li><p><strong>Diagonal panels</strong>: Display a normalized density
     estimate with a rug plot showing individual samples. The
-    density is estimated with the <code>bandwidth</code>
-    <code>'SJ-ste'</code> and scaled so that its peak equals one.</p></li>
+    density is estimated with the <code>'SJ-ste'</code> bandwidth
+    selection method and scaled so that its peak equals one.</p></li>
 <li><p><strong>Upper triangular panels</strong>: Display scatterplots of
     the raw parameter samples for each pair of variables.</p></li>
 <li><p><strong>Lower triangular panels</strong>: Display contour lines of
     the 2D kernel density estimate of the joint distribution
-    between parameter pairs, computed with <code><a href="https://rdrr.io/pkg/MASS/man/kde2d.html" class="external-link">MASS::kde2d</a></code> with
-    default bandwidths and without contour labels.</p></li>
+    between parameter pairs, computed with the <code>kde2d</code>
+    function in the 'MASS' package with default bandwidths and
+    without contour labels.</p></li>
 </ul><p>If only a single parameter is selected, a single density plot with
 a rug is produced.</p>
     </div>
