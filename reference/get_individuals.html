@@ -63,15 +63,40 @@ at a specified time-point.</p>
 
 
 <dt id="arg-time">time<a class="anchor" aria-label="anchor" href="#arg-time"></a></dt>
-<dd><p>the time-point for the lookup of individuals. Default
-is <code>NULL</code> which means to extract the individuals at the
-minimum time-point in the events object <code>x</code>.</p></dd>
+<dd><p>the time-point for the lookup of individuals, either
+an integer or, if the events were specified with dates, a
+date. Default is <code>NULL</code> which means to extract the
+individuals at the minimum time-point in the events object
+<code>x</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>a <code>data.frame</code> with the columns <code>id</code>,
     <code>node</code>, and <code>age</code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>All individuals must have an 'enter' event, otherwise an error is
+raised. An individual is included in the result if its 'enter'
+event occurs at or before the time-point, and it has no 'exit'
+event at or before the time-point. Individuals that have not yet
+entered are omitted, and so are individuals that have exited.</p>
+<p>The node is the node where the individual was last registered; if
+the last event is an external transfer, the node is the
+destination of that movement. Node identifiers are returned as
+specified in the events, e.g. 'XY010'.</p>
+<p>The age is the difference between the time-point and the 'enter'
+event of the individual. If the events were specified with dates,
+the age is in days, otherwise it is in the same unit as the
+time-points.</p>
+<p>The rows in the returned data frame are ordered by <code>id</code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="individual_events.html">individual_events</a></code>,
+    <code><a href="node_events.html">node_events</a></code>,
+    <code><a href="u0_from_individual_events.html">u0_from_individual_events</a></code>.</p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
