@@ -123,8 +123,9 @@ the element <code>d[i, j]</code> contains the distance between node
 <span class="r-in"><span>  cutoff <span class="op">=</span> <span class="fl">300</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Inspect the sparse matrix structure.</span></span></span>
-<span class="r-in"><span><span class="co">## Note: The matrix is symmetric and the diagonal is zero.</span></span></span>
+<span class="r-in"><span><span class="co">## Inspect the sparse matrix structure. Display the first ten</span></span></span>
+<span class="r-in"><span><span class="co">## rows and columns; the matrix is symmetric and the diagonal</span></span></span>
+<span class="r-in"><span><span class="co">## is zero.</span></span></span>
 <span class="r-in"><span><span class="va">d</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 x 10 sparse Matrix of class "dgCMatrix"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                              </span>
@@ -139,7 +140,9 @@ the element <code>d[i, j]</code> contains the distance between node
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]   .   .   .   .   . 300 200 100   . 100</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [10,]   .   .   .   .   .   . 300 200 100   .</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Count the number of neighbors for the first node.</span></span></span>
+<span class="r-in"><span><span class="co">## Count the number of neighbors within the cutoff for the</span></span></span>
+<span class="r-in"><span><span class="co">## first node, i.e. the number of non-zero distances in the</span></span></span>
+<span class="r-in"><span><span class="co">## first row of the full matrix.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">d</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10</span>
 </code></pre></div>
