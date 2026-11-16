@@ -530,14 +530,15 @@ setMethod(
 ##' \itemize{
 ##'   \item \strong{Diagonal panels}: Display a normalized density
 ##'     estimate with a rug plot showing individual samples. The
-##'     density is estimated with the \code{\link[stats]{bandwidth}}
-##'     \code{'SJ-ste'} and scaled so that its peak equals one.
+##'     density is estimated with the \code{'SJ-ste'} bandwidth
+##'     selection method and scaled so that its peak equals one.
 ##'   \item \strong{Upper triangular panels}: Display scatterplots of
 ##'     the raw parameter samples for each pair of variables.
 ##'   \item \strong{Lower triangular panels}: Display contour lines of
 ##'     the 2D kernel density estimate of the joint distribution
-##'     between parameter pairs, computed with \code{MASS::kde2d} with
-##'     default bandwidths and without contour labels.
+##'     between parameter pairs, computed with the \code{kde2d}
+##'     function in the 'MASS' package with default bandwidths and
+##'     without contour labels.
 ##' }
 ##' If only a single parameter is selected, a single density plot with
 ##' a rug is produced.
