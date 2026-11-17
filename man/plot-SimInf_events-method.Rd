@@ -7,12 +7,20 @@
 \S4method{plot}{SimInf_events}(x, frame.plot = FALSE, ...)
 }
 \arguments{
-\item{x}{The events data to plot.}
+\item{x}{The \code{SimInf_events} object to plot.}
 
 \item{frame.plot}{Draw a frame around each plot. Default is FALSE.}
 
-\item{...}{Additional arguments affecting the plot}
+\item{...}{Additional arguments affecting the plot, passed on to
+the plot function for each panel.}
 }
 \description{
-Display the distribution of scheduled events over time
+Plot the number of individuals that are affected by the scheduled
+events over time. The events are aggregated per time-point and
+event type, and four panels are produced in a 2x2 grid, one for
+each event type: 'Exit', 'Enter', 'Internal transfer', and
+'External transfer'. All panels share the same y-axis scale to
+ease comparison between the event types, and an event type with no
+events is displayed as a line at zero.  If the time-points in the
+events are dates, the x-axis is displayed as dates.
 }
