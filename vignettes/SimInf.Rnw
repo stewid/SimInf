@@ -657,8 +657,7 @@ library("SimInf")
     individuals should be written to \code{U\_sparse}.  The layout of
     the data in \code{U\_sparse} is identical to \code{U}.  Please
     note that the data in \code{U\_sparse} is numeric and that the
-    data in \code{U} is integer.  Also note that replicates (see
-    above) cannot be used when data is written to a sparse matrix.\\
+    data in \code{U} is integer.\\
 
     \code{u0} & The initial number of individuals in each compartment
     in every node.  Integer matrix ($\Ncompartments \times
@@ -681,9 +680,7 @@ library("SimInf")
     when \code{run} is called, the non-zero entries in
     \code{V\_sparse} indicates where the real-valued continuous state
     should be written to \code{V\_sparse}.  The layout of the data in
-    \code{V\_sparse} is identical to \code{V}.  Please note that
-    replicates (see above) cannot be used when data is written to a
-    sparse matrix.\\
+    \code{V\_sparse} is identical to \code{V}.\\
 
     \code{v0} & The initial value for the real-valued continuous
     state.  Numeric matrix ($N_{ld} \times \Nnodes$).\\
@@ -701,6 +698,9 @@ library("SimInf")
     individuals in a node at a pre-defined time $t$.  \proglang{S}4
     class \code{SimInf\_events}, see Section~\ref{sec:events} and
     Table~\ref{table:scheduled:events}.\\
+
+    \code{replicates} & Number replicates simulated for this model
+    when \code{run} is called.\\
 
     \code{C\_code} & Character vector with optional model \proglang{C}
     code, see Section~\ref{sec:extend}.  If non-empty, the
