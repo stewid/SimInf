@@ -223,7 +223,7 @@
   : Display the distribution of individual events over time
 
 - [`plot(`*`<SimInf_pfilter>`*`)`](http://stewid.github.io/SimInf/reference/plot-SimInf_pfilter-method.md)
-  : Diagnostic plot of a particle filter object
+  : Plot a particle filter object
 
 - [`plot(`*`<SimInf_pmcmc>`*`)`](http://stewid.github.io/SimInf/reference/plot-SimInf_pmcmc-method.md)
   : Display the PMCMC posterior distribution

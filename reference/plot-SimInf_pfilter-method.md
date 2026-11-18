@@ -1,6 +1,14 @@
-# Diagnostic plot of a particle filter object
+# Plot a particle filter object
 
-Diagnostic plot of a particle filter object
+Diagnostic plots of a particle filter (`pfilter`) run. If `y` is
+missing, the function displays two panels: the filtered trajectory of
+the model (top) and the effective sample size (ESS) at each time point
+in `tspan` (bottom). Alternatively, if `y` is a character vector or a
+formula, the plot function for a `SimInf_model` object is called with
+the filtered trajectory, which allows specifying compartments and
+prevalence expressions, see
+[`plot`](http://stewid.github.io/SimInf/reference/plot.md) for more
+details about the specification of a plot.
 
 ## Usage
 
@@ -17,12 +25,12 @@ plot(x, y, ...)
 
 - y:
 
-  If y is `NULL` or missing (default), the filtered trajectory (top) and
-  the effective sample size (bottom) are displayed. If `y` is a
+  If `y` is `NULL` or missing (default), the filtered trajectory (top)
+  and the effective sample size (bottom) are displayed. If `y` is a
   character vector or a formula, the plot function for a `SimInf_model`
   object is called with the filtered trajectory, see
   [`plot`](http://stewid.github.io/SimInf/reference/plot.md) for more
-  details about the specification a plot.
+  details about the specification of a plot.
 
 - ...:
 
