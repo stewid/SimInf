@@ -615,16 +615,27 @@ setMethod(
     }
 )
 
-##' Diagnostic plot of a particle filter object
+##' Plot a particle filter object
+##'
+##' Diagnostic plots of a particle filter (\code{pfilter}) run. If
+##' \code{y} is missing, the function displays two panels: the
+##' filtered trajectory of the model (top) and the effective sample
+##' size (ESS) at each time point in \code{tspan} (bottom).
+##' Alternatively, if \code{y} is a character vector or a formula, the
+##' plot function for a \code{SimInf_model} object is called with the
+##' filtered trajectory, which allows specifying compartments and
+##' prevalence expressions, see
+##' \code{\link[=plot,SimInf_model-method]{plot}} for more details
+##' about the specification of a plot.
 ##'
 ##' @param x The \code{SimInf_pfilter} object to plot.
-##' @param y If y is \code{NULL} or missing (default), the filtered
-##'     trajectory (top) and the effective sample size (bottom) are
-##'     displayed. If \code{y} is a character vector or a formula, the
-##'     plot function for a \code{SimInf_model} object is called with
-##'     the filtered trajectory, see
+##' @param y If \code{y} is \code{NULL} or missing (default), the
+##'     filtered trajectory (top) and the effective sample size
+##'     (bottom) are displayed. If \code{y} is a character vector or a
+##'     formula, the plot function for a \code{SimInf_model} object is
+##'     called with the filtered trajectory, see
 ##'     \code{\link[=plot,SimInf_model-method]{plot}} for more details
-##'     about the specification a plot.
+##'     about the specification of a plot.
 ##' @param ... Other graphical parameters that are passed on to the
 ##'     plot function.
 ##' @aliases plot,SimInf_pfilter-method
