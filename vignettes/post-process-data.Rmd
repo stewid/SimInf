@@ -51,14 +51,11 @@ reproducibility, we set the number of threads and specify a seed.
 ```{r}
 set_num_threads(1)
 
-u0 <- data.frame(
-  S = c(100, 101, 102, 103, 104, 105),
-  I = c(1, 2, 3, 4, 5, 6),
-  R = c(0, 0, 0, 0, 0, 0)
-)
-
 model  <- SIR(
-  u0 = u0,
+  u0 = data.frame(
+    S = c(100, 101, 102, 103, 104, 105),
+    I = c(1, 2, 3, 4, 5, 6),
+    R = c(0, 0, 0, 0, 0, 0)),
   tspan = 1:10,
   beta = 0.16,
   gamma = 0.077
