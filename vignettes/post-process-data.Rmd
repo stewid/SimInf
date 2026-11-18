@@ -46,10 +46,9 @@ you need to:
 - Combine results from multiple simulation runs.
 
 Let's simulate 10 days of data from an SIR model with 6 nodes. For
-reproducibility, we set the seed and specify the number of threads.
+reproducibility, we set the number of threads and specify a seed.
 
 ```{r}
-set.seed(123)
 set_num_threads(1)
 
 u0 <- data.frame(
@@ -65,7 +64,7 @@ model  <- SIR(
   gamma = 0.077
 )
 
-result <- run(model)
+result <- run(model, seed = 123)
 ```
 
 Extract the full trajectory data (all compartments, all nodes).
