@@ -93,10 +93,9 @@ plotting. To support this, <code>SimInf</code> provides the
 <li>Combine results from multiple simulation runs.</li>
 </ul>
 <p>Let’s simulate 10 days of data from an SIR model with 6 nodes. For
-reproducibility, we set the seed and specify the number of threads.</p>
+reproducibility, we set the number of threads and specify a seed.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">u0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">101</span>, <span class="fl">102</span>, <span class="fl">103</span>, <span class="fl">104</span>, <span class="fl">105</span><span class="op">)</span>,</span>
@@ -111,71 +110,71 @@ reproducibility, we set the seed and specify the number of threads.</p>
 <span>  gamma <span class="op">=</span> <span class="fl">0.077</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">123</span><span class="op">)</span></span></code></pre></div>
 <p>Extract the full trajectory data (all compartments, all nodes).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/trajectory.html">trajectory</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##    node time   S  I R</span></span>
-<span><span class="co">## 1     1    1 100  1 0</span></span>
-<span><span class="co">## 2     2    1 101  2 0</span></span>
-<span><span class="co">## 3     3    1 102  3 0</span></span>
-<span><span class="co">## 4     4    1 102  5 0</span></span>
-<span><span class="co">## 5     5    1 103  6 0</span></span>
-<span><span class="co">## 6     6    1 105  6 0</span></span>
-<span><span class="co">## 7     1    2 100  1 0</span></span>
-<span><span class="co">## 8     2    2 101  2 0</span></span>
-<span><span class="co">## 9     3    2 101  4 0</span></span>
-<span><span class="co">## 10    4    2 101  5 1</span></span>
-<span><span class="co">## 11    5    2 103  6 0</span></span>
-<span><span class="co">## 12    6    2 105  6 0</span></span>
-<span><span class="co">## 13    1    3  99  2 0</span></span>
-<span><span class="co">## 14    2    3 101  2 0</span></span>
-<span><span class="co">## 15    3    3 101  4 0</span></span>
-<span><span class="co">## 16    4    3  99  6 2</span></span>
-<span><span class="co">## 17    5    3 101  8 0</span></span>
-<span><span class="co">## 18    6    3 103  7 1</span></span>
-<span><span class="co">## 19    1    4  98  3 0</span></span>
-<span><span class="co">## 20    2    4 101  2 0</span></span>
-<span><span class="co">## 21    3    4 101  4 0</span></span>
-<span><span class="co">## 22    4    4  98  6 3</span></span>
-<span><span class="co">## 23    5    4  99 10 0</span></span>
-<span><span class="co">## 24    6    4 101  8 2</span></span>
-<span><span class="co">## 25    1    5  98  3 0</span></span>
-<span><span class="co">## 26    2    5 101  2 0</span></span>
-<span><span class="co">## 27    3    5 100  5 0</span></span>
-<span><span class="co">## 28    4    5  97  6 4</span></span>
-<span><span class="co">## 29    5    5  98  9 2</span></span>
-<span><span class="co">## 30    6    5 101  6 4</span></span>
-<span><span class="co">## 31    1    6  98  2 1</span></span>
-<span><span class="co">## 32    2    6 101  2 0</span></span>
-<span><span class="co">## 33    3    6 100  5 0</span></span>
-<span><span class="co">## 34    4    6  97  5 5</span></span>
-<span><span class="co">## 35    5    6  98  8 3</span></span>
-<span><span class="co">## 36    6    6 100  7 4</span></span>
-<span><span class="co">## 37    1    7  98  2 1</span></span>
-<span><span class="co">## 38    2    7  98  5 0</span></span>
-<span><span class="co">## 39    3    7 100  5 0</span></span>
-<span><span class="co">## 40    4    7  92 10 5</span></span>
-<span><span class="co">## 41    5    7  98  7 4</span></span>
-<span><span class="co">## 42    6    7  99  8 4</span></span>
-<span><span class="co">## 43    1    8  97  3 1</span></span>
-<span><span class="co">## 44    2    8  98  5 0</span></span>
-<span><span class="co">## 45    3    8  98  6 1</span></span>
-<span><span class="co">## 46    4    8  92  8 7</span></span>
-<span><span class="co">## 47    5    8  95 10 4</span></span>
-<span><span class="co">## 48    6    8  99  8 4</span></span>
-<span><span class="co">## 49    1    9  97  3 1</span></span>
-<span><span class="co">## 50    2    9  97  6 0</span></span>
-<span><span class="co">## 51    3    9  98  4 3</span></span>
-<span><span class="co">## 52    4    9  91  9 7</span></span>
-<span><span class="co">## 53    5    9  94 10 5</span></span>
-<span><span class="co">## 54    6    9  99  7 5</span></span>
-<span><span class="co">## 55    1   10  97  3 1</span></span>
-<span><span class="co">## 56    2   10  96  6 1</span></span>
-<span><span class="co">## 57    3   10  98  4 3</span></span>
-<span><span class="co">## 58    4   10  89 11 7</span></span>
-<span><span class="co">## 59    5   10  93  9 7</span></span>
-<span><span class="co">## 60    6   10  98  8 5</span></span></code></pre>
+<pre><code><span><span class="co">##    node time   S  I  R</span></span>
+<span><span class="co">## 1     1    1 100  1  0</span></span>
+<span><span class="co">## 2     2    1 101  2  0</span></span>
+<span><span class="co">## 3     3    1 102  3  0</span></span>
+<span><span class="co">## 4     4    1 103  4  0</span></span>
+<span><span class="co">## 5     5    1 100  9  0</span></span>
+<span><span class="co">## 6     6    1 104  7  0</span></span>
+<span><span class="co">## 7     1    2 100  1  0</span></span>
+<span><span class="co">## 8     2    2 101  2  0</span></span>
+<span><span class="co">## 9     3    2 102  2  1</span></span>
+<span><span class="co">## 10    4    2 103  3  1</span></span>
+<span><span class="co">## 11    5    2  99  9  1</span></span>
+<span><span class="co">## 12    6    2 104  6  1</span></span>
+<span><span class="co">## 13    1    3 100  0  1</span></span>
+<span><span class="co">## 14    2    3 101  2  0</span></span>
+<span><span class="co">## 15    3    3 102  2  1</span></span>
+<span><span class="co">## 16    4    3 103  3  1</span></span>
+<span><span class="co">## 17    5    3  97  8  4</span></span>
+<span><span class="co">## 18    6    3 104  6  1</span></span>
+<span><span class="co">## 19    1    4 100  0  1</span></span>
+<span><span class="co">## 20    2    4 101  2  0</span></span>
+<span><span class="co">## 21    3    4 102  1  2</span></span>
+<span><span class="co">## 22    4    4 103  3  1</span></span>
+<span><span class="co">## 23    5    4  95 10  4</span></span>
+<span><span class="co">## 24    6    4 103  7  1</span></span>
+<span><span class="co">## 25    1    5 100  0  1</span></span>
+<span><span class="co">## 26    2    5 101  2  0</span></span>
+<span><span class="co">## 27    3    5 102  1  2</span></span>
+<span><span class="co">## 28    4    5 101  5  1</span></span>
+<span><span class="co">## 29    5    5  94 11  4</span></span>
+<span><span class="co">## 30    6    5 103  7  1</span></span>
+<span><span class="co">## 31    1    6 100  0  1</span></span>
+<span><span class="co">## 32    2    6 101  2  0</span></span>
+<span><span class="co">## 33    3    6 102  0  3</span></span>
+<span><span class="co">## 34    4    6 100  6  1</span></span>
+<span><span class="co">## 35    5    6  92 11  6</span></span>
+<span><span class="co">## 36    6    6 102  7  2</span></span>
+<span><span class="co">## 37    1    7 100  0  1</span></span>
+<span><span class="co">## 38    2    7 101  1  1</span></span>
+<span><span class="co">## 39    3    7 102  0  3</span></span>
+<span><span class="co">## 40    4    7 100  5  2</span></span>
+<span><span class="co">## 41    5    7  89 13  7</span></span>
+<span><span class="co">## 42    6    7 102  5  4</span></span>
+<span><span class="co">## 43    1    8 100  0  1</span></span>
+<span><span class="co">## 44    2    8 101  1  1</span></span>
+<span><span class="co">## 45    3    8 102  0  3</span></span>
+<span><span class="co">## 46    4    8  98  7  2</span></span>
+<span><span class="co">## 47    5    8  88 14  7</span></span>
+<span><span class="co">## 48    6    8 102  5  4</span></span>
+<span><span class="co">## 49    1    9 100  0  1</span></span>
+<span><span class="co">## 50    2    9 101  1  1</span></span>
+<span><span class="co">## 51    3    9 102  0  3</span></span>
+<span><span class="co">## 52    4    9  97  7  3</span></span>
+<span><span class="co">## 53    5    9  88 11 10</span></span>
+<span><span class="co">## 54    6    9 102  4  5</span></span>
+<span><span class="co">## 55    1   10 100  0  1</span></span>
+<span><span class="co">## 56    2   10 100  2  1</span></span>
+<span><span class="co">## 57    3   10 102  0  3</span></span>
+<span><span class="co">## 58    4   10  97  7  3</span></span>
+<span><span class="co">## 59    5   10  87 11 11</span></span>
+<span><span class="co">## 60    6   10 101  5  5</span></span></code></pre>
 <p>Extract the number of recovered individuals (R) in the first node
 only.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -183,9 +182,9 @@ only.</p>
 <pre><code><span><span class="co">##    node time R</span></span>
 <span><span class="co">## 1     1    1 0</span></span>
 <span><span class="co">## 2     1    2 0</span></span>
-<span><span class="co">## 3     1    3 0</span></span>
-<span><span class="co">## 4     1    4 0</span></span>
-<span><span class="co">## 5     1    5 0</span></span>
+<span><span class="co">## 3     1    3 1</span></span>
+<span><span class="co">## 4     1    4 1</span></span>
+<span><span class="co">## 5     1    5 1</span></span>
 <span><span class="co">## 6     1    6 1</span></span>
 <span><span class="co">## 7     1    7 1</span></span>
 <span><span class="co">## 8     1    8 1</span></span>
@@ -199,19 +198,19 @@ nodes.</p>
 <span><span class="co">## 1     1    1 0</span></span>
 <span><span class="co">## 2     3    1 0</span></span>
 <span><span class="co">## 3     1    2 0</span></span>
-<span><span class="co">## 4     3    2 0</span></span>
-<span><span class="co">## 5     1    3 0</span></span>
-<span><span class="co">## 6     3    3 0</span></span>
-<span><span class="co">## 7     1    4 0</span></span>
-<span><span class="co">## 8     3    4 0</span></span>
-<span><span class="co">## 9     1    5 0</span></span>
-<span><span class="co">## 10    3    5 0</span></span>
+<span><span class="co">## 4     3    2 1</span></span>
+<span><span class="co">## 5     1    3 1</span></span>
+<span><span class="co">## 6     3    3 1</span></span>
+<span><span class="co">## 7     1    4 1</span></span>
+<span><span class="co">## 8     3    4 2</span></span>
+<span><span class="co">## 9     1    5 1</span></span>
+<span><span class="co">## 10    3    5 2</span></span>
 <span><span class="co">## 11    1    6 1</span></span>
-<span><span class="co">## 12    3    6 0</span></span>
+<span><span class="co">## 12    3    6 3</span></span>
 <span><span class="co">## 13    1    7 1</span></span>
-<span><span class="co">## 14    3    7 0</span></span>
+<span><span class="co">## 14    3    7 3</span></span>
 <span><span class="co">## 15    1    8 1</span></span>
-<span><span class="co">## 16    3    8 1</span></span>
+<span><span class="co">## 16    3    8 3</span></span>
 <span><span class="co">## 17    1    9 1</span></span>
 <span><span class="co">## 18    3    9 3</span></span>
 <span><span class="co">## 19    1   10 1</span></span>
@@ -249,111 +248,111 @@ population.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/prevalence.html">prevalence</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    time prevalence</span></span>
-<span><span class="co">## 1     1 0.03616352</span></span>
-<span><span class="co">## 2     2 0.03773585</span></span>
-<span><span class="co">## 3     3 0.04559748</span></span>
-<span><span class="co">## 4     4 0.05188679</span></span>
-<span><span class="co">## 5     5 0.04874214</span></span>
-<span><span class="co">## 6     6 0.04559748</span></span>
-<span><span class="co">## 7     7 0.05817610</span></span>
-<span><span class="co">## 8     8 0.06289308</span></span>
-<span><span class="co">## 9     9 0.06132075</span></span>
-<span><span class="co">## 10   10 0.06446541</span></span></code></pre>
+<span><span class="co">## 1     1 0.04088050</span></span>
+<span><span class="co">## 2     2 0.03616352</span></span>
+<span><span class="co">## 3     3 0.03301887</span></span>
+<span><span class="co">## 4     4 0.03616352</span></span>
+<span><span class="co">## 5     5 0.04088050</span></span>
+<span><span class="co">## 6     6 0.04088050</span></span>
+<span><span class="co">## 7     7 0.03773585</span></span>
+<span><span class="co">## 8     8 0.04245283</span></span>
+<span><span class="co">## 9     9 0.03616352</span></span>
+<span><span class="co">## 10   10 0.03930818</span></span></code></pre>
 <p>Identical result is obtained with the shorthand <code>I ~ .</code>
 (where <code>.</code> means “all compartments”).</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/prevalence.html">prevalence</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    time prevalence</span></span>
-<span><span class="co">## 1     1 0.03616352</span></span>
-<span><span class="co">## 2     2 0.03773585</span></span>
-<span><span class="co">## 3     3 0.04559748</span></span>
-<span><span class="co">## 4     4 0.05188679</span></span>
-<span><span class="co">## 5     5 0.04874214</span></span>
-<span><span class="co">## 6     6 0.04559748</span></span>
-<span><span class="co">## 7     7 0.05817610</span></span>
-<span><span class="co">## 8     8 0.06289308</span></span>
-<span><span class="co">## 9     9 0.06132075</span></span>
-<span><span class="co">## 10   10 0.06446541</span></span></code></pre>
+<span><span class="co">## 1     1 0.04088050</span></span>
+<span><span class="co">## 2     2 0.03616352</span></span>
+<span><span class="co">## 3     3 0.03301887</span></span>
+<span><span class="co">## 4     4 0.03616352</span></span>
+<span><span class="co">## 5     5 0.04088050</span></span>
+<span><span class="co">## 6     6 0.04088050</span></span>
+<span><span class="co">## 7     7 0.03773585</span></span>
+<span><span class="co">## 8     8 0.04245283</span></span>
+<span><span class="co">## 9     9 0.03616352</span></span>
+<span><span class="co">## 10   10 0.03930818</span></span></code></pre>
 <p>Calculate the proportion of nodes that are infected (at least one I
 individual).</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/prevalence.html">prevalence</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span>, level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    time prevalence</span></span>
-<span><span class="co">## 1     1          1</span></span>
-<span><span class="co">## 2     2          1</span></span>
-<span><span class="co">## 3     3          1</span></span>
-<span><span class="co">## 4     4          1</span></span>
-<span><span class="co">## 5     5          1</span></span>
-<span><span class="co">## 6     6          1</span></span>
-<span><span class="co">## 7     7          1</span></span>
-<span><span class="co">## 8     8          1</span></span>
-<span><span class="co">## 9     9          1</span></span>
-<span><span class="co">## 10   10          1</span></span></code></pre>
+<span><span class="co">## 1     1  1.0000000</span></span>
+<span><span class="co">## 2     2  1.0000000</span></span>
+<span><span class="co">## 3     3  0.8333333</span></span>
+<span><span class="co">## 4     4  0.8333333</span></span>
+<span><span class="co">## 5     5  0.8333333</span></span>
+<span><span class="co">## 6     6  0.6666667</span></span>
+<span><span class="co">## 7     7  0.6666667</span></span>
+<span><span class="co">## 8     8  0.6666667</span></span>
+<span><span class="co">## 9     9  0.6666667</span></span>
+<span><span class="co">## 10   10  0.6666667</span></span></code></pre>
 <p>Calculate the prevalence <strong>within each node</strong>
 individually.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/prevalence.html">prevalence</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">I</span> <span class="op">~</span> <span class="va">S</span> <span class="op">+</span> <span class="va">I</span> <span class="op">+</span> <span class="va">R</span>, level <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##    node time prevalence</span></span>
-<span><span class="co">## 1     1    1 0.00990099</span></span>
-<span><span class="co">## 2     2    1 0.01941748</span></span>
-<span><span class="co">## 3     3    1 0.02857143</span></span>
-<span><span class="co">## 4     4    1 0.04672897</span></span>
-<span><span class="co">## 5     5    1 0.05504587</span></span>
-<span><span class="co">## 6     6    1 0.05405405</span></span>
-<span><span class="co">## 7     1    2 0.00990099</span></span>
-<span><span class="co">## 8     2    2 0.01941748</span></span>
-<span><span class="co">## 9     3    2 0.03809524</span></span>
-<span><span class="co">## 10    4    2 0.04672897</span></span>
-<span><span class="co">## 11    5    2 0.05504587</span></span>
-<span><span class="co">## 12    6    2 0.05405405</span></span>
-<span><span class="co">## 13    1    3 0.01980198</span></span>
-<span><span class="co">## 14    2    3 0.01941748</span></span>
-<span><span class="co">## 15    3    3 0.03809524</span></span>
-<span><span class="co">## 16    4    3 0.05607477</span></span>
-<span><span class="co">## 17    5    3 0.07339450</span></span>
-<span><span class="co">## 18    6    3 0.06306306</span></span>
-<span><span class="co">## 19    1    4 0.02970297</span></span>
-<span><span class="co">## 20    2    4 0.01941748</span></span>
-<span><span class="co">## 21    3    4 0.03809524</span></span>
-<span><span class="co">## 22    4    4 0.05607477</span></span>
-<span><span class="co">## 23    5    4 0.09174312</span></span>
-<span><span class="co">## 24    6    4 0.07207207</span></span>
-<span><span class="co">## 25    1    5 0.02970297</span></span>
-<span><span class="co">## 26    2    5 0.01941748</span></span>
-<span><span class="co">## 27    3    5 0.04761905</span></span>
-<span><span class="co">## 28    4    5 0.05607477</span></span>
-<span><span class="co">## 29    5    5 0.08256881</span></span>
-<span><span class="co">## 30    6    5 0.05405405</span></span>
-<span><span class="co">## 31    1    6 0.01980198</span></span>
-<span><span class="co">## 32    2    6 0.01941748</span></span>
-<span><span class="co">## 33    3    6 0.04761905</span></span>
-<span><span class="co">## 34    4    6 0.04672897</span></span>
-<span><span class="co">## 35    5    6 0.07339450</span></span>
-<span><span class="co">## 36    6    6 0.06306306</span></span>
-<span><span class="co">## 37    1    7 0.01980198</span></span>
-<span><span class="co">## 38    2    7 0.04854369</span></span>
-<span><span class="co">## 39    3    7 0.04761905</span></span>
-<span><span class="co">## 40    4    7 0.09345794</span></span>
-<span><span class="co">## 41    5    7 0.06422018</span></span>
-<span><span class="co">## 42    6    7 0.07207207</span></span>
-<span><span class="co">## 43    1    8 0.02970297</span></span>
-<span><span class="co">## 44    2    8 0.04854369</span></span>
-<span><span class="co">## 45    3    8 0.05714286</span></span>
-<span><span class="co">## 46    4    8 0.07476636</span></span>
-<span><span class="co">## 47    5    8 0.09174312</span></span>
-<span><span class="co">## 48    6    8 0.07207207</span></span>
-<span><span class="co">## 49    1    9 0.02970297</span></span>
-<span><span class="co">## 50    2    9 0.05825243</span></span>
-<span><span class="co">## 51    3    9 0.03809524</span></span>
-<span><span class="co">## 52    4    9 0.08411215</span></span>
-<span><span class="co">## 53    5    9 0.09174312</span></span>
-<span><span class="co">## 54    6    9 0.06306306</span></span>
-<span><span class="co">## 55    1   10 0.02970297</span></span>
-<span><span class="co">## 56    2   10 0.05825243</span></span>
-<span><span class="co">## 57    3   10 0.03809524</span></span>
-<span><span class="co">## 58    4   10 0.10280374</span></span>
-<span><span class="co">## 59    5   10 0.08256881</span></span>
-<span><span class="co">## 60    6   10 0.07207207</span></span></code></pre>
+<pre><code><span><span class="co">##    node time  prevalence</span></span>
+<span><span class="co">## 1     1    1 0.009900990</span></span>
+<span><span class="co">## 2     2    1 0.019417476</span></span>
+<span><span class="co">## 3     3    1 0.028571429</span></span>
+<span><span class="co">## 4     4    1 0.037383178</span></span>
+<span><span class="co">## 5     5    1 0.082568807</span></span>
+<span><span class="co">## 6     6    1 0.063063063</span></span>
+<span><span class="co">## 7     1    2 0.009900990</span></span>
+<span><span class="co">## 8     2    2 0.019417476</span></span>
+<span><span class="co">## 9     3    2 0.019047619</span></span>
+<span><span class="co">## 10    4    2 0.028037383</span></span>
+<span><span class="co">## 11    5    2 0.082568807</span></span>
+<span><span class="co">## 12    6    2 0.054054054</span></span>
+<span><span class="co">## 13    1    3 0.000000000</span></span>
+<span><span class="co">## 14    2    3 0.019417476</span></span>
+<span><span class="co">## 15    3    3 0.019047619</span></span>
+<span><span class="co">## 16    4    3 0.028037383</span></span>
+<span><span class="co">## 17    5    3 0.073394495</span></span>
+<span><span class="co">## 18    6    3 0.054054054</span></span>
+<span><span class="co">## 19    1    4 0.000000000</span></span>
+<span><span class="co">## 20    2    4 0.019417476</span></span>
+<span><span class="co">## 21    3    4 0.009523810</span></span>
+<span><span class="co">## 22    4    4 0.028037383</span></span>
+<span><span class="co">## 23    5    4 0.091743119</span></span>
+<span><span class="co">## 24    6    4 0.063063063</span></span>
+<span><span class="co">## 25    1    5 0.000000000</span></span>
+<span><span class="co">## 26    2    5 0.019417476</span></span>
+<span><span class="co">## 27    3    5 0.009523810</span></span>
+<span><span class="co">## 28    4    5 0.046728972</span></span>
+<span><span class="co">## 29    5    5 0.100917431</span></span>
+<span><span class="co">## 30    6    5 0.063063063</span></span>
+<span><span class="co">## 31    1    6 0.000000000</span></span>
+<span><span class="co">## 32    2    6 0.019417476</span></span>
+<span><span class="co">## 33    3    6 0.000000000</span></span>
+<span><span class="co">## 34    4    6 0.056074766</span></span>
+<span><span class="co">## 35    5    6 0.100917431</span></span>
+<span><span class="co">## 36    6    6 0.063063063</span></span>
+<span><span class="co">## 37    1    7 0.000000000</span></span>
+<span><span class="co">## 38    2    7 0.009708738</span></span>
+<span><span class="co">## 39    3    7 0.000000000</span></span>
+<span><span class="co">## 40    4    7 0.046728972</span></span>
+<span><span class="co">## 41    5    7 0.119266055</span></span>
+<span><span class="co">## 42    6    7 0.045045045</span></span>
+<span><span class="co">## 43    1    8 0.000000000</span></span>
+<span><span class="co">## 44    2    8 0.009708738</span></span>
+<span><span class="co">## 45    3    8 0.000000000</span></span>
+<span><span class="co">## 46    4    8 0.065420561</span></span>
+<span><span class="co">## 47    5    8 0.128440367</span></span>
+<span><span class="co">## 48    6    8 0.045045045</span></span>
+<span><span class="co">## 49    1    9 0.000000000</span></span>
+<span><span class="co">## 50    2    9 0.009708738</span></span>
+<span><span class="co">## 51    3    9 0.000000000</span></span>
+<span><span class="co">## 52    4    9 0.065420561</span></span>
+<span><span class="co">## 53    5    9 0.100917431</span></span>
+<span><span class="co">## 54    6    9 0.036036036</span></span>
+<span><span class="co">## 55    1   10 0.000000000</span></span>
+<span><span class="co">## 56    2   10 0.019417476</span></span>
+<span><span class="co">## 57    3   10 0.000000000</span></span>
+<span><span class="co">## 58    4   10 0.065420561</span></span>
+<span><span class="co">## 59    5   10 0.100917431</span></span>
+<span><span class="co">## 60    6   10 0.045045045</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="visualize-a-trajectory-with-plot">Visualize a trajectory with <code>plot()</code><a class="anchor" aria-label="anchor" href="#visualize-a-trajectory-with-plot"></a>
