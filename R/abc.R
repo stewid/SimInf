@@ -1004,17 +1004,17 @@ abc_internal <- function(object,
 ##' ## Fit the model parameters using ABC-SMC and adaptive tolerance
 ##' ## selection. The priors for the parameters are specified using a
 ##' ## formula notation. Here we use a uniform distribution for each
-##' ## parameter with lower bound = 0 and upper bound = 1. Note that we
-##' ## use a low number of particles here to keep the run-time of the
-##' ## example short. In practice you would want to use many more to
-##' ## ensure better approximations.
+##' ## parameter. To keep the run-time of the example short, we use
+##' ## a low number of particles and narrow prior bounds around the
+##' ## true values. In practice you would want many more particles
+##' ## and broader, less informative priors.
 ##' fit <- abc(
 ##'   model = model,
 ##'   priors = c(
-##'     beta ~ uniform(0, 1),
-##'     gamma ~ uniform(0, 1)),
-##'   n_particles = 100,
-##'   n_init = 1000,
+##'     beta ~ uniform(0.05, 0.3),
+##'     gamma ~ uniform(0.02, 0.15)),
+##'   n_particles = 75,
+##'   n_init = 500,
 ##'   distance = distance,
 ##'   data = infectious
 ##' )
