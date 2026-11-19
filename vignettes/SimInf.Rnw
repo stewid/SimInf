@@ -1033,13 +1033,21 @@ multiple processors and perform computations in parallel.  Two
 numerical solvers are currently supported.  The default solver is a
 split-step method named \code{ssm}, that uses direct SSA, but once
 every unit of time, it also processes scheduled events and calls the
-post time step function.  The other solver implements an ``all events
-method'' \citep{Bauer2015} and is named \code{aem}.  Similarly, it
-also processes scheduled events and calls the post time step function
-once every unit of time.  A core feature of the \code{aem} solver is
-that transition events are carried out in channels which access
-private streams of random numbers, in contrast to the \code{ssm}
-solver where one uses only one stream for all events.
+post time step function.  For models that contain multiple replicates
+(\code{replicates > 1}), the \code{ssm} solver is automatically
+replaced by the multi-model split-step method \code{mssm}, which
+simulates all replicates of the model.  Optionally, the \code{mssm}
+solver can make use of common random numbers by assigning each node
+and replicate a separate stream of random numbers, which enables
+variance reduction when comparing simulations.  The other solver
+implements an ``all events method'' \citep{Bauer2015} and is named
+\code{aem}.  Similarly, it also processes scheduled events and calls
+the post time step function once every unit of time.  A core feature
+of the \code{aem} solver is that transition events are carried out in
+channels which access private streams of random numbers, in contrast
+to the \code{ssm} solver where one uses only one stream for all
+events.  Note that the \code{aem} solver cannot be used with
+replicated models.
 
 \subsubsection{Function pointers}
 
