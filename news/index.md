@@ -4,17 +4,6 @@
 
 ### CHANGES OR IMPROVEMENTS
 
-- Improved and clarified the documentation for
-  [`pfilter()`](http://stewid.github.io/SimInf/reference/pfilter.md),
-  [`abc()`](http://stewid.github.io/SimInf/reference/abc.md),
-  [`pmcmc()`](http://stewid.github.io/SimInf/reference/pmcmc.md),
-  [`trajectory()`](http://stewid.github.io/SimInf/reference/trajectory.md),
-  [`run()`](http://stewid.github.io/SimInf/reference/run.md),
-  [`select_matrix()`](http://stewid.github.io/SimInf/reference/select_matrix.md)
-  and the
-  [`shift_matrix()`](http://stewid.github.io/SimInf/reference/shift_matrix.md)
-  accessors, including worked-out examples.
-
 - [`pfilter()`](http://stewid.github.io/SimInf/reference/pfilter.md) now
   handles an observation that is impossible under a particle: such a
   particle is assigned zero weight instead of raising an error. If the
@@ -22,6 +11,14 @@
   [`pfilter()`](http://stewid.github.io/SimInf/reference/pfilter.md)
   returns an object with a log-likelihood of -Inf, and, for consistency,
   the trajectory is not sampled.
+
+- Continued the work to improve and clarify the documentation for
+  several functions, including worked-out examples.
+
+- Updated the vignettes to describe the `mssm` solver and the
+  `replicates` slot, to use `punchcard()` for sparse output, and to pass
+  the seed to [`run()`](http://stewid.github.io/SimInf/reference/run.md)
+  for reproducibility.
 
 ### BUG FIXES
 
