@@ -242,11 +242,16 @@ This software has been made possible by support from the Swedish
 Research Council within the UPMARC Linnaeus center of Excellence
 (Pavol Bauer, Robin Eriksson, and Stefan Engblom), the Swedish
 Research Council Formas (Stefan Engblom and Stefan Widgren), the
-Swedish Board of Agriculture (Stefan Widgren), the Swedish strategic
-research program eSSENCE (Stefan Widgren), and in the framework of the
-Full Force project, supported by funding from the European Union’s
-Horizon 2020 Research and Innovation programme under grant agreement
-No 773830: One Health European Joint Programme (Stefan Widgren).
+Swedish Board of Agriculture (Stefan Widgren), and the Swedish
+strategic research program eSSENCE (Stefan Widgren).  In addition,
+SimInf has been developed within the framework of the Full Force
+project, supported by funding from the European Union's Horizon 2020
+Research and Innovation programme under grant agreement No 773830: One
+Health European Joint Programme (Stefan Widgren), and within research
+funded by Formas (the Swedish Research Council for Sustainable
+Development, grant number 2021-02279: Stefan Widgren, Ivana Rodriguez
+Ewerlöf) and co-funded by the European Union's Horizon Europe project
+101136346 EUPAHW (Stefan Widgren, Ivana Rodriguez Ewerlöf).
 
 ## Versioning
 
