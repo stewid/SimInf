@@ -143,16 +143,14 @@ select_matrix(model)
 In another case you might be interested in only targeting the
 susceptibles, which means for this model that we select the first
 column. Now, let us run the model and generate data from it. For
-reproducibility, we first call the
-[`set.seed()`](https://rdrr.io/r/base/Random.html) function and specify
-the number of threads to use since there is random sampling involved
-when picking individuals from the compartments.
+reproducibility, we specify a `seed` and set the number of threads to
+use since there is random sampling involved when picking individuals
+from the compartments.
 
 ``` r
 
-set.seed(1)
 set_num_threads(1)
-result <- run(model)
+result <- run(model, seed = 1)
 ```
 
 And plot (Figure 2) the number of individuals in each node. We use
@@ -189,13 +187,13 @@ trajectory(result)
     ## 6     2    1 17 0 0
     ## 7     3    1  9 0 0
     ## 8     4    1 34 0 0
-    ## 9     1    2  6 1 0
+    ## 9     1    2  4 3 0
     ## 10    2    2 17 0 0
-    ## 11    3    2 16 4 0
+    ## 11    3    2 18 2 0
     ## 12    4    2 31 0 0
-    ## 13    1    3  6 1 0
-    ## 14    2    3 25 1 0
-    ## 15    3    3 12 3 0
+    ## 13    1    3  4 3 0
+    ## 14    2    3 26 0 0
+    ## 15    3    3 13 2 0
     ## 16    4    3 27 0 0
 
 ## Varying probability of picking individuals
@@ -241,7 +239,7 @@ model <- SIR(
   gamma = 0
 )
 
-plot(run(model), index = 2)
+plot(run(model, seed = 1), index = 2)
 ```
 
 ![\*\*Figure 3.\*\* The individuals have an equal probability of being
@@ -286,7 +284,7 @@ Now, run the model again to see the effect.
 
 ``` r
 
-plot(run(model), index = 2)
+plot(run(model, seed = 1), index = 2)
 ```
 
 ![\*\*Figure 4.\*\* The individuals in the \$I\$ compartment are more
@@ -306,7 +304,7 @@ select_matrix(model) <- data.frame(
   value       = c(1, 10, 1)
 )
 
-plot(run(model), index = 2)
+plot(run(model, seed = 1), index = 2)
 ```
 
 ![\*\*Figure 5.\*\* The individuals in the \$I\$ compartment are even
@@ -327,7 +325,7 @@ select_matrix(model) <- data.frame(
   value       = c(1, 10, 4)
 )
 
-plot(run(model), index = 2)
+plot(run(model, seed = 1), index = 2)
 ```
 
 ![\*\*Figure 6.\*\* The individuals in the \$I\$ and \$R\$ compartments
@@ -386,7 +384,7 @@ model <- SIR(
   gamma = 0
 )
 
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 ![\*\*Figure 7.\*\* The number of susceptible (\$S\$) individuals
@@ -471,7 +469,7 @@ select_matrix(model)
 
 ``` r
 
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 ![\*\*Figure 8.\*\* The number of susceptible (\$S\$) and recovered
@@ -492,7 +490,7 @@ select_matrix(model) <- data.frame(
   value       = c(2, 1)
 )
 
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 ![\*\*Figure 9.\*\* Individuals are more likely to enter as susceptible
@@ -540,7 +538,7 @@ model <- SIR(
   gamma = 0
 )
 
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 ![\*\*Figure 10.\*\* The number of susceptible (\$S\$) individuals
@@ -596,7 +594,7 @@ select_matrix(model) <- data.frame(
   value       = c(1, 5)
 )
 
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 ![\*\*Figure 11.\*\* The number of infected (\$I\$) individuals
@@ -696,7 +694,7 @@ to move from compartment p.
 
 ``` r
 
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 ![\*\*Figure 12.\*\* The number of recovered (\$R\$) individuals
@@ -747,7 +745,7 @@ model <- SIR(
   gamma = 0
 )
 
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 ![\*\*Figure 13.\*\* The number of individuals decrease at
@@ -813,7 +811,7 @@ shift_matrix(model) <- data.frame(
   value = 2
 )
 
-plot(run(model), range = FALSE)
+plot(run(model, seed = 1), range = FALSE)
 ```
 
 ![\*\*Figure 14.\*\* Multiple events have been processed at

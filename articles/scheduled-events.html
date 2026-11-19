@@ -197,13 +197,12 @@ be sampled in each movement event (see below).</p>
 <p>In another case you might be interested in only targeting the
 susceptibles, which means for this model that we select the first
 column. Now, let us run the model and generate data from it. For
-reproducibility, we first call the <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> function and
-specify the number of threads to use since there is random sampling
-involved when picking individuals from the compartments.</p>
+reproducibility, we specify a <code>seed</code> and set the number of
+threads to use since there is random sampling involved when picking
+individuals from the compartments.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/set_num_threads.html">set_num_threads</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>And plot (Figure 2) the number of individuals in each node. We use
 <code>range = FALSE</code> to display the trajectory lines without the
 shaded range bands, making it easier to read the exact compartment
@@ -229,13 +228,13 @@ the outcome in each node in detail.</p>
 <span><span class="co">## 6     2    1 17 0 0</span></span>
 <span><span class="co">## 7     3    1  9 0 0</span></span>
 <span><span class="co">## 8     4    1 34 0 0</span></span>
-<span><span class="co">## 9     1    2  6 1 0</span></span>
+<span><span class="co">## 9     1    2  4 3 0</span></span>
 <span><span class="co">## 10    2    2 17 0 0</span></span>
-<span><span class="co">## 11    3    2 16 4 0</span></span>
+<span><span class="co">## 11    3    2 18 2 0</span></span>
 <span><span class="co">## 12    4    2 31 0 0</span></span>
-<span><span class="co">## 13    1    3  6 1 0</span></span>
-<span><span class="co">## 14    2    3 25 1 0</span></span>
-<span><span class="co">## 15    3    3 12 3 0</span></span>
+<span><span class="co">## 13    1    3  4 3 0</span></span>
+<span><span class="co">## 14    2    3 26 0 0</span></span>
+<span><span class="co">## 15    3    3 13 2 0</span></span>
 <span><span class="co">## 16    4    3 27 0 0</span></span></code></pre>
 </div>
 <div class="section level2">
@@ -277,7 +276,7 @@ individuals in the second node.</p>
 <span>  gamma <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="**Figure 3.** The individuals have an equal probability of being selected regardless of compartment." width="672"><p class="caption">
 <strong>Figure 3.</strong> The individuals have an equal probability of
@@ -316,7 +315,7 @@ We specify the compartment name, the column index
 <span><span class="op">)</span></span></code></pre></div>
 <p>Now, run the model again to see the effect.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="**Figure 4.** The individuals in the $I$ compartment are more likely of being selected for a movement event." width="672"><p class="caption">
 <strong>Figure 4.</strong> The individuals in the <span class="math inline">I</span> compartment are more likely of being
@@ -331,7 +330,7 @@ selected for a movement event.
 <span>  value       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="**Figure 5.** The individuals in the $I$ compartment are even more likely of being selected for a movement event compared to the previous example." width="672"><p class="caption">
 <strong>Figure 5.</strong> The individuals in the <span class="math inline">I</span> compartment are even more likely of being
@@ -346,7 +345,7 @@ selected for a movement event compared to the previous example.
 <span>  value       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, index <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="**Figure 6.** The individuals in the $I$ and $R$ compartments are more likely of being selected for a movement event compared to individuals in the $S$ compartment." width="672"><p class="caption">
 <strong>Figure 6.</strong> The individuals in the <span class="math inline">I</span> and <span class="math inline">R</span>
@@ -398,7 +397,7 @@ matrix).</p>
 <span>  gamma <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="**Figure 7.** The number of susceptible ($S$) individuals increases by 10 individuals at each scheduled event." width="672"><p class="caption">
 <strong>Figure 7.</strong> The number of susceptible (<span class="math inline">S</span>) individuals increases by 10 individuals at
@@ -465,7 +464,7 @@ the default, however, for clarity we specifically set that value.</p>
 <span><span class="co">## I .</span></span>
 <span><span class="co">## R 1</span></span></code></pre>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-22-1.png" class="r-plt" alt="**Figure 8.** The number of susceptible ($S$) and recovered ($R) individuals increases over time." width="672"><p class="caption">
 <strong>Figure 8.</strong> The number of susceptible (<span class="math inline">S</span>) and recovered ($R) individuals increases
@@ -481,7 +480,7 @@ the S compartment compared to the R compartment.</p>
 <span>  value       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-23-1.png" class="r-plt" alt="**Figure 9.** Individuals are more likely to enter as susceptible ($S$) compared to as recovered ($R$)" width="672"><p class="caption">
 <strong>Figure 9.</strong> Individuals are more likely to enter as
@@ -528,7 +527,7 @@ compartments are selected.</p>
 <span>  gamma <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-24-1.png" class="r-plt" alt="**Figure 10.** The number of susceptible ($S$) individuals decreases by 5 individuals at each scheduled event." width="672"><p class="caption">
 <strong>Figure 10.</strong> The number of susceptible (<span class="math inline">S</span>) individuals decreases by 5 individuals at
@@ -577,7 +576,7 @@ individuals more likely to be removed:</p>
 <span>  value       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-26-1.png" class="r-plt" alt="**Figure 11.** The number of infected ($I$) individuals decreases faster compared to susceptibles ($S$)." width="672"><p class="caption">
 <strong>Figure 11.</strong> The number of infected (<span class="math inline">I</span>) individuals decreases faster compared to
@@ -656,7 +655,7 @@ the destination compartment.</p>
 value selects which column to use. The value N[p, q] indicates how many
 rows to move from compartment p.</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-31-1.png" class="r-plt" alt="**Figure 12.** The number of recovered ($R$) individuals increases at $t=10$." width="672"><p class="caption">
 <strong>Figure 12.</strong> The number of recovered (<span class="math inline">R</span>) individuals increases at <span class="math inline">t=10</span>.
@@ -701,7 +700,7 @@ population.</p>
 <span>  gamma <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-33-1.png" class="r-plt" alt="**Figure 13.** The number of individuals decrease at $t=10$." width="672"><p class="caption">
 <strong>Figure 13.</strong> The number of individuals decrease at <span class="math inline">t=10</span>.
@@ -770,7 +769,7 @@ within-node movements happen before between-node movements.</p>
 <span>  value <span class="op">=</span> <span class="fl">2</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/run.html">run</a></span><span class="op">(</span><span class="va">model</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, range <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: left">
 <img src="scheduled-events_files/figure-html/unnamed-chunk-35-1.png" class="r-plt" alt="**Figure 14.** Multiple events have been processed at $t=5$." width="672"><p class="caption">
 <strong>Figure 14.</strong> Multiple events have been processed at <span class="math inline">t=5</span>.
