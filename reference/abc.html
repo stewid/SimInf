@@ -332,34 +332,34 @@ the final generation of the returned object.</p>
 <span class="r-in"><span><span class="co">## Fit the model parameters using ABC-SMC and adaptive tolerance</span></span></span>
 <span class="r-in"><span><span class="co">## selection. The priors for the parameters are specified using a</span></span></span>
 <span class="r-in"><span><span class="co">## formula notation. Here we use a uniform distribution for each</span></span></span>
-<span class="r-in"><span><span class="co">## parameter with lower bound = 0 and upper bound = 1. Note that we</span></span></span>
-<span class="r-in"><span><span class="co">## use a low number of particles here to keep the run-time of the</span></span></span>
-<span class="r-in"><span><span class="co">## example short. In practice you would want to use many more to</span></span></span>
-<span class="r-in"><span><span class="co">## ensure better approximations.</span></span></span>
+<span class="r-in"><span><span class="co">## parameter. To keep the run-time of the example short, we use</span></span></span>
+<span class="r-in"><span><span class="co">## a low number of particles and narrow prior bounds around the</span></span></span>
+<span class="r-in"><span><span class="co">## true values. In practice you would want many more particles</span></span></span>
+<span class="r-in"><span><span class="co">## and broader, less informative priors.</span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">abc</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  model <span class="op">=</span> <span class="va">model</span>,</span></span>
 <span class="r-in"><span>  priors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">beta</span> <span class="op">~</span> <span class="fu">uniform</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    <span class="va">gamma</span> <span class="op">~</span> <span class="fu">uniform</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  n_particles <span class="op">=</span> <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>  n_init <span class="op">=</span> <span class="fl">1000</span>,</span></span>
+<span class="r-in"><span>    <span class="va">beta</span> <span class="op">~</span> <span class="fu">uniform</span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="va">gamma</span> <span class="op">~</span> <span class="fu">uniform</span><span class="op">(</span><span class="fl">0.02</span>, <span class="fl">0.15</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  n_particles <span class="op">=</span> <span class="fl">75</span>,</span></span>
+<span class="r-in"><span>  n_init <span class="op">=</span> <span class="fl">500</span>,</span></span>
 <span class="r-in"><span>  distance <span class="op">=</span> <span class="va">distance</span>,</span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">infectious</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Print a brief summary.</span></span></span>
 <span class="r-in"><span><span class="va">fit</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of particles per generation: 100</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of generations: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of particles per generation: 75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of generations: 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Generation 4:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Generation 2:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Accrate: 5.05e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ESS: 8.55e+01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Accrate: 2.68e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ESS: 6.77e+01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           Min. 1st Qu.  Median    Mean 3rd Qu.    Max.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  beta  0.03512 0.12079 0.18568 0.19028 0.24370 0.45717</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  gamma 0.00527 0.07022 0.09189 0.09719 0.11748 0.23464</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Min. 1st Qu. Median   Mean 3rd Qu.   Max.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  beta  0.0607  0.1311 0.1737 0.1713  0.2133 0.2773</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  gamma 0.0255  0.0683 0.0860 0.0887  0.1104 0.1492</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Display the ABC posterior distribution.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>

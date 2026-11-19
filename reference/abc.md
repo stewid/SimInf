@@ -262,34 +262,34 @@ distance <- function(result, generation, data) {
 ## Fit the model parameters using ABC-SMC and adaptive tolerance
 ## selection. The priors for the parameters are specified using a
 ## formula notation. Here we use a uniform distribution for each
-## parameter with lower bound = 0 and upper bound = 1. Note that we
-## use a low number of particles here to keep the run-time of the
-## example short. In practice you would want to use many more to
-## ensure better approximations.
+## parameter. To keep the run-time of the example short, we use
+## a low number of particles and narrow prior bounds around the
+## true values. In practice you would want many more particles
+## and broader, less informative priors.
 fit <- abc(
   model = model,
   priors = c(
-    beta ~ uniform(0, 1),
-    gamma ~ uniform(0, 1)),
-  n_particles = 100,
-  n_init = 1000,
+    beta ~ uniform(0.05, 0.3),
+    gamma ~ uniform(0.02, 0.15)),
+  n_particles = 75,
+  n_init = 500,
   distance = distance,
   data = infectious
 )
 
 ## Print a brief summary.
 fit
-#> Number of particles per generation: 100
-#> Number of generations: 4
+#> Number of particles per generation: 75
+#> Number of generations: 2
 #> 
-#> Generation 4:
+#> Generation 2:
 #> -------------
-#>  Accrate: 5.05e-02
-#>  ESS: 8.55e+01
+#>  Accrate: 2.68e-01
+#>  ESS: 6.77e+01
 #> 
-#>           Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-#>  beta  0.03512 0.12079 0.18568 0.19028 0.24370 0.45717
-#>  gamma 0.00527 0.07022 0.09189 0.09719 0.11748 0.23464
+#>          Min. 1st Qu. Median   Mean 3rd Qu.   Max.
+#>  beta  0.0607  0.1311 0.1737 0.1713  0.2133 0.2773
+#>  gamma 0.0255  0.0683 0.0860 0.0887  0.1104 0.1492
 
 ## Display the ABC posterior distribution.
 plot(fit)
