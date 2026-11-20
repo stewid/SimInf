@@ -1,6 +1,8 @@
 # Changelog
 
-## SimInf (development version)
+## SimInf 11.2.0 (2026-11-19)
+
+CRAN release: 2026-11-19
 
 ### CHANGES OR IMPROVEMENTS
 
