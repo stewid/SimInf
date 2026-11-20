@@ -1,3 +1,7 @@
+# SimInf (development version)
+
+## CHANGES OR IMPROVEMENTS
+
 # SimInf 11.2.0 (2026-11-19)
 
 ## CHANGES OR IMPROVEMENTS
