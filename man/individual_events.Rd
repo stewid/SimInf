@@ -7,42 +7,88 @@
 individual_events(events)
 }
 \arguments{
-\item{events}{a \code{data.frame} with the columns \code{id}, \code{event},
-\code{time}, \code{node}, and \code{dest} to define the events, see
-\code{details}.}
+\item{events}{a \code{data.frame} with the columns \code{id},
+\code{event}, \code{time}, \code{node}, and \code{dest} to
+define the events, see Details.}
 }
 \value{
-\linkS4class{SimInf_individual_events}
+A \linkS4class{SimInf_individual_events} object with the
+cleaned events for all individuals with a plausible life
+history.
 }
 \description{
 In many countries, individual-based livestock data are collected
 to enable contact tracing during disease outbreaks. However, the
-livestock databases are not always structured in such a way that
-relevant information for disease spread simulations is easily
-retrieved. The aim of this function is to facilitate cleaning
-livestock event data and prepare it for usage in SimInf.
+individual-based records are not always directly usable for
+disease spread simulations. The aim of this function is to
+facilitate cleaning livestock event data and prepare it for usage
+in SimInf.
 }
 \details{
 The argument \code{events} in \code{individual_events} must be a
 \code{data.frame} with the following columns:
 \itemize{
 \item \strong{id:} an integer or character identifier of the individual.
-\item \strong{event:} four event types are supported: \emph{exit},
-\emph{enter}, \emph{internal transfer}, and \emph{external
-transfer}.  When assigning the events, they can either be
-coded as a numerical value or a character string: \emph{exit;}
-\code{0} or \code{'exit'}, \emph{enter;} \code{1} or
-\code{'enter'}, \emph{internal transfer;} \code{2} or
-\code{'intTrans'}, and \emph{external transfer;} \code{3} or
-\code{'extTrans'}.
+\item \strong{event:} three event types are supported: \emph{exit},
+\emph{enter}, and \emph{external transfer}. When assigning the
+events, they can either be coded as a numerical value or a
+character string: \emph{exit;} \code{0} or \code{'exit'},
+\emph{enter;} \code{1} or \code{'enter'}, and \emph{external
+transfer;} \code{3} or \code{'extTrans'}.
 \item \strong{time:} an integer, character, or date (of class \code{Date})
-for when the event occured. If it's a character it must be
+for when the event occurred. If it's a character it must be
 able to coerce to \code{Date}.
-\item \strong{node:} an integer or character identifier of the source node.
+\item \strong{node:} an integer or character identifier of the source
+node.
 \item \strong{dest:} an integer or character identifier of the destination
 node for movement events, and 'dest' will be replaced with
 \code{NA} for non-movement events.
 }
+
+The node and dest identifiers must uniquely identify the nodes,
+e.g. 'XY010', 'XY023', etc. Character identifiers are internally
+mapped to consecutive integer node numbers.
+
+For each individual, duplicated records are removed and the
+function then searches for the longest plausible sequence of
+events: an enter event, followed by zero or more external
+transfer events, and finally an exit event, if the individual
+has one. In a plausible sequence, the events occur in
+chronological order and each external transfer departs from the
+node where the individual was last registered. All events that
+are not part of the longest plausible sequence are discarded,
+and if no plausible sequence can be found for an individual, all
+events for that individual are dropped. The method is described
+in Ewerlöf and others (2025).
+
+Internal transfer events, such as ageing of an individual, are
+not part of the event data that this function accepts. Instead,
+internal transfer events can be generated when the cleaned
+events are applied to a model, see \code{\link{node_events}} and
+its \code{age} argument.
+}
+\examples{
+## Example data with two animals; the first has a plausible life
+## history, the second does not since the animal is not registered
+## at the node of the exit event.
+events <- data.frame(
+  id = c(1, 1, 1, 1,
+         2, 2, 2),
+  event = c("enter", "extTrans", "exit", "extTrans",
+            "enter", "extTrans", "exit"),
+  time = c("2025-03-01", "2025-06-15", "2025-09-01", "2025-12-01",
+           "2025-04-01", "2025-07-01", "2025-10-01"),
+  node = c("N1", "N1", "N2", "N2",
+           "N3", "N3", "N5"),
+  dest = c("-", "N2", "-", "N3",
+           "-", "N4", "-")
+)
+
+## Keep the longest plausible life history for each animal: the
+## movement after the exit event of the first animal is discarded,
+## and all events of the second animal are dropped. Note that the
+## '-' in 'dest' is replaced with NA for non-movement events.
+as.data.frame(individual_events(events))
 }
 \references{
 \Ewerlof2025

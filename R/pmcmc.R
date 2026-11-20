@@ -258,8 +258,9 @@ setMethod(
 ##'
 ##' @param model The \code{SimInf_model} object to estimate parameters
 ##'     for.
-##' @param object The \code{SimInf_pmcmc} object to continue, as
-##'     returned by \code{pmcmc()}.
+##' @param object For \code{continue_pmcmc()}: the
+##'     \code{SimInf_pmcmc} object to continue, as returned by
+##'     \code{pmcmc()}.
 ##' @template obs_process-param
 ##' @template data-param
 ##' @template priors-param

@@ -522,29 +522,35 @@ setMethod(
 ##' Display the ABC posterior distribution
 ##'
 ##' Produce diagnostic plots of the Approximate Bayesian Computation
-##' (ABC) posterior distribution stored in a \code{SimInf_abc} object.
-##'
-##' The function generates a scatterplot matrix of the parameter
-##' values for the specified generation:
+##' (ABC) posterior distribution stored in a \code{SimInf_abc}
+##' object. The parameter values of the accepted particles in the
+##' selected generation are displayed: with more than one parameter, a
+##' scatterplot matrix of the pairwise distributions is produced, with
+##' one row and column per parameter.
 ##' \itemize{
 ##'   \item \strong{Diagonal panels}: Display a normalized density
-##'     estimate with a rug plot showing individual samples.
+##'     estimate with a rug plot showing individual samples. The
+##'     density is estimated with the \code{'SJ-ste'} bandwidth
+##'     selection method and scaled so that its peak equals one.
 ##'   \item \strong{Upper triangular panels}: Display scatterplots of
 ##'     the raw parameter samples for each pair of variables.
-##'   \item \strong{Lower triangular panels}: Display contour lines
-##'     representing the 2D kernel density estimate of the joint
-##'     distribution between parameter pairs.
+##'   \item \strong{Lower triangular panels}: Display contour lines of
+##'     the 2D kernel density estimate of the joint distribution
+##'     between parameter pairs, computed with the \code{kde2d}
+##'     function in the 'MASS' package with default bandwidths and
+##'     without contour labels.
 ##' }
 ##' If only a single parameter is selected, a single density plot with
 ##' a rug is produced.
 ##'
 ##' @param x The \code{SimInf_abc} object containing the ABC results.
-##' @param y The generation number to plot. The default is
-##'     \code{NULL}, which displays the \strong{last} generation (the
-##'     final posterior).  Specify an integer to view intermediate
-##'     generations for convergence diagnostics.
-##' @param ... Additional graphical arguments passed to the underlying
-##'     plotting functions (e.g., \code{col} for contour colors,
+##' @param y The generation to plot as an integer in
+##'     \code{1:n_generations(x)}. The default is \code{NULL}, which
+##'     displays the last generation. Specify an earlier generation to
+##'     inspect intermediate populations for convergence diagnostics.
+##' @param ... Additional graphical arguments passed on to the
+##'     underlying plotting functions, and therefore to the density
+##'     estimates, contours, and scatterplots alike (e.g.  \code{col},
 ##'     \code{lwd}).
 ##' @aliases plot,SimInf_abc-method
 ##' @export
@@ -555,6 +561,7 @@ setMethod(
     function(x, y, ...) {
         if (missing(y))
             y <- n_generations(x)
+        check_integer_arg(y)
         y <- as.integer(y)
         if (length(y) != 1) {
             stop("Can only select one generation to plot.",
@@ -602,6 +609,63 @@ setMethod(
             plot_trace(x@chain, i, c(j, 1), ...)
         } else {
             plot_density(x@chain[i, j, drop = FALSE], ...)
+        }
+
+        invisible(NULL)
+    }
+)
+
+##' Plot a particle filter object
+##'
+##' Diagnostic plots of a particle filter (\code{pfilter}) run. If
+##' \code{y} is missing, the function displays two panels: the
+##' filtered trajectory of the model (top) and the effective sample
+##' size (ESS) at each time point in \code{tspan} (bottom).
+##' Alternatively, if \code{y} is a character vector or a formula, the
+##' plot function for a \code{SimInf_model} object is called with the
+##' filtered trajectory, which allows specifying compartments and
+##' prevalence expressions, see
+##' \code{\link[=plot,SimInf_model-method]{plot}} for more details
+##' about the specification of a plot.
+##'
+##' @param x The \code{SimInf_pfilter} object to plot.
+##' @param y If \code{y} is \code{NULL} or missing (default), the
+##'     filtered trajectory (top) and the effective sample size
+##'     (bottom) are displayed. If \code{y} is a character vector or a
+##'     formula, the plot function for a \code{SimInf_model} object is
+##'     called with the filtered trajectory, see
+##'     \code{\link[=plot,SimInf_model-method]{plot}} for more details
+##'     about the specification of a plot.
+##' @param ... Other graphical parameters that are passed on to the
+##'     plot function.
+##' @aliases plot,SimInf_pfilter-method
+##' @export
+setMethod(
+    "plot",
+    signature(x = "SimInf_pfilter"),
+    function(x, y, ...) {
+        if (missing(y)) {
+            savepar <- par(mfrow = c(2, 1))
+            on.exit(par(savepar), add = TRUE)
+
+            ## Settings for the x-axis
+            if (is.null(names(x@model@tspan))) {
+                xx <- x@model@tspan
+                xlab <- "Time"
+            } else {
+                xx <- as.Date(names(x@model@tspan))
+                xlab <- "Date"
+            }
+
+            ## Plot the sampled trajectory.
+            plot(x@model, ...)
+
+            ## Plot the effective sample size.
+            plot(xx, x@ess, xlab = xlab, ylab = "ESS",
+                 ylim = c(0, x@n_particles), frame.plot = FALSE, type = "l")
+        } else {
+            ## Plot the sampled trajectory.
+            plot(x@model, y, ...)
         }
 
         invisible(NULL)

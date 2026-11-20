@@ -67,11 +67,14 @@
 ##'   cutoff = 300
 ##' )
 ##'
-##' ## Inspect the sparse matrix structure.
-##' ## Note: The matrix is symmetric and the diagonal is zero.
+##' ## Inspect the sparse matrix structure. Display the first ten
+##' ## rows and columns; the matrix is symmetric and the diagonal
+##' ## is zero.
 ##' d[1:10, 1:10]
 ##'
-##' ## Count the number of neighbors for the first node.
+##' ## Count the number of neighbors within the cutoff for the
+##' ## first node, i.e. the number of non-zero distances in the
+##' ## first row of the full matrix.
 ##' sum(d[1, ] > 0)
 distance_matrix <- function(x, y, cutoff, min_dist = NULL, na_fail = TRUE) {
     .Call(SimInf_distance_matrix,

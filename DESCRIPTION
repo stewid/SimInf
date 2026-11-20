@@ -1,6 +1,6 @@
 Package: SimInf
 Title: A Framework for Data-Driven Stochastic Disease Spread Simulations
-Version: 11.1.0.9000
+Version: 11.2.0.9000
 Authors@R: c(person("Stefan", "Widgren", role = c("aut", "cre"),
                     email = "stefan.widgren@gmail.com",
                     comment = c(ORCID = "0000-0001-5745-2284")),
@@ -42,12 +42,17 @@ Acknowledgements: This software has been made possible by support from
     the Swedish Research Council within the UPMARC Linnaeus center of
     Excellence (Pavol Bauer, Robin Eriksson, and Stefan Engblom), the
     Swedish Research Council Formas (Stefan Engblom and Stefan
-    Widgren), the Swedish Board of Agriculture (Stefan Widgren), the
-    Swedish strategic research program eSSENCE (Stefan Widgren), and
-    in the framework of the Full Force project, supported by funding
-    from the European Union’s Horizon 2020 Research and Innovation
-    programme under grant agreement No 773830: One Health European
-    Joint Programme (Stefan Widgren).
+    Widgren), the Swedish Board of Agriculture (Stefan Widgren), and
+    the Swedish strategic research program eSSENCE (Stefan Widgren).
+    In addition, SimInf has been developed within the framework of the
+    Full Force project, supported by funding from the European Union's
+    Horizon 2020 Research and Innovation programme under grant
+    agreement No 773830: One Health European Joint Programme (Stefan
+    Widgren), and within research funded by Formas (the Swedish
+    Research Council for Sustainable Development, grant number
+    2021-02279: Stefan Widgren, Ivana Rodriguez Ewerlöf) and co-funded
+    by the European Union's Horizon Europe project 101136346 EUPAHW
+    (Stefan Widgren, Ivana Rodriguez Ewerlöf).
 License: GPL-3
 URL: https://github.com/stewid/SimInf, https://stewid.github.io/SimInf/
 BugReports: https://github.com/stewid/SimInf/issues

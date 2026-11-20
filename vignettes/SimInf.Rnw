@@ -657,8 +657,7 @@ library("SimInf")
     individuals should be written to \code{U\_sparse}.  The layout of
     the data in \code{U\_sparse} is identical to \code{U}.  Please
     note that the data in \code{U\_sparse} is numeric and that the
-    data in \code{U} is integer.  Also note that replicates (see
-    above) cannot be used when data is written to a sparse matrix.\\
+    data in \code{U} is integer.\\
 
     \code{u0} & The initial number of individuals in each compartment
     in every node.  Integer matrix ($\Ncompartments \times
@@ -681,9 +680,7 @@ library("SimInf")
     when \code{run} is called, the non-zero entries in
     \code{V\_sparse} indicates where the real-valued continuous state
     should be written to \code{V\_sparse}.  The layout of the data in
-    \code{V\_sparse} is identical to \code{V}.  Please note that
-    replicates (see above) cannot be used when data is written to a
-    sparse matrix.\\
+    \code{V\_sparse} is identical to \code{V}.\\
 
     \code{v0} & The initial value for the real-valued continuous
     state.  Numeric matrix ($N_{ld} \times \Nnodes$).\\
@@ -701,6 +698,9 @@ library("SimInf")
     individuals in a node at a pre-defined time $t$.  \proglang{S}4
     class \code{SimInf\_events}, see Section~\ref{sec:events} and
     Table~\ref{table:scheduled:events}.\\
+
+    \code{replicates} & Number replicates simulated for this model
+    when \code{run} is called.\\
 
     \code{C\_code} & Character vector with optional model \proglang{C}
     code, see Section~\ref{sec:extend}.  If non-empty, the
@@ -865,13 +865,13 @@ to write the state of the system to the sparse matrices
 \code{U\_sparse} and \code{V\_sparse}, which can save a lot of memory
 if the model contains many nodes and time-points, but where only a few
 of the data points are of interest.  In order to use this feature,
-call the \code{U} and \code{V} methods (before running a trajectory)
-with a \code{data.frame} that specify the nodes, time-points and
-compartments where the simulator should write the state of the system.
-The initial state in each node is specified by the two matrices
-\code{u0} and \code{v0} where \code{u0[, i]} is the initial number of
-individuals in each compartment at node $i$ and \code{v0[, i]} is the
-initial continuous state in node $i$.
+call the \code{punchcard} method (before running a trajectory) with a
+\code{data.frame} that specify the nodes, time-points and compartments
+where the simulator should write the state of the system.  The initial
+state in each node is specified by the two matrices \code{u0} and
+\code{v0} where \code{u0[, i]} is the initial number of individuals in
+each compartment at node $i$ and \code{v0[, i]} is the initial
+continuous state in node $i$.
 
 \begin{table}
   \small
@@ -1033,13 +1033,21 @@ multiple processors and perform computations in parallel.  Two
 numerical solvers are currently supported.  The default solver is a
 split-step method named \code{ssm}, that uses direct SSA, but once
 every unit of time, it also processes scheduled events and calls the
-post time step function.  The other solver implements an ``all events
-method'' \citep{Bauer2015} and is named \code{aem}.  Similarly, it
-also processes scheduled events and calls the post time step function
-once every unit of time.  A core feature of the \code{aem} solver is
-that transition events are carried out in channels which access
-private streams of random numbers, in contrast to the \code{ssm}
-solver where one uses only one stream for all events.
+post time step function.  For models that contain multiple replicates
+(\code{replicates > 1}), the \code{ssm} solver is automatically
+replaced by the multi-model split-step method \code{mssm}, which
+simulates all replicates of the model.  Optionally, the \code{mssm}
+solver can make use of common random numbers by assigning each node
+and replicate a separate stream of random numbers, which enables
+variance reduction when comparing simulations.  The other solver
+implements an ``all events method'' \citep{Bauer2015} and is named
+\code{aem}.  Similarly, it also processes scheduled events and calls
+the post time step function once every unit of time.  A core feature
+of the \code{aem} solver is that transition events are carried out in
+channels which access private streams of random numbers, in contrast
+to the \code{ssm} solver where one uses only one stream for all
+events.  Note that the \code{aem} solver cannot be used with
+replicated models.
 
 \subsubsection{Function pointers}
 

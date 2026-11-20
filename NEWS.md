@@ -2,15 +2,22 @@
 
 ## CHANGES OR IMPROVEMENTS
 
-* Improved and clarified the documentation for `pfilter()`, `abc()`,
-  `pmcmc()`, `trajectory()`, `run()`, `select_matrix()` and the
-  `shift_matrix()` accessors, including worked-out examples.
+# SimInf 11.2.0 (2026-11-19)
+
+## CHANGES OR IMPROVEMENTS
 
 * `pfilter()` now handles an observation that is impossible under a
   particle: such a particle is assigned zero weight instead of raising
   an error. If the observation is impossible under every particle,
   `pfilter()` returns an object with a log-likelihood of -Inf, and,
   for consistency, the trajectory is not sampled.
+
+* Continued the work to improve and clarify the documentation for
+  several functions, including worked-out examples.
+
+* Updated the vignettes to describe the `mssm` solver and the
+  `replicates` slot, to use `punchcard()` for sparse output, and to
+  pass the seed to `run()` for reproducibility.
 
 ## BUG FIXES
 

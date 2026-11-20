@@ -13,7 +13,7 @@ node_events(x, time = NULL, target = NULL, age = NULL)
 \item{x}{an individual events object of class
 \code{SimInf_individual_events}.}
 
-\item{time}{All events that occur after \sQuote{time} are
+\item{time}{All events that occur strictly after \sQuote{time} are
 included. Default is \code{NULL} which means to extract the
 events after the minimum time-point in the
 \code{SimInf_individual_events} object.}
@@ -24,7 +24,7 @@ for. The default, \code{NULL}, creates events but they might
 have to be post-processed to fit the specific use case.}
 
 \item{age}{Integer vector with break points in days for the ageing
-events.}
+events, see Details.}
 }
 \value{
 a \code{data.frame} with the columns \code{event},
@@ -34,26 +34,51 @@ a \code{data.frame} with the columns \code{event},
 \description{
 In many countries, individual-based livestock data are collected
 to enable contact tracing during disease outbreaks. However, the
-livestock databases are not always structured in such a way that
-relevant information for disease spread simulations is easily
-retrieved. The aim of this function is to facilitate cleaning
-livestock event data and prepare it for usage in SimInf.
+individual-based records are not always directly usable for
+disease spread simulations. This function aggregates the cleaned
+individual events from \code{\link{individual_events}} on
+node-level to prepare them for usage in SimInf models.
 }
 \details{
-The individual-based events will be aggregated on node-level.  The
+The nodes in the returned events are numbered 1 to N in sorted
+order of the unique node identifiers in the individual events.  If
+the individual events were specified with character event names or
+dates, the \code{event} and \code{time} columns of the returned
+events are converted back to character.
+
+All individuals must have an 'enter' event, otherwise an error is
+raised.
+
+The individual-based events are aggregated on node-level. The
 \code{select} value is determined by the event type and age
-category.  If there is only one age category, i.e.,
+category. If there is only one age category, i.e.,
 \code{age=NULL}, then \code{select=1} for the enter events, and
-\code{select=2} for all other events. If there are two age
-categories, then \code{select=1} for the enter events in the first
-age category, and \code{select=2} for the enter events in the
-second age category. Similarly, \code{select=3} for all other
-events in the first age category, and \code{select=4} for all
-other events in the first second category. With three age
-categories, it works similarly with \code{select=1,2,3} for the
-enter events in each age category, respectively. And
-\code{select=4,5,6} for all other events.
+\code{select=2} for all other events when the events are targeted
+for a model. If there are two age categories, then \code{select=1}
+for the enter events in the first age category, and
+\code{select=2} for the enter events in the second age
+category. Similarly, \code{select=3} for all other events in the
+first age category, and \code{select=4} for all other events in
+the second age category. With three age categories, it works
+similarly with \code{select=1,2,3} for the enter events in each
+age category, respectively. And \code{select=4,5,6} for all other
+events.
+
+For the built-in models, the \code{select} value for the non-enter
+events is determined by the design of the target model, such that
+the events act on the appropriate compartment.
+
+If \code{age} contains more than one break point, internal
+transfer events for the ageing of individuals between age
+categories are generated and included in the returned events.  The
+age categories are determined by the break points in \code{age}:
+individuals with an age below \code{age[1]} belong to the first
+category, individuals with an age from \code{age[i-1]} up to
+\code{age[i]} belong to category \code{i}, and individuals with an
+age of at least the last break point belong to the last category.
 }
 \seealso{
-\code{\link{individual_events}}.
+\code{\link{individual_events}},
+    \code{\link{u0_from_individual_events}},
+    \code{\link[=events,SimInf_model-method]{events}}.
 }

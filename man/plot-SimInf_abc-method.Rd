@@ -9,30 +9,35 @@
 \arguments{
 \item{x}{The \code{SimInf_abc} object containing the ABC results.}
 
-\item{y}{The generation number to plot. The default is
-\code{NULL}, which displays the \strong{last} generation (the
-final posterior).  Specify an integer to view intermediate
-generations for convergence diagnostics.}
+\item{y}{The generation to plot as an integer in
+\code{1:n_generations(x)}. The default is \code{NULL}, which
+displays the last generation. Specify an earlier generation to
+inspect intermediate populations for convergence diagnostics.}
 
-\item{...}{Additional graphical arguments passed to the underlying
-plotting functions (e.g., \code{col} for contour colors,
+\item{...}{Additional graphical arguments passed on to the
+underlying plotting functions, and therefore to the density
+estimates, contours, and scatterplots alike (e.g.  \code{col},
 \code{lwd}).}
 }
 \description{
 Produce diagnostic plots of the Approximate Bayesian Computation
-(ABC) posterior distribution stored in a \code{SimInf_abc} object.
-}
-\details{
-The function generates a scatterplot matrix of the parameter
-values for the specified generation:
+(ABC) posterior distribution stored in a \code{SimInf_abc}
+object. The parameter values of the accepted particles in the
+selected generation are displayed: with more than one parameter, a
+scatterplot matrix of the pairwise distributions is produced, with
+one row and column per parameter.
 \itemize{
   \item \strong{Diagonal panels}: Display a normalized density
-    estimate with a rug plot showing individual samples.
+    estimate with a rug plot showing individual samples. The
+    density is estimated with the \code{'SJ-ste'} bandwidth
+    selection method and scaled so that its peak equals one.
   \item \strong{Upper triangular panels}: Display scatterplots of
     the raw parameter samples for each pair of variables.
-  \item \strong{Lower triangular panels}: Display contour lines
-    representing the 2D kernel density estimate of the joint
-    distribution between parameter pairs.
+  \item \strong{Lower triangular panels}: Display contour lines of
+    the 2D kernel density estimate of the joint distribution
+    between parameter pairs, computed with the \code{kde2d}
+    function in the 'MASS' package with default bandwidths and
+    without contour labels.
 }
 If only a single parameter is selected, a single density plot with
 a rug is produced.

@@ -126,14 +126,13 @@ select_matrix(model)
 In another case you might be interested in only targeting the
 susceptibles, which means for this model that we select the first
 column. Now, let us run the model and generate data from it. For
-reproducibility, we first call the `set.seed()` function and specify
-the number of threads to use since there is random sampling involved
-when picking individuals from the compartments.
+reproducibility, we specify a `seed` and set the number of threads to
+use since there is random sampling involved when picking individuals
+from the compartments.
 
 ```{r}
-set.seed(1)
 set_num_threads(1)
-result <- run(model)
+result <- run(model, seed = 1)
 ```
 
 And plot (Figure 2) the number of individuals in each node. We use
@@ -192,7 +191,7 @@ model <- SIR(
   gamma = 0
 )
 
-plot(run(model), index = 2)
+plot(run(model, seed = 1), index = 2)
 ```
 
 The probability to sample an individual from each compartment is
@@ -234,7 +233,7 @@ select_matrix(model) <- data.frame(
 Now, run the model again to see the effect.
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 4.** The individuals in the $I$ compartment are more likely of being selected for a movement event."}
-plot(run(model), index = 2)
+plot(run(model, seed = 1), index = 2)
 ```
 
 Next, let us apply a much larger weight to the $I$ compartment.
@@ -246,7 +245,7 @@ select_matrix(model) <- data.frame(
   value       = c(1, 10, 1)
 )
 
-plot(run(model), index = 2)
+plot(run(model, seed = 1), index = 2)
 ```
 
 Finally, increase the weight for the $R$ compartment as well.
@@ -258,7 +257,7 @@ select_matrix(model) <- data.frame(
   value       = c(1, 10, 4)
 )
 
-plot(run(model), index = 2)
+plot(run(model, seed = 1), index = 2)
 ```
 
 ## Enter events: Adding individuals
@@ -306,7 +305,7 @@ model <- SIR(
   gamma = 0
 )
 
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 ### Weighted sampling for enter events
@@ -374,7 +373,7 @@ select_matrix(model)
 ```
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 8.** The number of susceptible ($S$) and recovered ($R) individuals increases over time."}
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 Let us modify the E matrix so that newborns are more likely to enter
@@ -387,7 +386,7 @@ select_matrix(model) <- data.frame(
   value       = c(2, 1)
 )
 
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 ## Exit events: Removing individuals
@@ -427,7 +426,7 @@ model <- SIR(
   gamma = 0
 )
 
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 ### Weighted sampling for exit events
@@ -474,7 +473,7 @@ select_matrix(model) <- data.frame(
   value       = c(1, 5)
 )
 
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 ## Internal transfer events: Moving within a node
@@ -556,7 +555,7 @@ selects which column to use. The value N[p, q] indicates how many rows
 to move from compartment p.
 
 ```{r, fig.width=7, fig.height=4, fig.align="left", fig.cap="**Figure 12.** The number of recovered ($R$) individuals increases at $t=10$."}
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 ## Stochastic events using proportion
@@ -598,7 +597,7 @@ model <- SIR(
   gamma = 0
 )
 
-plot(run(model))
+plot(run(model, seed = 1))
 ```
 
 ## Processing order of simultaneous events
@@ -657,7 +656,7 @@ shift_matrix(model) <- data.frame(
   value = 2
 )
 
-plot(run(model), range = FALSE)
+plot(run(model, seed = 1), range = FALSE)
 ```
 
 ## Summary

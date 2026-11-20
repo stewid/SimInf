@@ -347,39 +347,87 @@ compareNA <- function(x, y) {
 ##'
 ##' In many countries, individual-based livestock data are collected
 ##' to enable contact tracing during disease outbreaks. However, the
-##' livestock databases are not always structured in such a way that
-##' relevant information for disease spread simulations is easily
-##' retrieved. The aim of this function is to facilitate cleaning
-##' livestock event data and prepare it for usage in SimInf.
+##' individual-based records are not always directly usable for
+##' disease spread simulations. The aim of this function is to
+##' facilitate cleaning livestock event data and prepare it for usage
+##' in SimInf.
+##'
+##' @details
 ##'
 ##' The argument \code{events} in \code{individual_events} must be a
 ##' \code{data.frame} with the following columns:
 ##' * **id:** an integer or character identifier of the individual.
-##' * **event:** four event types are supported: \emph{exit},
-##'     \emph{enter}, \emph{internal transfer}, and \emph{external
-##'     transfer}.  When assigning the events, they can either be
-##'     coded as a numerical value or a character string: \emph{exit;}
-##'     \code{0} or \code{'exit'}, \emph{enter;} \code{1} or
-##'     \code{'enter'}, \emph{internal transfer;} \code{2} or
-##'     \code{'intTrans'}, and \emph{external transfer;} \code{3} or
-##'     \code{'extTrans'}.
+##' * **event:** three event types are supported: \emph{exit},
+##'     \emph{enter}, and \emph{external transfer}. When assigning the
+##'     events, they can either be coded as a numerical value or a
+##'     character string: \emph{exit;} \code{0} or \code{'exit'},
+##'     \emph{enter;} \code{1} or \code{'enter'}, and \emph{external
+##'     transfer;} \code{3} or \code{'extTrans'}.
 ##' * **time:** an integer, character, or date (of class \code{Date})
-##'     for when the event occured. If it's a character it must be
+##'     for when the event occurred. If it's a character it must be
 ##'     able to coerce to \code{Date}.
-##' * **node:** an integer or character identifier of the source node.
+##' * **node:** an integer or character identifier of the source
+##'     node.
 ##' * **dest:** an integer or character identifier of the destination
 ##'     node for movement events, and 'dest' will be replaced with
 ##'     \code{NA} for non-movement events.
-##' @param events a \code{data.frame} with the columns `id`, `event`,
-##'     `time`, `node`, and `dest` to define the events, see
-##'     `details`.
-##' @return \linkS4class{SimInf_individual_events}
+##'
+##' The node and dest identifiers must uniquely identify the nodes,
+##' e.g. 'XY010', 'XY023', etc. Character identifiers are internally
+##' mapped to consecutive integer node numbers.
+##'
+##' For each individual, duplicated records are removed and the
+##' function then searches for the longest plausible sequence of
+##' events: an enter event, followed by zero or more external
+##' transfer events, and finally an exit event, if the individual
+##' has one. In a plausible sequence, the events occur in
+##' chronological order and each external transfer departs from the
+##' node where the individual was last registered. All events that
+##' are not part of the longest plausible sequence are discarded,
+##' and if no plausible sequence can be found for an individual, all
+##' events for that individual are dropped. The method is described
+##' in Ewerlöf and others (2025).
+##'
+##' Internal transfer events, such as ageing of an individual, are
+##' not part of the event data that this function accepts. Instead,
+##' internal transfer events can be generated when the cleaned
+##' events are applied to a model, see \code{\link{node_events}} and
+##' its \code{age} argument.
+##'
+##' @param events a \code{data.frame} with the columns \code{id},
+##'     \code{event}, \code{time}, \code{node}, and \code{dest} to
+##'     define the events, see Details.
+##' @return A \linkS4class{SimInf_individual_events} object with the
+##'     cleaned events for all individuals with a plausible life
+##'     history.
 ##' @references
 ##'
 ##' \Ewerlof2025
 ##' @export
 ##' @seealso \code{\link{node_events}}.
 ##' @md
+##' @examples
+##' ## Example data with two animals; the first has a plausible life
+##' ## history, the second does not since the animal is not registered
+##' ## at the node of the exit event.
+##' events <- data.frame(
+##'   id = c(1, 1, 1, 1,
+##'          2, 2, 2),
+##'   event = c("enter", "extTrans", "exit", "extTrans",
+##'             "enter", "extTrans", "exit"),
+##'   time = c("2025-03-01", "2025-06-15", "2025-09-01", "2025-12-01",
+##'            "2025-04-01", "2025-07-01", "2025-10-01"),
+##'   node = c("N1", "N1", "N2", "N2",
+##'            "N3", "N3", "N5"),
+##'   dest = c("-", "N2", "-", "N3",
+##'            "-", "N4", "-")
+##' )
+##'
+##' ## Keep the longest plausible life history for each animal: the
+##' ## movement after the exit event of the first animal is discarded,
+##' ## and all events of the second animal are dropped. Note that the
+##' ## '-' in 'dest' is replaced with NA for non-movement events.
+##' as.data.frame(individual_events(events))
 individual_events <- function(events) {
     columns <- c("id", "event", "time", "node", "dest")
     if (!is.data.frame(events))
@@ -468,13 +516,39 @@ indiv_events_time <- function(events, time) {
 ##'
 ##' Lookup individuals, in which node they are located and their age
 ##' at a specified time-point.
+##'
+##' @details
+##'
+##' All individuals must have an 'enter' event, otherwise an error is
+##' raised. An individual is included in the result if its 'enter'
+##' event occurs at or before the time-point, and it has no 'exit'
+##' event at or before the time-point. Individuals that have not yet
+##' entered are omitted, and so are individuals that have exited.
+##'
+##' The node is the node where the individual was last registered; if
+##' the last event is an external transfer, the node is the
+##' destination of that movement. Node identifiers are returned as
+##' specified in the events, e.g. 'XY010'.
+##'
+##' The age is the difference between the time-point and the 'enter'
+##' event of the individual. If the events were specified with dates,
+##' the age is in days, otherwise it is in the same unit as the
+##' time-points.
+##'
+##' The rows in the returned data frame are ordered by \code{id}.
+##'
 ##' @param x an individual events object of class
 ##'     \code{SimInf_individual_events}.
-##' @param time the time-point for the lookup of individuals. Default
-##'     is \code{NULL} which means to extract the individuals at the
-##'     minimum time-point in the events object \code{x}.
+##' @param time the time-point for the lookup of individuals, either
+##'     an integer or, if the events were specified with dates, a
+##'     date. Default is \code{NULL} which means to extract the
+##'     individuals at the minimum time-point in the events object
+##'     \code{x}.
 ##' @return a \code{data.frame} with the columns \code{id},
 ##'     \code{node}, and \code{age}.
+##' @seealso \code{\link{individual_events}},
+##'     \code{\link{node_events}},
+##'     \code{\link{u0_from_individual_events}}.
 ##' @export
 ## nolint start: brace_linter
 setGeneric(
@@ -520,10 +594,19 @@ setMethod(
 
 ##' Display the distribution of individual events over time
 ##'
-##' @param x The individual events data to plot.
-##' @template plot-frame-param
-##' @param ... Other graphical parameters that are passed on to the
-##'     plot function.
+##' Plot the number of individuals that are affected by the scheduled
+##' events over time. The events are aggregated per time-point and
+##' event type, and four panels are produced in a 2x2 grid, one for
+##' each event type: 'Exit', 'Enter', 'Internal transfer', and
+##' 'External transfer'. All panels share the same y-axis scale to
+##' ease comparison between the event types, and an event type with no
+##' events is displayed as a line at zero.  If the time-points in the
+##' events are dates, the x-axis is displayed as dates.
+##'
+##' @param x The \code{SimInf_individual_events} object to plot.
+##' @param frame.plot Draw a frame around each plot. Default is FALSE.
+##' @param ... Additional arguments affecting the plot, passed on to
+##'     the plot function for each panel.
 ##' @aliases plot,SimInf_individual_events-method
 ##' @export
 setMethod(
@@ -660,28 +743,53 @@ events_target <- function(events, target) {
 ##'
 ##' In many countries, individual-based livestock data are collected
 ##' to enable contact tracing during disease outbreaks. However, the
-##' livestock databases are not always structured in such a way that
-##' relevant information for disease spread simulations is easily
-##' retrieved. The aim of this function is to facilitate cleaning
-##' livestock event data and prepare it for usage in SimInf.
+##' individual-based records are not always directly usable for
+##' disease spread simulations. This function aggregates the cleaned
+##' individual events from \code{\link{individual_events}} on
+##' node-level to prepare them for usage in SimInf models.
 ##'
-##' The individual-based events will be aggregated on node-level.  The
+##' @details
+##'
+##' The nodes in the returned events are numbered 1 to N in sorted
+##' order of the unique node identifiers in the individual events.  If
+##' the individual events were specified with character event names or
+##' dates, the \code{event} and \code{time} columns of the returned
+##' events are converted back to character.
+##'
+##' All individuals must have an 'enter' event, otherwise an error is
+##' raised.
+##'
+##' The individual-based events are aggregated on node-level. The
 ##' \code{select} value is determined by the event type and age
-##' category.  If there is only one age category, i.e.,
+##' category. If there is only one age category, i.e.,
 ##' \code{age=NULL}, then \code{select=1} for the enter events, and
-##' \code{select=2} for all other events. If there are two age
-##' categories, then \code{select=1} for the enter events in the first
-##' age category, and \code{select=2} for the enter events in the
-##' second age category. Similarly, \code{select=3} for all other
-##' events in the first age category, and \code{select=4} for all
-##' other events in the first second category. With three age
-##' categories, it works similarly with \code{select=1,2,3} for the
-##' enter events in each age category, respectively. And
-##' \code{select=4,5,6} for all other events.
+##' \code{select=2} for all other events when the events are targeted
+##' for a model. If there are two age categories, then \code{select=1}
+##' for the enter events in the first age category, and
+##' \code{select=2} for the enter events in the second age
+##' category. Similarly, \code{select=3} for all other events in the
+##' first age category, and \code{select=4} for all other events in
+##' the second age category. With three age categories, it works
+##' similarly with \code{select=1,2,3} for the enter events in each
+##' age category, respectively. And \code{select=4,5,6} for all other
+##' events.
+##'
+##' For the built-in models, the \code{select} value for the non-enter
+##' events is determined by the design of the target model, such that
+##' the events act on the appropriate compartment.
+##'
+##' If \code{age} contains more than one break point, internal
+##' transfer events for the ageing of individuals between age
+##' categories are generated and included in the returned events.  The
+##' age categories are determined by the break points in \code{age}:
+##' individuals with an age below \code{age[1]} belong to the first
+##' category, individuals with an age from \code{age[i-1]} up to
+##' \code{age[i]} belong to category \code{i}, and individuals with an
+##' age of at least the last break point belong to the last category.
 ##'
 ##' @param x an individual events object of class
 ##'     \code{SimInf_individual_events}.
-##' @param time All events that occur after \sQuote{time} are
+##' @param time All events that occur strictly after \sQuote{time} are
 ##'     included. Default is \code{NULL} which means to extract the
 ##'     events after the minimum time-point in the
 ##'     \code{SimInf_individual_events} object.
@@ -690,11 +798,13 @@ events_target <- function(events, target) {
 ##'     for. The default, \code{NULL}, creates events but they might
 ##'     have to be post-processed to fit the specific use case.
 ##' @param age Integer vector with break points in days for the ageing
-##'     events.
+##'     events, see Details.
 ##' @return a \code{data.frame} with the columns \code{event},
 ##'     \code{time}, \code{node}, \code{dest}, \code{n},
 ##'     \code{proportion}, \code{select}, and \code{shift}.
-##' @seealso \code{\link{individual_events}}.
+##' @seealso \code{\link{individual_events}},
+##'     \code{\link{u0_from_individual_events}},
+##'     \code{\link[=events,SimInf_model-method]{events}}.
 ##' @export
 ## nolint start: brace_linter
 setGeneric(
