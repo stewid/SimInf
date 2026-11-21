@@ -134,30 +134,6 @@ setMethod(
     }
 )
 
-##' Split tspan into intervals.
-##'
-##' @return A two-column matrix where each row specifies the tspan to
-##'     use when running the model from time[i] to time[i+1]. The
-##'     first column is \code{NA} if the interval is one time-unit.
-##' @noRd
-pfilter_tspan <- function(model, data) {
-    time <- sapply(data, function(x) {
-        x$time[1]
-    })
-
-    do.call("rbind", lapply(seq_along(time), function(i) {
-        if (i == 1) {
-            if (model@tspan[1] < time[1])
-                return(as.numeric(c(model@tspan[1], time[1])))
-            return(as.numeric(c(NA_real_, time[i])))
-        }
-
-        if (diff(as.integer(time[c(i - 1L, i)])) > 1)
-            return(as.numeric(time[c(i - 1L, i)]))
-        as.numeric(c(NA_real_, time[i]))
-    }))
-}
-
 ##' Split scheduled events into the intervals in tspan.
 ##'
 ##' @param events The scheduled events to split.
@@ -651,7 +627,7 @@ setMethod(
 
         n_particles <- check_n_particles(n_particles)
         data <- split_data(model, data)
-        tspan <- pfilter_tspan(model, data)
+        tspan <- split_tspan(model, data)
         model@tspan <- tspan[, 2]
         events <- pfilter_events(model@events, tspan[, 2] - 1)
         obs_process <- pfilter_obs_process(model, obs_process, data)
