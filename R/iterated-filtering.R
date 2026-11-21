@@ -75,6 +75,7 @@ setMethod(
 ##'
 ##' \Ionides2015
 ##' @export
+## nolint start: brace_linter
 setGeneric(
     "if2",
     signature = "model",
@@ -83,10 +84,10 @@ setGeneric(
              data,
              n_particles,
              n_iterations,
-             verbose = FALSE) {
+             verbose = FALSE)
         standardGeneric("if2")
-    }
 )
+## nolint end
 
 ##' @rdname if2
 ##' @export
