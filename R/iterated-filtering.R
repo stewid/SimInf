@@ -103,6 +103,9 @@ setMethod(
         n_particles <- check_n_particles(n_particles)
         n_iterations <- check_n_iterations(n_iterations, FALSE)
         data <- split_data(model, data)
+        tspan <- split_tspan(model, data)
+        model@tspan <- tspan[, 2]
+        events <- split_events(model@events, tspan[, 2] - 1)
         verbose <- check_verbose(verbose)
         stop("Not implemented.")
     }
