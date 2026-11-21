@@ -5,21 +5,9 @@
 \alias{if2,SimInf_model-method}
 \title{Iterated filtering algorithm}
 \usage{
-if2(
-  model,
-  obs_process,
-  n_particles,
-  n_iterations,
-  verbose = getOption("verbose", FALSE)
-)
+if2(model, obs_process, n_particles, n_iterations, verbose = FALSE)
 
-\S4method{if2}{SimInf_model}(
-  model,
-  obs_process,
-  n_particles,
-  n_iterations,
-  verbose = getOption("verbose", FALSE)
-)
+\S4method{if2}{SimInf_model}(model, obs_process, n_particles, n_iterations, verbose = FALSE)
 }
 \arguments{
 \item{model}{The model to simulate data from.}
@@ -38,14 +26,17 @@ uniform(min, max)}. The observation process can also be a
 function to evaluate the probability density of the
 observations given the simulated states. The first argument
 passed to the \code{obs_process} function is the result from a
-run of the model and it contains one trajectory with simulated
-data for a time-point, where the trajectory contains
-\code{n_particles} replicates, see
+run of the model for the current time interval: a trajectory
+with one replicate per particle for that time-point, see
 \code{\link{trajectory,SimInf_model-method}}. The second
 argument to the \code{obs_process} function is a
-\code{data.frame} containing the rows for the specific
-time-point that the function is called for. Note that the
-function must return the log of the density.}
+\code{data.frame} containing the rows in \code{data} for the
+time-point that the function is called for. The function must
+return a numeric vector with one entry per replicate,
+containing the log of the density. A value of \code{-Inf} is
+valid and means that the observation is impossible for that
+replicate, whereas \code{NA}, \code{NaN} and \code{+Inf} raise
+an error.}
 
 \item{n_particles}{An integer with the number of particles (> 1)
 to use at each timestep.}
@@ -53,9 +44,12 @@ to use at each timestep.}
 \item{n_iterations}{An integer specifying the number of filtering
 iterations to perform.}
 
-\item{verbose}{prints diagnostic messages when \code{TRUE}. The
-default is to retrieve the global option \code{verbose} and
-use \code{FALSE} if it is not set.}
+\item{verbose}{Prints diagnostic messages to the console; default
+is \code{FALSE}.  When \code{verbose = TRUE}, information is
+printed every 100 iterations. Specify an integer \code{n} to
+print information every \code{n} iterations, for example,
+\code{verbose = 1} or \code{verbose = 10}. Use \code{FALSE} or
+\code{verbose = 0} to suppress all messages.}
 }
 \description{
 Iterated filtering algorithm

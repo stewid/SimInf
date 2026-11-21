@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -69,9 +69,7 @@ setMethod(
 ##' @template n_particles-param
 ##' @param n_iterations An integer specifying the number of filtering
 ##'     iterations to perform.
-##' @param verbose prints diagnostic messages when \code{TRUE}. The
-##'     default is to retrieve the global option \code{verbose} and
-##'     use \code{FALSE} if it is not set.
+##' @template verbose-param
 ##' @references
 ##'
 ##' \Ionides2015
@@ -83,7 +81,7 @@ setGeneric(
              obs_process,
              n_particles,
              n_iterations,
-             verbose = getOption("verbose", FALSE)) {
+             verbose = FALSE) {
         standardGeneric("if2")
     }
 )
@@ -100,6 +98,7 @@ setMethod(
              verbose) {
         n_particles <- check_n_particles(n_particles)
         n_iterations <- check_n_iterations(n_iterations, FALSE)
+        verbose <- check_verbose(verbose)
         stop("Not implemented.")
     }
 )
