@@ -151,7 +151,7 @@ model <- SIR(u0 = data.frame(S = c(10, 15, 20, 25),
              events = events)
 
 stopifnot(identical(
-    SimInf:::pfilter_events(model@events, 2:3),
+    SimInf:::split_events(model@events, 2:3),
     list(new("SimInf_events",
              E = new("dgCMatrix",
                      i = c(0L, 1L, 2L, 0L, 1L, 2L),
@@ -191,7 +191,7 @@ stopifnot(identical(
 
 ## Check that the result is NULL for a model without events.
 stopifnot(is.null(
-    SimInf:::pfilter_events(
+    SimInf:::split_events(
                  SIR(u0 = data.frame(S = 100, I = 0, R = 0),
                      tspan = 0:3, beta = 0.16, gamma = 0.077)@events,
                  2:3)))

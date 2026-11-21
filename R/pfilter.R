@@ -134,34 +134,6 @@ setMethod(
     }
 )
 
-##' Split scheduled events into the intervals in tspan.
-##'
-##' @param events The scheduled events to split.
-##' @param time_end Endpoint time in each tpsan interval.
-##' @return A list with the scheduled events to use in each interval.
-##' @noRd
-pfilter_events <- function(events, time_end) {
-    if (length(events@event) == 0)
-        return(NULL)
-
-    m <- .Call(SimInf_split_events, events@time, as.integer(time_end))
-    lapply(seq_len(nrow(m)), function(i) {
-        j <- seq(from = m[i, 1], by = 1, length.out = m[i, 2])
-
-        methods::new("SimInf_events",
-                     E          = events@E,
-                     N          = events@N,
-                     event      = events@event[j],
-                     time       = events@time[j],
-                     node       = events@node[j],
-                     dest       = events@dest[j],
-                     n          = events@n[j],
-                     proportion = events@proportion[j],
-                     select     = events@select[j],
-                     shift      = events@shift[j])
-    })
-}
-
 pfilter_obs_process <- function(model, obs_process, data) {
     if (is.function(obs_process))
         return(match.fun(obs_process))
@@ -629,7 +601,7 @@ setMethod(
         data <- split_data(model, data)
         tspan <- split_tspan(model, data)
         model@tspan <- tspan[, 2]
-        events <- pfilter_events(model@events, tspan[, 2] - 1)
+        events <- split_events(model@events, tspan[, 2] - 1)
         obs_process <- pfilter_obs_process(model, obs_process, data)
         if (!is.null(init_model))
             init_model <- match.fun(init_model)

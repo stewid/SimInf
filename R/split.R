@@ -105,3 +105,43 @@ split_tspan <- function(model, data) {
         as.numeric(c(NA_real_, time[i]))
     }))
 }
+
+##' Split scheduled events into simulation intervals
+##'
+##' Split the scheduled events in a \code{SimInf_events} object into
+##' one \code{SimInf_events} object per simulation interval, such that
+##' the events in item \code{i} can be applied when advancing the
+##' model to the end time of interval \code{i} (the \code{time_end}
+##' argument). Event ordering within each interval is preserved.
+##'
+##' @param events The \code{SimInf_events} object with the scheduled
+##'     events to split.
+##' @param time_end A numeric vector with the end time of each
+##'     simulation interval, i.e. the second column of the matrix
+##'     returned by \code{split_tspan}.
+##' @return A list with one \code{SimInf_events} object per simulation
+##'     interval, holding the events whose event time falls within
+##'     that interval. Returns \code{NULL} when there are no scheduled
+##'     events.
+##' @noRd
+split_events <- function(events, time_end) {
+    if (length(events@event) == 0)
+        return(NULL)
+
+    m <- .Call(SimInf_split_events, events@time, as.integer(time_end))
+    lapply(seq_len(nrow(m)), function(i) {
+        j <- seq(from = m[i, 1], by = 1, length.out = m[i, 2])
+
+        methods::new("SimInf_events",
+                     E          = events@E,
+                     N          = events@N,
+                     event      = events@event[j],
+                     time       = events@time[j],
+                     node       = events@node[j],
+                     dest       = events@dest[j],
+                     n          = events@n[j],
+                     proportion = events@proportion[j],
+                     select     = events@select[j],
+                     shift      = events@shift[j])
+    })
+}
