@@ -100,6 +100,12 @@ setMethod(
              n_particles,
              n_iterations,
              verbose) {
+        if (isFALSE(identical(dim(model@U_sparse), c(0L, 0L))) ||
+            isFALSE(identical(dim(model@V_sparse), c(0L, 0L)))) {
+            stop("'if2' cannot run a model with a sparse result matrix.",
+                 call. = FALSE)
+        }
+
         n_particles <- check_n_particles(n_particles)
         n_iterations <- check_n_iterations(n_iterations, FALSE)
         data <- split_data(model, data)
