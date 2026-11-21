@@ -147,7 +147,17 @@ an error.</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>A <code>data.frame</code> holding the time series data.</p></dd>
+<dd><p>A <code>data.frame</code> with the observed data. It must
+contain a <code>time</code> column with the observation time points
+of the data. The time points must be numeric and strictly
+increasing; rows that share the same time point are kept
+together. When <code>tspan</code> is expressed in days since a start
+date, the <code>time</code> column can also be provided as dates,
+which are converted to numeric time points. Additional columns
+hold the observed values and are made available, together with
+the time points, to the <code>obs_process</code>
+function. Observation times before the first time point in
+<code>tspan</code> are not allowed.</p></dd>
 
 
 <dt id="arg-priors">priors<a class="anchor" aria-label="anchor" href="#arg-priors"></a></dt>

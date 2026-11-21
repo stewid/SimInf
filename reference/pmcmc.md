@@ -98,7 +98,15 @@ continue_pmcmc(
 
 - data:
 
-  A `data.frame` holding the time series data.
+  A `data.frame` with the observed data. It must contain a `time` column
+  with the observation time points of the data. The time points must be
+  numeric and strictly increasing; rows that share the same time point
+  are kept together. When `tspan` is expressed in days since a start
+  date, the `time` column can also be provided as dates, which are
+  converted to numeric time points. Additional columns hold the observed
+  values and are made available, together with the time points, to the
+  `obs_process` function. Observation times before the first time point
+  in `tspan` are not allowed.
 
 - priors:
 
