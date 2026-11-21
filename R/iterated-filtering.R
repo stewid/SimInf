@@ -66,6 +66,7 @@ setMethod(
 ##'
 ##' @param model The model to simulate data from.
 ##' @template obs_process-param
+##' @template data-param
 ##' @template n_particles-param
 ##' @param n_iterations An integer specifying the number of filtering
 ##'     iterations to perform.
@@ -79,6 +80,7 @@ setGeneric(
     signature = "model",
     function(model,
              obs_process,
+             data,
              n_particles,
              n_iterations,
              verbose = FALSE) {
@@ -93,11 +95,13 @@ setMethod(
     signature(model = "SimInf_model"),
     function(model,
              obs_process,
+             data,
              n_particles,
              n_iterations,
              verbose) {
         n_particles <- check_n_particles(n_particles)
         n_iterations <- check_n_iterations(n_iterations, FALSE)
+        data <- split_data(model, data)
         verbose <- check_verbose(verbose)
         stop("Not implemented.")
     }
