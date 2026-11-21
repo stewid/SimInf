@@ -181,10 +181,11 @@ continue_pmcmc(
 
 - verbose:
 
-  prints diagnostic messages when `TRUE`. Default is `FALSE`. When
-  `verbose=TRUE`, information is printed every 100 iterations. For
-  pmcmc, it is possible to get information every nth information by
-  specifying `verbose=n`, for example, `verbose=1` or `verbose=10`.
+  Prints diagnostic messages to the console; default is `FALSE`. When
+  `verbose = TRUE`, information is printed every 100 iterations. Specify
+  an integer `n` to print information every `n` iterations, for example,
+  `verbose = 1` or `verbose = 10`. Use `FALSE` or `verbose = 0` to
+  suppress all messages.
 
 - object:
 
