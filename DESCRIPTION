@@ -112,6 +112,7 @@ Collate:
     'prevalence.R'
     'print.R'
     'punchcard.R'
+    'split.R'
     'trajectory.R'
     'u0.R'
     'v0.R'

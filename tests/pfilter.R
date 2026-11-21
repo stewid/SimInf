@@ -36,36 +36,36 @@ model <- SIR(u0 = data.frame(S = 99, I = 1, R = 0),
              gamma = 0.077)
 
 ## Check that data is a data.frame.
-res <- assertError(SimInf:::pfilter_data(model, 5))
+res <- assertError(SimInf:::split_data(model, 5))
 check_error(res, "'data' must be a data.frame.")
 
 ## Check that a missing 'time' column in data raises an error.
-res <- assertError(SimInf:::pfilter_data(model, data.frame()))
+res <- assertError(SimInf:::split_data(model, data.frame()))
 check_error(res, "Missing 'time' column in data.")
 
 ## Check that a non-integer value in the 'data$time' column raises an
 ## error.
-res <- assertError(SimInf:::pfilter_data(model, data.frame(time = 1.1)))
+res <- assertError(SimInf:::split_data(model, data.frame(time = 1.1)))
 check_error(res, "'data$time' must be integer.")
 
 ## Check that a NA value in the 'data$time' column raises an error.
-res <- assertError(SimInf:::pfilter_data(model, data.frame(time = NA)))
+res <- assertError(SimInf:::split_data(model, data.frame(time = NA)))
 check_error(res, "'data$time' must be integer.")
 
 ## Check that 'data$time' column is a non-empty vector.
-res <- assertError(SimInf:::pfilter_data(model, data.frame(time = numeric(0))))
+res <- assertError(SimInf:::split_data(model, data.frame(time = numeric(0))))
 check_error(res, "'time' column in data must be an increasing vector.")
 
 ## Check that data$time[1] < model@tspan[1] raises an error.
-res <- assertError(SimInf:::pfilter_data(model, data.frame(time = 0)))
+res <- assertError(SimInf:::split_data(model, data.frame(time = 0)))
 check_error(res, "data$time[1] must be >= tspan[1].")
 
-data <- SimInf:::pfilter_data(model, data.frame(time = 1:3))
+data <- SimInf:::split_data(model, data.frame(time = 1:3))
 stopifnot(identical(
     SimInf:::pfilter_tspan(model, data),
     structure(c(NA, NA, NA, 1, 2, 3), dim = 3:2)))
 
-data <- SimInf:::pfilter_data(model, data.frame(time = 2:3))
+data <- SimInf:::split_data(model, data.frame(time = 2:3))
 stopifnot(identical(
     SimInf:::pfilter_tspan(model, data),
     structure(c(1, NA, 2, 3), dim = c(2L, 2L))))
@@ -79,17 +79,17 @@ model <- SIR(
 
 ## Check that data$time[1] < model@tspan[1] raises an error.
 df <- data.frame(time = c("2021-01-04", "2021-01-05"))
-res <- assertError(SimInf:::pfilter_data(model, df))
+res <- assertError(SimInf:::split_data(model, df))
 check_error(res, "data$time[1] must be >= tspan[1].")
 
 df <- data.frame(time = c("2021-01-05", "2021-01-06", "2021-01-07"))
-data <- SimInf:::pfilter_data(model, df)
+data <- SimInf:::split_data(model, df)
 stopifnot(identical(
     SimInf:::pfilter_tspan(model, data),
     structure(c(NA, NA, NA, 5, 6, 7), dim = 3:2)))
 
 df <- data.frame(time = c("2021-01-06", "2021-01-07"))
-data <- SimInf:::pfilter_data(model, df)
+data <- SimInf:::split_data(model, df)
 stopifnot(identical(
     SimInf:::pfilter_tspan(model, data),
     structure(c(5, NA, 6, 7), dim = c(2L, 2L))))

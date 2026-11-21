@@ -134,43 +134,6 @@ setMethod(
     }
 )
 
-##' Split data into intervals.
-##'
-##' @return A list of data.frames where each list item is the data for
-##'     one interval in tspan.
-##' @noRd
-pfilter_data <- function(model, data) {
-    if (!is.data.frame(data))
-        stop("'data' must be a data.frame.", call. = FALSE)
-
-    if (!("time" %in% names(data)))
-        stop("Missing 'time' column in data.", call. = FALSE)
-
-    if (!is.null(names(model@tspan))) {
-        data$time <- julian(x = as.Date(data$time),
-                            origin = as.Date(names(model@tspan)[1]))
-        data$time <- as.numeric(data$time + model@tspan[1])
-    }
-
-    check_integer_arg(data$time)
-    data <- data[order(data$time), seq_len(ncol(data)), drop = FALSE]
-
-    if (any(length(data$time) < 1,
-            anyNA(data$time),
-            any(diff(unique(data$time)) <= 0))) {
-        stop("'time' column in data must be an increasing vector.",
-             call. = FALSE)
-    }
-
-    if (data$time[1] < model@tspan[1])
-        stop("data$time[1] must be >= tspan[1].", call. = FALSE)
-
-    lapply(split(data, data$time), function(x) {
-        rownames(x) <- NULL
-        x
-    })
-}
-
 ##' Split tspan into intervals.
 ##'
 ##' @return A two-column matrix where each row specifies the tspan to
@@ -687,7 +650,7 @@ setMethod(
         }
 
         n_particles <- check_n_particles(n_particles)
-        data <- pfilter_data(model, data)
+        data <- split_data(model, data)
         tspan <- pfilter_tspan(model, data)
         model@tspan <- tspan[, 2]
         events <- pfilter_events(model@events, tspan[, 2] - 1)
