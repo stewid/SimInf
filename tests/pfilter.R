@@ -62,12 +62,12 @@ check_error(res, "data$time[1] must be >= tspan[1].")
 
 data <- SimInf:::split_data(model, data.frame(time = 1:3))
 stopifnot(identical(
-    SimInf:::pfilter_tspan(model, data),
+    SimInf:::split_tspan(model, data),
     structure(c(NA, NA, NA, 1, 2, 3), dim = 3:2)))
 
 data <- SimInf:::split_data(model, data.frame(time = 2:3))
 stopifnot(identical(
-    SimInf:::pfilter_tspan(model, data),
+    SimInf:::split_tspan(model, data),
     structure(c(1, NA, 2, 3), dim = c(2L, 2L))))
 
 ## Create an SIR model object where tspan is specified as Dates.
@@ -85,13 +85,13 @@ check_error(res, "data$time[1] must be >= tspan[1].")
 df <- data.frame(time = c("2021-01-05", "2021-01-06", "2021-01-07"))
 data <- SimInf:::split_data(model, df)
 stopifnot(identical(
-    SimInf:::pfilter_tspan(model, data),
+    SimInf:::split_tspan(model, data),
     structure(c(NA, NA, NA, 5, 6, 7), dim = 3:2)))
 
 df <- data.frame(time = c("2021-01-06", "2021-01-07"))
 data <- SimInf:::split_data(model, df)
 stopifnot(identical(
-    SimInf:::pfilter_tspan(model, data),
+    SimInf:::split_tspan(model, data),
     structure(c(5, NA, 6, 7), dim = c(2L, 2L))))
 
 ## Check invalid n_particles
@@ -151,7 +151,7 @@ model <- SIR(u0 = data.frame(S = c(10, 15, 20, 25),
              events = events)
 
 stopifnot(identical(
-    SimInf:::pfilter_events(model@events, 2:3),
+    SimInf:::split_events(model@events, 2:3),
     list(new("SimInf_events",
              E = new("dgCMatrix",
                      i = c(0L, 1L, 2L, 0L, 1L, 2L),
@@ -191,7 +191,7 @@ stopifnot(identical(
 
 ## Check that the result is NULL for a model without events.
 stopifnot(is.null(
-    SimInf:::pfilter_events(
+    SimInf:::split_events(
                  SIR(u0 = data.frame(S = 100, I = 0, R = 0),
                      tspan = 0:3, beta = 0.16, gamma = 0.077)@events,
                  2:3)))

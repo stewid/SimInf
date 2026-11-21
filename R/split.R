@@ -16,20 +16,20 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Split observed data by observation time.
+##' Split observed data by observation time
 ##'
 ##' Validate the observed data and split it into one data.frame per
 ##' unique observation time, ordered by increasing time. Rows that
 ##' share an observation time are kept together in the same
 ##' data.frame. If the model's tspan has names (i.e. is expressed in
-##' dates), the time column in data is converted from dates to
-##' numeric time points, relative to the first day of tspan.
+##' dates), the time column in data is converted from dates to numeric
+##' time points, relative to the first day of tspan.
 ##'
 ##' @param model The \code{SimInf_model} object that determines the
 ##'     observation time points.
 ##' @param data A \code{data.frame} with the observed data. It must
-##'     contain a \code{time} column with the observation time
-##'     points, coerced to dates when tspan is expressed in dates.
+##'     contain a \code{time} column with the observation time points,
+##'     coerced to dates when tspan is expressed in dates.
 ##' @return A named \code{list} with one \code{data.frame} per unique
 ##'     observation time, ordered by increasing time and with the
 ##'     observation time as the name of each list item.
@@ -63,5 +63,85 @@ split_data <- function(model, data) {
     lapply(split(data, data$time), function(x) {
         rownames(x) <- NULL
         x
+    })
+}
+
+##' Split the observation times into intervals for simulation
+##'
+##' Determine the 'tspan' to use for each call to \code{run} when
+##' propagating particles from one observation time to the next.
+##' Consecutive observation times that are more than one time-unit
+##' apart define an interval by both its start and end time.  When the
+##' gap is exactly one time-unit, only the end time is needed to
+##' advance the model and the start time is set to \code{NA}. The
+##' first interval starts at the first time point in 'tspan', unless
+##' the data already start there, in which case it is a one time-unit
+##' interval specified by its end time only.
+##'
+##' @param model The \code{SimInf_model} object with the 'tspan' that
+##'     determines the first time point of the simulation.
+##' @param data A named list with one data.frame per observation time,
+##'     i.e. the output from \code{split_data}.
+##' @return A two-column numeric matrix with one row per observation
+##'     time. The second column holds the end time of each interval;
+##'     the first column holds the start time, or \code{NA} when the
+##'     interval spans a single time-unit and the end time alone
+##'     determines the run.
+##' @noRd
+split_tspan <- function(model, data) {
+    time <- sapply(data, function(x) {
+        x$time[1]
+    })
+
+    do.call("rbind", lapply(seq_along(time), function(i) {
+        if (i == 1) {
+            if (model@tspan[1] < time[1])
+                return(as.numeric(c(model@tspan[1], time[1])))
+            return(as.numeric(c(NA_real_, time[i])))
+        }
+
+        if (diff(as.integer(time[c(i - 1L, i)])) > 1)
+            return(as.numeric(time[c(i - 1L, i)]))
+        as.numeric(c(NA_real_, time[i]))
+    }))
+}
+
+##' Split scheduled events into simulation intervals
+##'
+##' Split the scheduled events in a \code{SimInf_events} object into
+##' one \code{SimInf_events} object per simulation interval, such that
+##' the events in item \code{i} can be applied when advancing the
+##' model to the end time of interval \code{i} (the \code{time_end}
+##' argument). Event ordering within each interval is preserved.
+##'
+##' @param events The \code{SimInf_events} object with the scheduled
+##'     events to split.
+##' @param time_end A numeric vector with the end time of each
+##'     simulation interval, i.e. the second column of the matrix
+##'     returned by \code{split_tspan}.
+##' @return A list with one \code{SimInf_events} object per simulation
+##'     interval, holding the events whose event time falls within
+##'     that interval. Returns \code{NULL} when there are no scheduled
+##'     events.
+##' @noRd
+split_events <- function(events, time_end) {
+    if (length(events@event) == 0)
+        return(NULL)
+
+    m <- .Call(SimInf_split_events, events@time, as.integer(time_end))
+    lapply(seq_len(nrow(m)), function(i) {
+        j <- seq(from = m[i, 1], by = 1, length.out = m[i, 2])
+
+        methods::new("SimInf_events",
+                     E          = events@E,
+                     N          = events@N,
+                     event      = events@event[j],
+                     time       = events@time[j],
+                     node       = events@node[j],
+                     dest       = events@dest[j],
+                     n          = events@n[j],
+                     proportion = events@proportion[j],
+                     select     = events@select[j],
+                     shift      = events@shift[j])
     })
 }
