@@ -1,7 +1,7 @@
 ## This file is part of SimInf, a framework for stochastic
 ## disease spread simulations.
 ##
-## Copyright (C) 2015 -- 2025 Stefan Widgren
+## Copyright (C) 2015 -- 2026 Stefan Widgren
 ##
 ## SimInf is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -380,5 +380,5 @@ stopifnot(all(
     abs(SimInf:::set_proposal(fit, c(beta = 0.5, gamma = 0.6)) -
         c(beta = 0.5, gamma = 0.6)) < tol))
 
-stopifnot(identical(SimInf:::get_verbose(TRUE), 100L))
-stopifnot(identical(SimInf:::get_verbose(50), 50L))
+stopifnot(identical(SimInf:::check_verbose(TRUE), 100L))
+stopifnot(identical(SimInf:::check_verbose(50), 50L))

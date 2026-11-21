@@ -290,7 +290,7 @@ setMethod(
 ##'     one, containing a previous PMCMC chain to continue from. If
 ##'     provided, \code{theta} and \code{covmat} must be \code{NULL},
 ##'     and \code{n_iterations} can be 0.
-##' @template verbose-param-pmcmc
+##' @template verbose-param
 ##' @return For \code{pmcmc()}, a \code{\linkS4class{SimInf_pmcmc}}
 ##'     object containing the fitted parameters and diagnostic
 ##'     information for all iterations. For \code{continue_pmcmc()},
@@ -569,7 +569,7 @@ set_proposal <- function(object, theta) {
 }
 
 pmcmc_progress <- function(object, i, verbose) {
-    if (!is.null(verbose) && isTRUE(i %% verbose == 0)) {
+    if (isTRUE(i %% verbose == 0L)) {
         print_title(sprintf(
             "Iteration: %i of %i. Time: %s. Acceptance ratio: %.3f",
             i, length(object), format(Sys.time(), "%T"),
@@ -628,21 +628,6 @@ setMethod(
     }
 )
 
-get_verbose <- function(verbose) {
-    if (isTRUE(verbose))
-        return(100L)
-
-    if (all(is.numeric(verbose),
-            !anyNA(verbose),
-            all(is_wholenumber(verbose)),
-            all(verbose > 0),
-            length(verbose) == 1L)) {
-        return(as.integer(verbose))
-    }
-
-    NULL
-}
-
 ##' @rdname pmcmc
 ##' @export
 ## nolint start: brace_linter
@@ -678,7 +663,7 @@ setMethod(
         post_proposal <- check_post_proposal(post_proposal)
         init_model <- check_init_model(init_model)
         post_particle <- check_post_particle(post_particle)
-        verbose <- get_verbose(verbose)
+        verbose <- check_verbose(verbose)
         i <- length(object)
         iterations <- i + n_iterations
         object@chain <- setup_chain(object, n_iterations)

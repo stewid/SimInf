@@ -369,3 +369,21 @@ check_n_particles <- function(n_particles) {
         stop("'n_particles' must be an integer > 1.", call. = FALSE)
     n_particles
 }
+
+##' Validate 'verbose' argument.
+##' @noRd
+check_verbose <- function(verbose) {
+    if (isTRUE(verbose))
+        verbose <- 100L
+    if (isFALSE(verbose))
+        verbose <- 0L
+
+    check_integer_arg(verbose)
+    verbose <- as.integer(verbose)
+    if (length(verbose) != 1L || verbose < 0L) {
+        stop("'verbose' must be TRUE, FALSE, or an integer >= 0.",
+             call. = FALSE)
+    }
+
+    verbose
+}

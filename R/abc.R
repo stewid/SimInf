@@ -922,7 +922,8 @@ abc_internal <- function(object,
 ##'     stored in the \code{SimInf_abc} object, so
 ##'     \code{continue_abc()} must be given the same data again to
 ##'     continue the fit under the same conditions.
-##' @template verbose-param
+##' @param verbose prints diagnostic messages when \code{TRUE}.
+##'     Default is \code{FALSE}.
 ##' @template post_gen-param
 ##' @param init_model An optional function that, if non-NULL, is
 ##'     applied before running each proposal. The function must accept
