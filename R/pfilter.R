@@ -235,7 +235,7 @@ pfilter_internal <- function(model,
                              init_model) {
     Nd <- nrow(model@v0)
     Ntspan <- nrow(tspan)
-    ess <- numeric(Ntspan)
+    ess <- rep(NA_real_, Ntspan)
     loglik <- 0
     w <- numeric(n_particles)
 
