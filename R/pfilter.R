@@ -258,6 +258,16 @@ pfilter_internal <- function(model,
             ## Initialise the model.
             m <- init_model(model)
 
+            ## Guard against 'init_model' changing the structure of
+            ## the model: the particle blocks in 'U' and 'V' are
+            ## filled with the template layout, so 'u0' and 'v0' must
+            ## keep the dimensions of the template.
+            if (!identical(dim(m@u0), dim(model@u0)) ||
+                !identical(dim(m@v0), dim(model@v0))) {
+                stop("'init_model' must not change the dimensions ",
+                     "of 'u0' or 'v0'.", call. = FALSE)
+            }
+
             ## Save the initial u0 state.
             u_i <- seq.int(
                 from = (p - 1L) * n_nodes(model) * n_compartments(model) + 1L,
