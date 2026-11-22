@@ -235,7 +235,7 @@ pfilter_internal <- function(model,
                              init_model) {
     Nd <- nrow(model@v0)
     Ntspan <- nrow(tspan)
-    ess <- numeric(Ntspan)
+    ess <- rep(NA_real_, Ntspan)
     loglik <- 0
     w <- numeric(n_particles)
 
@@ -368,7 +368,7 @@ pfilter_internal <- function(model,
         ## are invalid.
         if (!identical(length(w), n_particles) || !is.vector(w, "numeric")) {
             stop("Invalid observation process: weights must be ",
-                 "a numeric vector of length 'n_replicates'.",
+                 "a numeric vector of length 'n_particles'.",
                  call. = FALSE)
         }
         if (anyNA(w)) {

@@ -534,7 +534,7 @@ res <- assertError(
             n_particles = 2))
 
 check_error(res, paste0("Invalid observation process: weights must be a ",
-                        "numeric vector of length 'n_replicates'."))
+                        "numeric vector of length 'n_particles'."))
 
 res <- assertError(
     pfilter(model,
@@ -545,7 +545,7 @@ res <- assertError(
             n_particles = 2))
 
 check_error(res, paste0("Invalid observation process: weights must be a ",
-                        "numeric vector of length 'n_replicates'."))
+                        "numeric vector of length 'n_particles'."))
 
 res <- assertError(
     pfilter(model,
@@ -590,5 +590,5 @@ stopifnot(identical(logLik(pf), -Inf))
 stopifnot(identical(pf@n_particles, 2L))
 stopifnot(length(pf@ess) == 3,
           all(abs(pf@ess[1] - (1 + exp(-1))^2 / (1 + exp(-2))) < tol),
-          pf@ess[2] == 0,
-          pf@ess[3] == 0)
+          is.na(pf@ess[2]),
+          is.na(pf@ess[3]))
