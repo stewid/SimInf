@@ -74,7 +74,9 @@ if2_internal <- function(model,
                          data,
                          n_particles,
                          tspan,
-                         init_model) {
+                         cooling,
+                         init_model,
+                         post_particle) {
     Nd <- nrow(model@v0)
     Ntspan <- nrow(tspan)
     ess <- rep(NA_real_, Ntspan)
@@ -239,6 +241,19 @@ if2_internal <- function(model,
          ess = ess)
 }
 
+check_cooling_fraction <- function(cooling_fraction) {
+    if (!is.numeric(cooling_fraction) ||
+        anyNA(cooling_fraction) ||
+        length(cooling_fraction) != 1L ||
+        cooling_fraction <= 0 ||
+        cooling_fraction >= 1) {
+        stop("'cooling_fraction' must be a numeric in (0, 1).",
+             call. = FALSE)
+    }
+
+    as.numeric(cooling_fraction)
+}
+
 ##' Iterated filtering algorithm
 ##'
 ##' @param model The model to simulate data from.
@@ -261,7 +276,9 @@ setGeneric(
              data,
              n_particles,
              n_iterations,
+             cooling_fraction = 0.5,
              init_model = NULL,
+             post_particle = NULL,
              verbose = FALSE)
         standardGeneric("if2")
 )
@@ -277,7 +294,9 @@ setMethod(
              data,
              n_particles,
              n_iterations,
+             cooling_fraction,
              init_model,
+             post_particle,
              verbose) {
         if (isFALSE(identical(dim(model@U_sparse), c(0L, 0L))) ||
             isFALSE(identical(dim(model@V_sparse), c(0L, 0L)))) {
@@ -287,25 +306,31 @@ setMethod(
 
         n_particles <- check_n_particles(n_particles)
         n_iterations <- check_n_iterations(n_iterations, FALSE)
+        cooling_fraction <- check_cooling_fraction(cooling_fraction)
+        cooling_rate <- cooling_fraction^(1 / 50)
         data <- split_data(model, data)
         tspan <- split_tspan(model, data)
         model@tspan <- tspan[, 2]
         events <- split_events(model@events, tspan[, 2] - 1)
         verbose <- check_verbose(verbose)
         obs_process <- pfilter_obs_process(model, obs_process, data)
-        if (!is.null(init_model))
-            init_model <- match.fun(init_model)
+        init_model <- check_init_model(init_model)
+        post_particle <- check_post_particle(post_particle)
 
         loglik <- rep(NA_real_, n_iterations)
         ess <- matrix(NA_real_, nrow = nrow(tspan), ncol = n_iterations)
         for (i in seq_len(n_iterations)) {
+            cooling <- cooling_rate^(i - 1L)
+
             out <- if2_internal(model = model,
                                 events = events,
                                 obs_process = obs_process,
                                 data = data,
                                 n_particles = n_particles,
                                 tspan = tspan,
-                                init_model = init_model)
+                                cooling = cooling,
+                                init_model = init_model,
+                                post_particle = post_particle)
 
             loglik[i] <- out$loglik
             ess[, i] <- out$ess
