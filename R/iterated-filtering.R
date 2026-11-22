@@ -16,17 +16,36 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-##' Class \code{"SimInf_if2"}
+##' Class \code{SimInf_if2}
+##'
+##' Storage class for the results of iterated filtering (IF2) on a
+##' \code{SimInf_model}, see \code{\link{if2}}.
 ##'
 ##' @slot model The \code{SimInf_model} object to estimate parameters
 ##'     in.
-##' @template priors-slot
+##' @slot n_particles An integer with the number of particles in the
+##'     parameter swarm.
+##' @slot cooling_fraction A numeric scalar with the fraction of the
+##'     perturbation scale that remains after 50 iterations. The
+##'     perturbation scales are multiplied by
+##'     \code{cooling_fraction^(i/50)} at iteration \code{i}.
+##' @slot loglik A numeric vector with the estimated log-likelihood of
+##'     the perturbed model for each iteration of the iterated
+##'     filtering. The final estimate is available with
+##'     \code{\link[=logLik,SimInf_if2-method]{logLik}}. Note that the
+##'     estimates are inflated close to the maximum and are not
+##'     suitable for likelihood-based inference on the focal model.
+##' @slot ess A matrix with the effective sample size, with one row
+##'     per observation time and one column per iteration. Entries are
+##'     \code{NA} for intervals that were not reached in an iteration,
+##'     e.g. if the swarm degenerated.
 ##' @include SimInf_model.R
 ##' @export
 setClass(
     "SimInf_if2",
     slots = c(model = "SimInf_model",
               n_particles = "integer",
+              cooling_fraction = "numeric",
               loglik = "numeric",
               ess = "matrix")
 )
@@ -60,6 +79,7 @@ setMethod(
         cat("Iterated filtering\n")
         cat("------------------\n")
         cat(sprintf("Number of particles: %i\n", object@n_particles))
+        cat(sprintf("Cooling fraction: %.2f\n", object@cooling_fraction))
         cat(sprintf("Log-likelihood: %f\n", logLik(object)))
 
         invisible(NULL)
@@ -241,6 +261,18 @@ if2_internal <- function(model,
          ess = ess)
 }
 
+##' Validate the 'cooling_fraction' argument
+##'
+##' Check that the cooling fraction is a numeric scalar in the open
+##' interval (0, 1) and return it as a numeric.
+##'
+##' @param cooling_fraction The fraction of the perturbation scale
+##'     that remains after 50 iterations in the iterated filtering.
+##'     The perturbation scales are multiplied by
+##'     \code{cooling_fraction^(i/50)} at iteration \code{i}.
+##' @return The validated cooling fraction as a numeric scalar.
+##'
+##' @noRd
 check_cooling_fraction <- function(cooling_fraction) {
     if (!is.numeric(cooling_fraction) ||
         anyNA(cooling_fraction) ||
@@ -352,6 +384,7 @@ setMethod(
         methods::new("SimInf_if2",
                      model = model,
                      n_particles = n_particles,
+                     cooling_fraction = cooling_fraction,
                      loglik = loglik,
                      ess = ess)
     }
