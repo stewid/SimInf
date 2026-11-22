@@ -368,7 +368,7 @@ pfilter_internal <- function(model,
         ## are invalid.
         if (!identical(length(w), n_particles) || !is.vector(w, "numeric")) {
             stop("Invalid observation process: weights must be ",
-                 "a numeric vector of length 'n_replicates'.",
+                 "a numeric vector of length 'n_particles'.",
                  call. = FALSE)
         }
         if (anyNA(w)) {

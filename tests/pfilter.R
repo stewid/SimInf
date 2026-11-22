@@ -534,7 +534,7 @@ res <- assertError(
             n_particles = 2))
 
 check_error(res, paste0("Invalid observation process: weights must be a ",
-                        "numeric vector of length 'n_replicates'."))
+                        "numeric vector of length 'n_particles'."))
 
 res <- assertError(
     pfilter(model,
@@ -545,7 +545,7 @@ res <- assertError(
             n_particles = 2))
 
 check_error(res, paste0("Invalid observation process: weights must be a ",
-                        "numeric vector of length 'n_replicates'."))
+                        "numeric vector of length 'n_particles'."))
 
 res <- assertError(
     pfilter(model,
