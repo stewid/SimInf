@@ -261,6 +261,177 @@ if2_internal <- function(model,
          ess = ess)
 }
 
+##' Run iterated filtering on a model.
+##' @noRd
+if2_ldata <- function(model,
+                      events,
+                      obs_process,
+                      data,
+                      tspan,
+                      cooling,
+                      init_model,
+                      post_particle) {
+    Nd <- nrow(model@v0)
+    Ntspan <- nrow(tspan)
+    ess <- rep(NA_real_, Ntspan)
+    loglik <- 0
+    w <- numeric(n_nodes(model))
+
+    ## Optionally initialise the initial state of every particle with
+    ## the 'init_model' callback. The callback is called once per
+    ## iteration with the expanded model, and only 'u0' and 'v0' are
+    ## extracted from the returned model: writes to any other slot,
+    ## including 'ldata', 'gdata' and 'events', are discarded. Only
+    ## the states from the latest observation time are needed to
+    ## rebuild u0 and v0 for the coming interval.
+    if (is.function(init_model)) {
+        ## Initialise the model.
+        m <- init_model(model)
+        if (!is(m, "SimInf_model")) {
+            stop("'init_model' must return a 'SimInf_model' object.",
+                 call. = FALSE)
+        }
+
+        ## Guard against 'init_model' changing the structure of the
+        ## model: each node in the expanded model is one particle, so
+        ## 'u0' and 'v0' must keep the dimensions of the template for
+        ## the per-particle states to stay aligned with the
+        ## per-particle parameters in 'ldata'.
+        if (!identical(dim(m@u0), dim(model@u0)) ||
+            !identical(dim(m@v0), dim(model@v0))) {
+            stop("'init_model' must not change the dimensions ",
+                 "of 'u0' or 'v0'.", call. = FALSE)
+        }
+
+        model@u0 <- matrix(
+            data = as.integer(m@u0),
+            nrow = n_compartments(model),
+            dimnames = dimnames(model@u0))
+
+        model@v0 <- matrix(
+            data = as.numeric(m@v0),
+            nrow = nrow(model@v0),
+            dimnames = dimnames(model@v0))
+    }
+
+    ## Loop over time series.
+    a <- seq_len(n_particles)
+    m <- model
+    m@replicates <- n_particles
+    for (i in seq_len(Ntspan)) {
+        if (is.na(tspan[i, 1L])) {
+            m@tspan <- tspan[i, 2L]
+        } else {
+            m@tspan <- tspan[i, 1:2]
+        }
+
+        ## Initialise events for the interval.
+        if (!is.null(events))
+            m@events <- events[[i]]
+
+        ## Initialise the model.
+        u_i <- seq_len(n_nodes(model) * n_compartments(model)) +
+            rep((a - 1L) * n_nodes(model) * n_compartments(model),
+                each = n_nodes(model) * n_compartments(model))
+        m@u0 <- matrix(
+            data = U[u_i],
+            nrow = n_compartments(model),
+            dimnames = dimnames(m@u0))
+
+        v_i <- seq_len(n_nodes(model) * Nd) +
+            rep((a - 1L) * n_nodes(model) * Nd,
+                each = n_nodes(model) * Nd)
+        m@v0 <- matrix(
+            data = V[v_i],
+            nrow = nrow(m@v0),
+            dimnames = dimnames(m@v0))
+
+        ## Propagate the model.
+        x <- run(m)
+        if (length(x@tspan) > 1L) {
+            ## Extract the final state in each replicate. The first
+            ## replicate is in column 1 and 2, the second replicate in
+            ## column 3 and 4, et cetera.
+            x@tspan <- x@tspan[2L]
+            j <- seq.int(from = 2L, by = 2L, length.out = n_particles)
+            x@U <- x@U[, j, drop = FALSE]
+            x@V <- x@V[, j, drop = FALSE]
+        }
+
+        ## Save the final state of all particles. Writing into the
+        ## preallocated buffers keeps them as flat vectors, with the
+        ## values placed in column-major order, which matches the
+        ## particle-block layout used when rebuilding u0 and v0.
+        U[] <- x@U
+        V[] <- x@V
+
+        ## Set the weight for the particle.
+        if (is.function(obs_process)) {
+            w <- obs_process(x, data[[i]])
+        } else {
+            e <- new.env(parent = baseenv())
+
+            assign(x = obs_process$par,
+                   value = data[[i]][, obs_process$par_i],
+                   pos = e)
+
+            for (j in seq_along(obs_process$slots)) {
+                s <- obs_process$slots[[j]]$slot
+                v <- slot(x, s)[obs_process$slots[[j]]$i, ]
+                n <- obs_process$slots[[j]]$name
+                assign(x = n, value = v, pos = e)
+            }
+
+            expr <- obs_process$expr
+            e$expr <- expr
+            w <- evalq(eval(parse(text = expr)), envir = e)
+        }
+
+        ## The observation process must return a numeric vector with
+        ## one entry per particle. -Inf is a valid outcome: the
+        ## observation is impossible under that particle, and the
+        ## weight normalisation assigns it zero weight. +Inf/NA/NaN
+        ## are invalid.
+        if (!identical(length(w), n_particles) || !is.vector(w, "numeric")) {
+            stop("Invalid observation process: weights must be ",
+                 "a numeric vector of length 'n_particles'.",
+                 call. = FALSE)
+        }
+        if (anyNA(w)) {
+            stop("Invalid observation process: weights must not be NA or NaN.",
+                 call. = FALSE)
+        }
+        if (any(w == Inf)) {
+            stop("Invalid observation process: weights must not be +Inf.",
+                 call. = FALSE)
+        }
+
+        max_w <- max(w)
+        if (!is.finite(max_w)) {
+            ## Signal a degenerate swarm to the outer loop.
+            return(list(ok = FALSE,
+                        loglik = NA_real_,
+                        ess = ess))
+        }
+
+        w <- exp(w - max_w)
+        sum_w <- sum(w)
+        loglik <- loglik + max_w + log(sum_w) - log(n_particles)
+        w <- w / sum_w
+        ess[i] <- 1 / sum(w^2)
+
+        ## Systematic resampling. Sample the ancestor indices for the
+        ## next generation of particles from the normalised weights.
+        if (i < Ntspan) {
+            a[] <- .Call(SimInf_systematic_resampling, w)
+        }
+    }
+
+    list(ok = TRUE,
+         loglik = loglik,
+         ess = ess)
+}
+
 ##' Iterated filtering algorithm
 ##'
 ##' @param model The model to simulate data from.
