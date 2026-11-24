@@ -88,15 +88,15 @@ setMethod(
 
 ##' Run iterated filtering on a model.
 ##' @noRd
-if2_internal <- function(model,
-                         events,
-                         obs_process,
-                         data,
-                         n_particles,
-                         tspan,
-                         cooling,
-                         init_model,
-                         post_particle) {
+if2_gdata <- function(model,
+                      events,
+                      obs_process,
+                      data,
+                      n_particles,
+                      tspan,
+                      cooling,
+                      init_model,
+                      post_particle) {
     Nd <- nrow(model@v0)
     Ntspan <- nrow(tspan)
     ess <- rep(NA_real_, Ntspan)
