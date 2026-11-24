@@ -115,6 +115,10 @@ if2_gdata <- function(model,
         for (p in seq_len(n_particles)) {
             ## Initialise the model.
             m <- init_model(model)
+            if (!methods::is(m, "SimInf_model")) {
+                stop("'init_model' must return a 'SimInf_model' object.",
+                     call. = FALSE)
+            }
 
             ## Guard against 'init_model' changing the structure of
             ## the model: the particle blocks in 'U' and 'V' are
