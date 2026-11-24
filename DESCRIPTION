@@ -99,7 +99,7 @@ Collate:
     'distance.R'
     'distributions.R'
     'edge_properties.R'
-    'iterated-filtering.R'
+    'if2.R'
     'lambert.R'
     'match_compartments.R'
     'mparse.R'
