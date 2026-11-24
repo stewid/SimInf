@@ -303,15 +303,8 @@ if2_ldata <- function(model,
                  "of 'u0' or 'v0'.", call. = FALSE)
         }
 
-        model@u0 <- matrix(
-            data = as.integer(m@u0),
-            nrow = n_compartments(model),
-            dimnames = dimnames(model@u0))
-
-        model@v0 <- matrix(
-            data = as.numeric(m@v0),
-            nrow = nrow(model@v0),
-            dimnames = dimnames(model@v0))
+        model@u0[] <- as.integer(m@u0)
+        model@v0[] <- as.numeric(m@v0)
     }
 
     ## Loop over time series.
