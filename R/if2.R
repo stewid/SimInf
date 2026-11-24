@@ -287,7 +287,7 @@ if2_ldata <- function(model,
     if (is.function(init_model)) {
         ## Initialise the model.
         m <- init_model(model)
-        if (!is(m, "SimInf_model")) {
+        if (!methods::is(m, "SimInf_model")) {
             stop("'init_model' must return a 'SimInf_model' object.",
                  call. = FALSE)
         }
