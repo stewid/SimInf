@@ -387,3 +387,28 @@ check_verbose <- function(verbose) {
 
     verbose
 }
+
+##' Validate the 'cooling_fraction' argument
+##'
+##' Check that the cooling fraction is a numeric scalar in the open
+##' interval (0, 1) and return it as a numeric.
+##'
+##' @param cooling_fraction The fraction of the perturbation scale
+##'     that remains after 50 iterations in the iterated filtering.
+##'     The perturbation scales are multiplied by
+##'     \code{cooling_fraction^(i/50)} at iteration \code{i}.
+##' @return The validated cooling fraction as a numeric scalar.
+##'
+##' @noRd
+check_cooling_fraction <- function(cooling_fraction) {
+    if (!is.numeric(cooling_fraction) ||
+        anyNA(cooling_fraction) ||
+        length(cooling_fraction) != 1L ||
+        cooling_fraction <= 0 ||
+        cooling_fraction >= 1) {
+        stop("'cooling_fraction' must be a numeric in (0, 1).",
+             call. = FALSE)
+    }
+
+    as.numeric(cooling_fraction)
+}
