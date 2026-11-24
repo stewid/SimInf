@@ -596,8 +596,13 @@ abc_gdata <- function(model,
         }
 
         ## Handle the init_model callback.
-        if (is.function(init_model))
+        if (is.function(init_model)) {
             model_proposals <- init_model(model_proposals)
+            if (!methods::is(model_proposals, "SimInf_model")) {
+                stop("'init_model' must return a 'SimInf_model' object.",
+                     call. = FALSE)
+            }
+        }
 
         d <- abc_distance(
             fn(run(model_proposals), generation, data), 1L)
