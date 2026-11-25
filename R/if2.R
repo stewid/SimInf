@@ -274,7 +274,7 @@ if2_ldata <- function(model,
                       tspan,
                       cooling,
                       init_model,
-                      post_particle) {
+                      post_proposal) {
     n_particles <- n_nodes(model)
     Nd <- nrow(model@v0)
     Ntspan <- nrow(tspan)
@@ -317,17 +317,16 @@ if2_ldata <- function(model,
     a <- seq_len(n_particles)
 
     ## Loop over time series.
-    m <- model
     for (i in seq_len(Ntspan)) {
         if (is.na(tspan[i, 1L])) {
-            m@tspan <- tspan[i, 2L]
+            model@tspan <- tspan[i, 2L]
         } else {
-            m@tspan <- tspan[i, 1:2]
+            model@tspan <- tspan[i, 1:2]
         }
 
         ## Initialise events for the interval.
         if (!is.null(events))
-            m@events <- events[[i]]
+            model@events <- events[[i]]
 
         ## Perturb the parameters for the coming interval. Drawing the
         ## mean from 'a' lets each particle inherit the parameter
@@ -335,21 +334,34 @@ if2_ldata <- function(model,
         ## perturbation.
         for (j in seq_len(nrow(proposals))) {
             k <- proposals$parameter[j]
-            m@ldata[k, ] <- rnorm(n = ncol(m@ldata),
-                                  mean = m@ldata[k, a],
-                                  sd = cooling * proposals$rw_sd[j])
+            model@ldata[k, ] <- rnorm(n = ncol(model@ldata),
+                                      mean = model@ldata[k, a],
+                                      sd = cooling * proposals$rw_sd[j])
         }
 
         if (is.function(post_proposal)) {
-            m <- post_proposal(m)
+            m <- post_proposal(model)
             if (!methods::is(m, "SimInf_model")) {
                 stop("'post_proposal' must return a 'SimInf_model' object.",
                      call. = FALSE)
             }
+
+            ## Guard against 'post_proposal' changing the structure of
+            ## the model: each node in the expanded model is one
+            ## particle, so 'ldata' and 'gdata' must keep the
+            ## dimensions of the expanded model.
+            if (!identical(dim(m@ldata), dim(model@ldata)) ||
+                !identical(length(m@gdata), length(model@gdata))) {
+                stop("'post_proposal' must not change the dimensions ",
+                     "of 'ldata' or 'gdata'.", call. = FALSE)
+            }
+
+            model@gdata[] <- m@gdata
+            model@ldata[] <- m@ldata
         }
 
         ## Propagate the model.
-        x <- run(m)
+        x <- run(model)
         if (length(x@tspan) > 1L) {
             ## Extract the final state of each particle.
             x@tspan <- x@tspan[2L]
@@ -403,7 +415,6 @@ if2_ldata <- function(model,
         if (!is.finite(max_w)) {
             ## Signal a degenerate swarm to the outer loop.
             return(list(ok = FALSE,
-                        theta = m@ldata[proposals$parameter, a, drop = FALSE],
                         loglik = NA_real_,
                         ess = ess))
         }
@@ -426,15 +437,15 @@ if2_ldata <- function(model,
         ## matches 'u0', so the fill is direct, and the permutation
         ## selects whole node-blocks by column.
         if (i < Ntspan) {
-            m@u0[] <- x@U
-            m@u0[] <- m@u0[, a]
-            m@v0[] <- x@V
-            m@v0[] <- m@v0[, a]
+            model@u0[] <- x@U
+            model@u0[] <- model@u0[, a]
+            model@v0[] <- x@V
+            model@v0[] <- model@v0[, a]
         }
     }
 
     list(ok = TRUE,
-         theta = m@ldata[proposals$parameter, a, drop = FALSE],
+         theta = model@ldata[proposals$parameter, a, drop = FALSE],
          loglik = loglik,
          ess = ess)
 }
