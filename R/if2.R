@@ -275,11 +275,12 @@ if2_ldata <- function(model,
                       cooling,
                       init_model,
                       post_particle) {
+    n_particles <- n_nodes(model)
     Nd <- nrow(model@v0)
     Ntspan <- nrow(tspan)
     ess <- rep(NA_real_, Ntspan)
     loglik <- 0
-    w <- numeric(n_nodes(model))
+    w <- numeric(n_particles)
 
     ## Optionally initialise the initial state of every particle with
     ## the 'init_model' callback. The callback is called once per
@@ -311,10 +312,12 @@ if2_ldata <- function(model,
         model@v0[] <- as.numeric(m@v0)
     }
 
-    ## Loop over time series.
+    ## Ancestor indices for the resampling. At the first interval,
+    ## every particle is its own ancestor.
     a <- seq_len(n_particles)
+
+    ## Loop over time series.
     m <- model
-    m@replicates <- n_particles
     for (i in seq_len(Ntspan)) {
         if (is.na(tspan[i, 1L])) {
             m@tspan <- tspan[i, 2L]
@@ -326,41 +329,33 @@ if2_ldata <- function(model,
         if (!is.null(events))
             m@events <- events[[i]]
 
-        ## Initialise the model.
-        u_i <- seq_len(n_nodes(model) * n_compartments(model)) +
-            rep((a - 1L) * n_nodes(model) * n_compartments(model),
-                each = n_nodes(model) * n_compartments(model))
-        m@u0 <- matrix(
-            data = U[u_i],
-            nrow = n_compartments(model),
-            dimnames = dimnames(m@u0))
+        ## Perturb the parameters for the coming interval. Drawing the
+        ## mean from 'a' lets each particle inherit the parameter
+        ## value of its resampled ancestor before adding its own
+        ## perturbation.
+        for (j in seq_len(nrow(proposals))) {
+            k <- proposals$parameter[j]
+            m@ldata[k, ] <- rnorm(n = ncol(m@ldata),
+                                  mean = m@ldata[k, a],
+                                  sd = cooling * proposals$rw_sd[j])
+        }
 
-        v_i <- seq_len(n_nodes(model) * Nd) +
-            rep((a - 1L) * n_nodes(model) * Nd,
-                each = n_nodes(model) * Nd)
-        m@v0 <- matrix(
-            data = V[v_i],
-            nrow = nrow(m@v0),
-            dimnames = dimnames(m@v0))
+        if (is.function(post_proposal)) {
+            m <- post_proposal(m)
+            if (!methods::is(m, "SimInf_model")) {
+                stop("'post_proposal' must return a 'SimInf_model' object.",
+                     call. = FALSE)
+            }
+        }
 
         ## Propagate the model.
         x <- run(m)
         if (length(x@tspan) > 1L) {
-            ## Extract the final state in each replicate. The first
-            ## replicate is in column 1 and 2, the second replicate in
-            ## column 3 and 4, et cetera.
+            ## Extract the final state of each particle.
             x@tspan <- x@tspan[2L]
-            j <- seq.int(from = 2L, by = 2L, length.out = n_particles)
-            x@U <- x@U[, j, drop = FALSE]
-            x@V <- x@V[, j, drop = FALSE]
+            x@U <- x@U[, 2L, drop = FALSE]
+            x@V <- x@V[, 2L, drop = FALSE]
         }
-
-        ## Save the final state of all particles. Writing into the
-        ## preallocated buffers keeps them as flat vectors, with the
-        ## values placed in column-major order, which matches the
-        ## particle-block layout used when rebuilding u0 and v0.
-        U[] <- x@U
-        V[] <- x@V
 
         ## Set the weight for the particle.
         if (is.function(obs_process)) {
@@ -389,7 +384,8 @@ if2_ldata <- function(model,
         ## observation is impossible under that particle, and the
         ## weight normalisation assigns it zero weight. +Inf/NA/NaN
         ## are invalid.
-        if (!identical(length(w), n_particles) || !is.vector(w, "numeric")) {
+        if (!identical(length(w), n_particles) ||
+            !is.vector(w, "numeric")) {
             stop("Invalid observation process: weights must be ",
                  "a numeric vector of length 'n_particles'.",
                  call. = FALSE)
@@ -407,6 +403,7 @@ if2_ldata <- function(model,
         if (!is.finite(max_w)) {
             ## Signal a degenerate swarm to the outer loop.
             return(list(ok = FALSE,
+                        theta = m@ldata[proposals$parameter, a, drop = FALSE],
                         loglik = NA_real_,
                         ess = ess))
         }
@@ -418,13 +415,26 @@ if2_ldata <- function(model,
         ess[i] <- 1 / sum(w^2)
 
         ## Systematic resampling. Sample the ancestor indices for the
-        ## next generation of particles from the normalised weights.
+        ## next generation of particles from the normalised
+        ## weights. At the last interval, the indices are used to
+        ## sample the returned swarm from the normalised weights.
+        a[] <- .Call(SimInf_systematic_resampling, w)
+
+        ## Carry the final state of the interval over to the next
+        ## interval, and let each particle inherit the state of its
+        ## resampled ancestor: the flat node-block order of 'x@U'
+        ## matches 'u0', so the fill is direct, and the permutation
+        ## selects whole node-blocks by column.
         if (i < Ntspan) {
-            a[] <- .Call(SimInf_systematic_resampling, w)
+            m@u0[] <- x@U
+            m@u0[] <- m@u0[, a]
+            m@v0[] <- x@V
+            m@v0[] <- m@v0[, a]
         }
     }
 
     list(ok = TRUE,
+         theta = m@ldata[proposals$parameter, a, drop = FALSE],
          loglik = loglik,
          ess = ess)
 }
