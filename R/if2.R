@@ -428,7 +428,7 @@ if2_ldata <- function(model,
         ## next generation of particles from the normalised
         ## weights. At the last interval, the indices are used to
         ## sample the returned swarm from the normalised weights.
-        a[] <- .Call(SimInf_systematic_resampling, w)
+        a <- .Call(SimInf_systematic_resampling, w)
 
         ## Carry the final state of the interval over to the next
         ## interval, and let each particle inherit the state of its
