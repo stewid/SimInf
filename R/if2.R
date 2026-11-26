@@ -271,16 +271,15 @@ if2_ldata <- function(model,
                       events,
                       obs_process,
                       data,
+                      proposals,
+                      n_particles,
                       tspan,
                       cooling,
                       init_model,
                       post_proposal) {
-    n_particles <- n_nodes(model)
-    Nd <- nrow(model@v0)
-    Ntspan <- nrow(tspan)
-    ess <- rep(NA_real_, Ntspan)
+    n_tspan <- nrow(tspan)
+    ess <- rep(NA_real_, n_tspan)
     loglik <- 0
-    w <- numeric(n_particles)
 
     ## Optionally initialise the initial state of every particle with
     ## the 'init_model' callback. The callback is called once per
@@ -317,7 +316,7 @@ if2_ldata <- function(model,
     a <- seq_len(n_particles)
 
     ## Loop over time series.
-    for (i in seq_len(Ntspan)) {
+    for (i in seq_len(n_tspan)) {
         if (is.na(tspan[i, 1L])) {
             model@tspan <- tspan[i, 2L]
         } else {
@@ -436,7 +435,7 @@ if2_ldata <- function(model,
         ## resampled ancestor: the flat node-block order of 'x@U'
         ## matches 'u0', so the fill is direct, and the permutation
         ## selects whole node-blocks by column.
-        if (i < Ntspan) {
+        if (i < n_tspan) {
             model@u0[] <- x@U
             model@u0[] <- model@u0[, a]
             model@v0[] <- x@V
