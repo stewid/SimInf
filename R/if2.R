@@ -98,10 +98,9 @@ if2_gdata <- function(model,
                       init_model,
                       post_particle) {
     Nd <- nrow(model@v0)
-    Ntspan <- nrow(tspan)
-    ess <- rep(NA_real_, Ntspan)
+    n_tspan <- nrow(tspan)
+    ess <- rep(NA_real_, n_tspan)
     loglik <- 0
-    w <- numeric(n_particles)
 
     ## Keep track of the states in the compartments and the continuous
     ## states in every particle. Only the states from the latest
@@ -147,96 +146,74 @@ if2_gdata <- function(model,
         V <- rep(as.numeric(model@v0), n_particles)
     }
 
-    ## Loop over time series.
+    ## Ancestor indices for the resampling. At the first interval,
+    ## every particle is its own ancestor.
     a <- seq_len(n_particles)
-    m <- model
-    m@replicates <- n_particles
-    for (i in seq_len(Ntspan)) {
+
+    ## Loop over time series.
+    for (i in seq_len(n_tspan)) {
         if (is.na(tspan[i, 1L])) {
-            m@tspan <- tspan[i, 2L]
+            model@tspan <- tspan[i, 2L]
         } else {
-            m@tspan <- tspan[i, 1:2]
+            model@tspan <- tspan[i, 1:2]
         }
 
         ## Initialise events for the interval.
         if (!is.null(events))
-            m@events <- events[[i]]
+            model@events <- events[[i]]
 
-        ## Initialise the model.
-        u_i <- seq_len(n_nodes(model) * n_compartments(model)) +
-            rep((a - 1L) * n_nodes(model) * n_compartments(model),
-                each = n_nodes(model) * n_compartments(model))
-        m@u0 <- matrix(
-            data = U[u_i],
-            nrow = n_compartments(model),
-            dimnames = dimnames(m@u0))
+        ## Loop over the particles.
+        w <- numeric(n_particles)
+        for (p in seq_len(n_particles)) {
+            ## Initialise the model.
+            u_i <- seq.int(
+                from = (p - 1L) * n_nodes(model) * n_compartments(model) + 1L,
+                length.out = n_nodes(model) * n_compartments(model))
+            model@u0[] <- U[u_i]
 
-        v_i <- seq_len(n_nodes(model) * Nd) +
-            rep((a - 1L) * n_nodes(model) * Nd,
-                each = n_nodes(model) * Nd)
-        m@v0 <- matrix(
-            data = V[v_i],
-            nrow = nrow(m@v0),
-            dimnames = dimnames(m@v0))
+            v_i <- seq.int(
+                from = (p - 1L) * n_nodes(model) * Nd + 1L,
+                length.out = n_nodes(model) * Nd)
+            model@v0[] <- V[v_i]
 
-        ## Propagate the model.
-        x <- run(m)
-        if (length(x@tspan) > 1L) {
-            ## Extract the final state in each replicate. The first
-            ## replicate is in column 1 and 2, the second replicate in
-            ## column 3 and 4, et cetera.
-            x@tspan <- x@tspan[2L]
-            j <- seq.int(from = 2L, by = 2L, length.out = n_particles)
-            x@U <- x@U[, j, drop = FALSE]
-            x@V <- x@V[, j, drop = FALSE]
-        }
-
-        ## Save the final state of all particles. Writing into the
-        ## preallocated buffers keeps them as flat vectors, with the
-        ## values placed in column-major order, which matches the
-        ## particle-block layout used when rebuilding u0 and v0.
-        U[] <- x@U
-        V[] <- x@V
-
-        ## Set the weight for the particle.
-        if (is.function(obs_process)) {
-            w <- obs_process(x, data[[i]])
-        } else {
-            e <- new.env(parent = baseenv())
-
-            assign(x = obs_process$par,
-                   value = data[[i]][, obs_process$par_i],
-                   pos = e)
-
-            for (j in seq_along(obs_process$slots)) {
-                s <- obs_process$slots[[j]]$slot
-                v <- slot(x, s)[obs_process$slots[[j]]$i, ]
-                n <- obs_process$slots[[j]]$name
-                assign(x = n, value = v, pos = e)
+            ## Propagate the model.
+            x <- run(model)
+            if (length(x@tspan) > 1L) {
+                ## Extract the final state of each particle.
+                x@tspan <- x@tspan[2L]
+                x@U <- x@U[, 2L, drop = FALSE]
+                x@V <- x@V[, 2L, drop = FALSE]
             }
 
-            expr <- obs_process$expr
-            e$expr <- expr
-            w <- evalq(eval(parse(text = expr)), envir = e)
-        }
+            ## Save the final state of the particle.
+            U[u_i] <- as.integer(x@U)
+            V[v_i] <- as.numeric(x@V)
 
-        ## The observation process must return a numeric vector with
-        ## one entry per particle. -Inf is a valid outcome: the
-        ## observation is impossible under that particle, and the
-        ## weight normalisation assigns it zero weight. +Inf/NA/NaN
-        ## are invalid.
-        if (!identical(length(w), n_particles) || !is.vector(w, "numeric")) {
-            stop("Invalid observation process: weights must be ",
-                 "a numeric vector of length 'n_particles'.",
-                 call. = FALSE)
-        }
-        if (anyNA(w)) {
-            stop("Invalid observation process: weights must not be NA or NaN.",
-                 call. = FALSE)
-        }
-        if (any(w == Inf)) {
-            stop("Invalid observation process: weights must not be +Inf.",
-                 call. = FALSE)
+            ## Set the weight for the particle.
+            w_particle <- obs_process(x, data[[i]])
+
+            ## The observation process must return a numeric vector of
+            ## length 1. -Inf is a valid outcome: the observation is
+            ## impossible under that particle, and the weight
+            ## normalisation assigns it zero weight. +Inf/NA/NaN are
+            ## invalid.
+            if (!identical(length(w_particle), 1L) ||
+                !is.vector(w_particle, "numeric")) {
+                stop("Invalid observation process: weights must be ",
+                     "a numeric vector of length 1.",
+                     call. = FALSE)
+            }
+            if (anyNA(w_particle)) {
+                stop("Invalid observation process: weights must not be ",
+                     "NA or NaN.",
+                     call. = FALSE)
+            }
+            if (any(w_particle == Inf)) {
+                stop("Invalid observation process: weights must not be +Inf.",
+                     call. = FALSE)
+            }
+
+            w[p] <- w_particle
         }
 
         max_w <- max(w)
@@ -254,10 +231,10 @@ if2_gdata <- function(model,
         ess[i] <- 1 / sum(w^2)
 
         ## Systematic resampling. Sample the ancestor indices for the
-        ## next generation of particles from the normalised weights.
-        if (i < Ntspan) {
-            a[] <- .Call(SimInf_systematic_resampling, w)
-        }
+        ## next generation of particles from the normalised
+        ## weights. At the last interval, the indices are used to
+        ## sample the returned swarm from the normalised weights.
+        a <- .Call(SimInf_systematic_resampling, w)
     }
 
     list(ok = TRUE,
@@ -368,7 +345,7 @@ if2_ldata <- function(model,
             x@V <- x@V[, 2L, drop = FALSE]
         }
 
-        ## Set the weight for the particle.
+        ## Set the weight for the particles.
         if (is.function(obs_process)) {
             w <- obs_process(x, data[[i]])
         } else {
