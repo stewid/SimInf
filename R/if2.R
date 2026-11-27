@@ -97,7 +97,6 @@ if2_gdata <- function(model,
                       cooling,
                       init_model,
                       post_particle) {
-    Nd <- nrow(model@v0)
     n_tspan <- nrow(tspan)
     ess <- rep(NA_real_, n_tspan)
     loglik <- 0
@@ -106,10 +105,13 @@ if2_gdata <- function(model,
     ## states in every particle. Only the states from the latest
     ## observation time are needed to rebuild u0 and v0 for the coming
     ## interval.
+    U <- matrix(data = as.integer(model@u0),
+                nrow = prod(dim(model@u0)),
+                ncol = n_particles)
+    V <- matrix(data = as.numeric(model@v0),
+                nrow = prod(dim(model@v0)),
+                ncol = n_particles)
     if (is.function(init_model)) {
-        U <- integer(n_particles * n_nodes(model) * n_compartments(model))
-        V <- numeric(n_particles * n_nodes(model) * Nd)
-
         ## Loop over the particles and initialise each model.
         for (p in seq_len(n_particles)) {
             ## Initialise the model.
@@ -129,21 +131,10 @@ if2_gdata <- function(model,
                      "of 'u0' or 'v0'.", call. = FALSE)
             }
 
-            ## Save the initial u0 state.
-            u_i <- seq.int(
-                from = (p - 1L) * n_nodes(model) * n_compartments(model) + 1L,
-                length.out = n_nodes(model) * n_compartments(model))
-            U[u_i] <- as.integer(m@u0)
-
-            ## Save the initial v0 state.
-            v_i <- seq.int(
-                from = (p - 1L) * n_nodes(model) * Nd + 1L,
-                length.out = n_nodes(model) * Nd)
-            V[v_i] <- as.numeric(m@v0)
+            ## Save the initial u0 and v0 states.
+            U[, p] <- as.integer(m@u0)
+            V[, p] <- as.numeric(m@v0)
         }
-    } else {
-        U <- rep(as.integer(model@u0), n_particles)
-        V <- rep(as.numeric(model@v0), n_particles)
     }
 
     ## Ancestor indices for the resampling. At the first interval,
@@ -166,15 +157,8 @@ if2_gdata <- function(model,
         w <- numeric(n_particles)
         for (p in seq_len(n_particles)) {
             ## Initialise the model.
-            u_i <- seq.int(
-                from = (p - 1L) * n_nodes(model) * n_compartments(model) + 1L,
-                length.out = n_nodes(model) * n_compartments(model))
-            model@u0[] <- U[u_i]
-
-            v_i <- seq.int(
-                from = (p - 1L) * n_nodes(model) * Nd + 1L,
-                length.out = n_nodes(model) * Nd)
-            model@v0[] <- V[v_i]
+            model@u0[] <- U[, p]
+            model@v0[] <- V[, p]
 
             ## Propagate the model.
             x <- run(model)
@@ -186,8 +170,8 @@ if2_gdata <- function(model,
             }
 
             ## Save the final state of the particle.
-            U[u_i] <- as.integer(x@U)
-            V[v_i] <- as.numeric(x@V)
+            U[, p] <- as.integer(x@U)
+            V[, p] <- as.numeric(x@V)
 
             ## Set the weight for the particle.
             w_particle <- obs_process(x, data[[i]])
