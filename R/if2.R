@@ -272,10 +272,6 @@ if2_ldata <- function(model,
         model@v0[] <- as.numeric(m@v0)
     }
 
-    ## Ancestor indices for the resampling. At the first interval,
-    ## every particle is its own ancestor.
-    a <- seq_len(n_particles)
-
     ## Loop over time series.
     for (i in seq_len(n_tspan)) {
         if (is.na(tspan[i, 1L])) {
@@ -288,14 +284,11 @@ if2_ldata <- function(model,
         if (!is.null(events))
             model@events <- events[[i]]
 
-        ## Perturb the parameters for the coming interval. Drawing the
-        ## mean from 'a' lets each particle inherit the parameter
-        ## value of its resampled ancestor before adding its own
-        ## perturbation.
+        ## Perturb the parameters for the coming interval.
         for (j in seq_len(nrow(proposals))) {
             k <- proposals$parameter[j]
             model@ldata[k, ] <- rnorm(n = ncol(model@ldata),
-                                      mean = model@ldata[k, a],
+                                      mean = model@ldata[k, ],
                                       sd = cooling * proposals$rw_sd[j])
         }
 
@@ -393,19 +386,16 @@ if2_ldata <- function(model,
 
         ## Carry the final state of the interval over to the next
         ## interval, and let each particle inherit the state of its
-        ## resampled ancestor: the flat node-block order of 'x@U'
-        ## matches 'u0', so the fill is direct, and the permutation
-        ## selects whole node-blocks by column.
-        if (i < n_tspan) {
-            model@u0[] <- x@U
-            model@u0[] <- model@u0[, a]
-            model@v0[] <- x@V
-            model@v0[] <- model@v0[, a]
-        }
+        ## resampled ancestor.
+        model@u0[] <- x@U
+        model@u0[] <- model@u0[, a]
+        model@v0[] <- x@V
+        model@v0[] <- model@v0[, a]
+        model@ldata[] <- model@ldata[, a]
     }
 
     list(ok = TRUE,
-         theta = model@ldata[proposals$parameter, a, drop = FALSE],
+         theta = model@ldata[proposals$parameter, , drop = FALSE],
          loglik = loglik,
          ess = ess)
 }
